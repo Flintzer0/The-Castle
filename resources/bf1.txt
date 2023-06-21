@@ -1,0 +1,11 @@
+stairs		empty_room	empty_passageway	empty_room					
+empty_passageway				empty_passageway					
+goblin_room	empty_passageway	empty_room	empty_passageway	goblin_room	empty_room	empty_passageway	goblin_room	empty_passageway	stairs
+		empty_passageway					empty_passageway		
+locked_room		empty_room	empty_passageway	giant_spider_room	empty_room	empty_passageway	find_rusty_dagger_room	empty_passageway	empty_room
+empty_passageway		empty_passageway					giant_spider_room		
+giant_spider_room	empty_passageway	goblin_room			locked_room	empty_passageway	key_room		
+empty_passageway		empty_passageway					find_rusty_dagger_room		
+empty_room	empty_passageway	find_rusty_shield_room	empty_passageway	empty_passageway	goblin_room	five_gold	jail		
+		empty_passageway					jail_cell		
+locked_room	empty_passageway	empty_room							
