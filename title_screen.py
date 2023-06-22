@@ -1,5 +1,6 @@
 import world, sys, time, items
 from player import Player
+from utilities import text_speed
 from pathlib import Path
 import pickle
 
@@ -10,13 +11,14 @@ def play(saved_world=None, saved_player=None):
         player = saved_player
     else:
         world.load_tiles()
-        name=input("What is your name? ")
-        player = Player(name=name, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=2, LUCK=1, cash=5)
+        text_speed("What is your name? ", .05)
+        name=input()
+        player = Player(name=name, LVL=1, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=2, LUCK=1, cash=5)
     game_loop(player)
 
 def game_loop(player):
     room = world.tile_exists(player.location_x, player.location_y)
-    print(room.intro_text())
+    room.intro_text()
     while player.is_alive() and not player.victory:
         room = world.tile_exists(player.location_x, player.location_y)
         # Check again since the room could have changed the player's state
@@ -61,16 +63,8 @@ def check_for_save():
         play()
 
 if __name__ == "__main__":
-    title = "The Castle\n"
-    for l in title:
-        sys.stdout.write(l)
-        sys.stdout.flush()
-        time.sleep(0.05)
-    time.sleep(2)
-    subtitle = "A simple text-based adventure\n"
-    for l in subtitle:
-        sys.stdout.write(l)
-        sys.stdout.flush()
-        time.sleep(0.05)
-    time.sleep(2)
+    text_speed("The Castle\n", .05)
+    time.sleep(1)
+    text_speed("A text-based adventure game\n", .05)
+    time.sleep(1)
     check_for_save()

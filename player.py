@@ -1,17 +1,15 @@
-import items, world, combat
-import pickle, sys, time
-
-def text_speed(text):
-    for l in text:
-        sys.stdout.write(l)
-        sys.stdout.flush()
-        time.sleep(.05)
+import items, world
+from utilities import text_speed
+import pickle, sys, time, random
+import combat
 
 class Player():
-    def __init__(self, name, mHP, cHP, STR, DEF, MAG, RES, SPD, SKL, LUCK, cash):
+    def __init__(self, name, mHP, cHP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash):
         self.mHP = mHP
         self.cHP = cHP
         self.name = name
+        self.LVL = LVL
+        self.EXP = 0
         self.inventory = []
         self.compendium = []
         self.STR = STR
@@ -24,13 +22,63 @@ class Player():
         self.cash = cash
         self.location_x, self.location_y = world.starting_position
         self.victory = False
+        self.mHPgrowth = .6
+        self.STRgrowth = .5
+        self.DEFgrowth = .4
+        self.MAGgrowth = .3
+        self.RESgrowth = .2
+        self.SPDgrowth = .4
+        self.SKLgrowth = .4
+        self.LUCKgrowth = .3
     
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.HP, self.name, self.inventory, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
  
     def is_alive(self):
         return self.cHP > 0
- 
+    
+    def chk_stat_roll(self, growth, stat):
+        if random.randint(1,100) <= (100 * (growth + (stat * .1))):
+            return 1
+        else:
+            return 0
+
+    def level_up(self):
+        if self.EXP >= 100:
+            self.LVL += 1
+            self.EXP -= 100
+            self.mHP += 2 + self.chk_stat_roll(self.mHPgrowth, self.mHP)
+            self.cHP = self.mHP
+            self.STR += self.chk_stat_roll(self.STRgrowth, self.STR)
+            self.DEF += self.chk_stat_roll(self.DEFgrowth, self.DEF)
+            self.MAG += self.chk_stat_roll(self.MAGgrowth, self.MAG)
+            self.RES += self.chk_stat_roll(self.RESgrowth, self.RES)
+            self.SPD += self.chk_stat_roll(self.SPDgrowth, self.SPD)
+            self.SKL += self.chk_stat_roll(self.SKLgrowth, self.SKL)
+            self.LUCK += self.chk_stat_roll(self.LUCKgrowth, self.LUCK)
+            print("You leveled up!\n")
+            time.sleep(1)
+            print("You are now level {}!\n".format(self.LVL))
+            time.sleep(1)
+            print("Your max HP is now {}!\n".format(self.mHP))
+            time.sleep(1)
+            print("Your STR is now {}!\n".format(self.STR))
+            time.sleep(1)
+            print("Your DEF is now {}!\n".format(self.DEF))
+            time.sleep(1)
+            print("Your MAG is now {}!\n".format(self.MAG))
+            time.sleep(1)
+            print("Your RES is now {}!\n".format(self.RES))
+            time.sleep(1)
+            print("Your SPD is now {}!\n".format(self.SPD))
+            time.sleep(1)
+            print("Your SKL is now {}!\n".format(self.SKL))
+            time.sleep(1)
+            print("Your LUCK is now {}!\n".format(self.LUCK))
+            time.sleep(1)
+        else:
+            pass
+
     def print_inventory(self):
         print(self.cash, "gold\n")
         for item in self.inventory:
@@ -77,7 +125,7 @@ class Player():
             elif input == len(self.compendium):
                 pass
             else:
-                print("Invalid choice.")
+                text_speed("Invalid choice.", .05)
         else:
             print("You haven't encountered any monsters yet!")
 
@@ -88,28 +136,25 @@ class Player():
             print(room.search_text())
             if isinstance(item, items.gold):
                 self.cash += item.amt
-                text_speed("You found {} {}!\n".format(item.amt, item.name))
+                text_speed("You found {} {}!\n".format(item.amt, item.name), .05)
                 time.sleep(1)
-                text_speed("You now have {} gold!\n".format(self.cash))
+                text_speed("You now have {} gold!\n".format(self.cash), .05)
             elif isinstance(item, items.Potion):
                 self.inventory.append(item)
-                text_speed("You found {} {}(s)!\n".format(item.qty, item.name))
+                text_speed("You found {} {}(s)!\n".format(item.qty, item.name), .05)
             else:
                 self.inventory.append(item)
-                text_speed("You found a {}!\n".format(item.name))
+                text_speed("You found a {}!\n".format(item.name), .05)
             room.item = None
         else:
             return room.searched_text()
         
     def fight(self, enemy):
-        if self.check_SPD(self, enemy) == True:
-            combat.pfight(self, enemy)
-            if enemy.is_alive() == True:
-                combat.efight(enemy, self)
+        self.combat(enemy)
+        if not enemy.is_alive():
+            text_speed("You killed {}!\n".format(enemy.name), .05)
         else:
-            combat.efight(enemy, self)
-            if self.is_alive() == True:
-                combat.pfight(self, enemy)
+            text_speed("{} HP is {}.\n".format(enemy.name, enemy.hp), .05)
     
     def unlock(self, unlock):
         print(world.tile_exists(self.location_x, self.location_y).unlock(unlock))
@@ -193,3 +238,121 @@ class Player():
         print("Game saved!")
         time.sleep(.5)
         exit()
+
+    def chk_Weapon(self):
+        best_weapon = items.Fists()
+        max_dmg = 0
+        for i in self.inventory:
+            if isinstance(i, items.Weapon):
+                if i.damage > max_dmg:
+                    max_dmg = i.damage
+                    best_weapon = i
+        return best_weapon
+
+    def chk_armor(self):
+        armor = items.unarmored()
+        max_armor = 0
+        for i in self.inventory:
+            if isinstance(i, items.Armor):
+                if i.armor > max_armor:
+                    max_armor = i.armor
+                    armor = i
+        return armor
+
+    def chk_SPD(self, enemy):
+        if self.SPD > enemy.SPD:
+            return True
+        elif self.SPD == enemy.SPD:
+            return True
+        else:
+            return False
+
+    def chk_CRIT(object):
+        critical = False
+        if random.randint(1,100) <= ((object.SKL*2) + object.LUCK):
+            critical = True
+        else:
+            critical = False
+        return critical
+
+    def pfight(self, enemy):
+        print("You attack!")
+        best_weapon = self.chk_Weapon()
+        chkCRIT = self.chk_CRIT()
+        if chkCRIT == True:
+            pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
+            print("You use {} against {}!".format(best_weapon.name, enemy.name))
+            time.sleep(.5)
+            print("Critical hit!")
+            time.sleep(1)
+            enemy.hp -= pdamage
+            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
+            time.sleep(1)
+            if enemy.is_alive() == False:
+                print("You killed the {}!".format(enemy.name))
+                time.sleep(1)
+            else:
+                print("The {} has {} HP remaining.".format(enemy.name, enemy.hp))
+                time.sleep(1)
+        else:
+            pdamage = ((best_weapon.damage + self.STR) - enemy.DEF)
+            enemy.hp -= pdamage
+            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
+            time.sleep(1)
+
+
+    def chk_edamage(self, enemy):
+        edamage = None
+        armor = self.chk_armor()
+        pdef = (self.DEF + armor.armor)
+        chkCrit = combat.chk_CRIT(enemy)
+        if chkCrit == True:
+            print("The {} scores a Critical Hit!".format(enemy.name))
+            time.sleep(1)
+            edamage = (enemy.damage * 2)
+            if edamage < pdef:
+                edamage = 1
+                return edamage
+            elif edamage == pdef:
+                edamage = 1
+                return edamage
+            else:
+                edamage = edamage - pdef
+                return edamage
+        else:
+            edamage = (enemy.damage - pdef)
+            if enemy.damage < pdef:
+                edamage = 1
+                return edamage
+            
+            elif enemy.damage == pdef:
+                edamage = 1
+                return edamage
+            else:
+                edamage = (enemy.damage - pdef)
+                return edamage
+
+    def efight(self, enemy):
+            print("The {} attacks!".format(enemy.name))
+            time.sleep(1)
+            edamage = self.chk_edamage(enemy)
+            self.cHP -= edamage
+            print("The {} dealt {} damage to you.".format(enemy.name, edamage))
+            time.sleep(1)
+            if self.is_alive() == True:
+                print("You have {} HP remaining.".format(self.cHP))
+                time.sleep(1)
+
+    def combat(self, enemy):
+        chkSPD = self.chk_SPD(enemy)
+        if chkSPD == True:
+            self.pfight(enemy)
+            if enemy.is_alive() == True:
+                self.efight(enemy)
+            else:
+                print("You killed the {}!".format(enemy.name))
+                time.sleep(1)
+        else:
+            self.efight(enemy)
+            if self.is_alive() == True:
+                self.pfight(enemy)

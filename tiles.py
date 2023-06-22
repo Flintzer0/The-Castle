@@ -1,11 +1,6 @@
 import items, world, actions, enemies, time, sys, title_screen
 from player import Player
-
-def text_speed(text, speed):
-    for l in text:
-        sys.stdout.write(l)
-        sys.stdout.flush()
-        time.sleep(speed)
+from utilities import text_speed
 
 class map_tile:
     def __init__(self, x, y):
@@ -58,10 +53,10 @@ class jail(map_tile):
 
     def intro_text(self):
         if self.entered == False:
-            text_speed("You leave your cell and find yourself in the dungeon.\n", .05)
-            time.sleep(1)
-            text_speed("There doesn't seem to be anyone around.\n", .05)
-            time.sleep(1)
+            # text_speed("You leave your cell and find yourself in the dungeon.\n", .05)
+            # time.sleep(1)
+            # text_speed("There doesn't seem to be anyone around.\n", .05)
+            # time.sleep(1)
             text_speed("What do you do?\n", .05)
             time.sleep(1)
             self.entered = True
@@ -145,10 +140,10 @@ class key_room(map_tile):
         self.item = items.wooden_key(1)
 
     def intro_text(self):
-        text_speed("You enter a room that appears to have been a guard's quarters.\n", .05)
-        time.sleep(1)
-        text_speed("There seems to be something on the table.\n", .05)
-        time.sleep(1)
+        # text_speed("You enter a room that appears to have been a guard's quarters.\n", .05)
+        # time.sleep(1)
+        # text_speed("There seems to be something on the table.\n", .05)
+        # time.sleep(1)
         text_speed("What do you do?\n", .05)
 
     def search_text(self):
@@ -184,21 +179,11 @@ class enemy_room(map_tile):
         super().__init__(x, y)
         self.enemy.seen = False
 
-    def deal_damage(self, player):
-        if self.enemy.damage < player.DEF:
-            self.enemy.damage = 1
-            player.HP = player.HP - self.enemy.damage
-            text_speed("Enemy does 1 damage. You have {} HP remaining.\n".format(player.HP), .05)
-        else:
-            damage = self.enemy.damage - player.DEF
-            player.HP = player.HP - damage
-            text_speed("Enemy does {} damage. You have {} HP remaining.\n".format(damage, player.HP), .05)
-
     def available_actions(self):
         if self.enemy.is_alive():
             return [actions.fight(enemy=self.enemy)]
         else:
-            pass
+            return map_tile.available_actions(self)
     
     def check_monster(self, player):
         if self.enemy.seen == False:
@@ -261,12 +246,12 @@ class find_rusty_dagger_room(map_tile):
     def intro_text(self):
         text_speed("You're in a slightly larger room than the others.\n", .05)
         time.sleep(1)
-        text_speed("You're not quite sure what it was used for.\n", .05)
-        time.sleep(1)
-        text_speed("You can make out what appears to be torture devices, though they have long since decayed.\n", .05)
-        time.sleep(1)
-        text_speed("What do you do?\n", .05)
-        time.sleep(1)
+        # text_speed("You're not quite sure what it was used for.\n", .05)
+        # time.sleep(1)
+        # text_speed("You can make out what appears to be torture devices, though they have long since decayed.\n", .05)
+        # time.sleep(1)
+        # text_speed("What do you do?\n", .05)
+        # time.sleep(1)
 
     def search_text(self):
         text_speed("You can see something glinting on one of the racks...\n", .05)

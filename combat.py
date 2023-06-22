@@ -1,5 +1,6 @@
 import items
 import random
+import sys
 
 def chk_Weapon(player):
     best_weapon = items.Fists()
@@ -57,7 +58,7 @@ def pfight(player, enemy):
         print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
 
 
-def chk_edamage(enemy, player):
+def chk_edamage(player, enemy):
     edamage = None
     armor = chk_armor(player)
     pdef = (player.DEF + armor.armor)
@@ -89,7 +90,7 @@ def chk_edamage(enemy, player):
 
 def efight(player, enemy):
         print("The {} attacks!".format(enemy.name))
-        edamage = chk_edamage(enemy, player)
+        edamage = chk_edamage(player, enemy)
         player.cHP -= edamage
         print("The {} dealt {} damage to you.".format(enemy.name, edamage))
         if player.is_alive() == True:
@@ -101,7 +102,12 @@ def combat(player, enemy):
         pfight(player, enemy)
         if enemy.is_alive() == True:
             efight(player, enemy)
+        else:
+            print("You killed the {}!".format(enemy.name))
     else:
         efight(player, enemy)
         if player.is_alive() == True:
             pfight(player, enemy)
+        else:
+            print("You died.")
+            sys.exit()
