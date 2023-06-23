@@ -95,16 +95,36 @@ class Player():
         print(world.tile_exists(self.location_x, self.location_y).intro_text())
 
     def move_north(self):
-        self.move(dx=0, dy=-1)
+        room = world.tile_exists(self.location_x, (self.location_y-1))
+        if room.unlocked == True:
+            self.move(dx=0, dy=-1)
+        else:
+            print(room.locked_text())
+            self.move(dx=0, dy=0)
     
     def move_south(self):
-        self.move(dx=0, dy=1)
+        room = world.tile_exists(self.location_x, (self.location_y+1))
+        if room.unlocked == True:
+            self.move(dx=0, dy=1)
+        else:
+            print(room.locked_text())
+            self.move(dx=0, dy=0)
     
     def move_east(self):
-        self.move(dx=1, dy=0)
+        room = world.tile_exists((self.location_x+1), self.location_y)
+        if room.unlocked == True:
+            self.move(dx=1, dy=0)
+        else:
+            print(room.locked_text())
+            self.move(dx=0, dy=0)
     
     def move_west(self):
-        self.move(dx=-1, dy=0)
+        room = world.tile_exists((self.location_x-1), self.location_y)
+        if room.unlocked == True:
+            self.move(dx=-1, dy=0)
+        else:
+            print(room.locked_text())
+            self.move(dx=0, dy=0)
 
     def add_monster(self):
         monster = world.tile_exists(self.location_x, self.location_y).enemy
@@ -155,9 +175,6 @@ class Player():
             text_speed("You killed {}!\n".format(enemy.name), .05)
         else:
             text_speed("{} HP is {}.\n".format(enemy.name, enemy.hp), .05)
-    
-    def unlock(self, unlock):
-        print(world.tile_exists(self.location_x, self.location_y).unlock(unlock))
 
     def check_inventory(self, item):
         a=[]
@@ -177,31 +194,58 @@ class Player():
                 print(f'{i}: {items[i].name} x{items[i].qty}')
         return False
 
-    def use_potion(self):
-        if self.list_inventory(items.Potion) is not False:
-            potion = input("Which potion do you want to use? ")
-            if potion.isdigit():
-                potion = int(potion)
-                if potion < len(self.check_inventory(items.Potion)):
-                    p = self.check_inventory(items.Potion)
-                    if self.cHP + p[potion].heal > self.mHP:
-                        self.cHP = self.mHP
-                    if self.cHP + p[potion].heal <= self.mHP:
-                        self.cHP += p[potion].heal
-                    print("You drink the {}!\n".format(p[potion].name))
-                    print("You heal {} HP!\n".format(p[potion].heal))
-                    print("Your HP is now {}.".format(self.cHP))
-                    p[potion].qty -= 1
-                    if p[potion].qty == 0:
-                        self.inventory.remove(p[potion])
-                    for item in self.inventory:
-                        print(item, '\n')
+    def unlock(self, room):
+        if self.check_inventory(items.Key) is not False:
+            self.list_inventory(items.Key)
+            key = input("Which key do you want to use? ")
+            if key.isdigit():
+                key = int(key)
+                if key < len(self.check_inventory(items.Key)):
+                    k = self.check_inventory(items.Key)
+                    print("You unlocked the door!\n")
+                    k[key].unlock -= 1
+                    if k[key].unlock == 0:
+                        text_speed("The {} broke!\n".format(k[key].name), .05)
+                        self.inventory.remove(k[key])
+                    room.unlocked = True
                 else:
                     print("Invalid choice.")
             else:
                 print("Invalid choice.")
         else:
-            print("You don't have any potions!")
+            print("You don't have a key!")
+
+    def use_potion(self):
+        if self.cHP != self.mHP:
+            if self.list_inventory(items.Potion) is not False:
+                potion = input("Which potion do you want to use? ")
+                if potion.isdigit():
+                    potion = int(potion)
+                    if potion < len(self.check_inventory(items.Potion)):
+                        p = self.check_inventory(items.Potion)
+                        if self.cHP + p[potion].heal > self.mHP:
+                            self.cHP = self.mHP
+                        if self.cHP + p[potion].heal <= self.mHP:
+                            self.cHP += p[potion].heal
+                        text_speed("You drink the {}!\n".format(p[potion].name), .05)
+                        time.sleep(.5)
+                        text_speed("You heal {} HP!\n".format(p[potion].heal), .05)
+                        time.sleep(.5)
+                        text_speed("Your HP is now {}.".format(self.cHP), .05)
+                        time.sleep(.5)
+                        p[potion].qty -= 1
+                        if p[potion].qty == 0:
+                            self.inventory.remove(p[potion])
+                    else:
+                        print("Invalid choice.")
+                        time.sleep(.2)
+                else:
+                    print("Invalid choice.")
+                    time.sleep(.2)
+            else:
+                text_speed("You don't have any potions!", .05)
+        else:
+            text_speed("You are already at full health!", .05)
     
     def check_SPD(self, enemy):
         if self.SPD > enemy.SPD:
@@ -276,29 +320,29 @@ class Player():
         return critical
 
     def pfight(self, enemy):
-        print("You attack!")
+        text_speed("You attack!", .03)
         best_weapon = self.chk_Weapon()
         chkCRIT = self.chk_CRIT()
         if chkCRIT == True:
             pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
-            print("You use {} against {}!".format(best_weapon.name, enemy.name))
+            text_speed("You use {} against {}!".format(best_weapon.name, enemy.name), .03)
             time.sleep(.5)
             print("Critical hit!")
-            time.sleep(1)
+            time.sleep(.5)
             enemy.hp -= pdamage
-            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
-            time.sleep(1)
+            text_speed("You dealt {} damage to the {}.".format(pdamage, enemy.name), .03)
+            time.sleep(.5)
             if enemy.is_alive() == False:
-                print("You killed the {}!".format(enemy.name))
-                time.sleep(1)
+                text_speed("You killed the {}!".format(enemy.name), .03)
+                time.sleep(.5)
             else:
-                print("The {} has {} HP remaining.".format(enemy.name, enemy.hp))
-                time.sleep(1)
+                text_speed("The {} has {} HP remaining.".format(enemy.name, enemy.hp), .03)
+                time.sleep(.5)
         else:
             pdamage = ((best_weapon.damage + self.STR) - enemy.DEF)
             enemy.hp -= pdamage
-            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
-            time.sleep(1)
+            text_speed("You dealt {} damage to the {}.".format(pdamage, enemy.name), .03)
+            time.sleep(.5)
 
 
     def chk_edamage(self, enemy):
@@ -307,8 +351,8 @@ class Player():
         pdef = (self.DEF + armor.armor)
         chkCrit = combat.chk_CRIT(enemy)
         if chkCrit == True:
-            print("The {} scores a Critical Hit!".format(enemy.name))
-            time.sleep(1)
+            text_speed("The {} scores a Critical Hit!".format(enemy.name), .03)
+            time.sleep(.5)
             edamage = (enemy.damage * 2)
             if edamage < pdef:
                 edamage = 1
@@ -333,15 +377,15 @@ class Player():
                 return edamage
 
     def efight(self, enemy):
-            print("The {} attacks!".format(enemy.name))
-            time.sleep(1)
+            text_speed("The {} attacks!".format(enemy.name), .03)
+            time.sleep(.5)
             edamage = self.chk_edamage(enemy)
             self.cHP -= edamage
-            print("The {} dealt {} damage to you.".format(enemy.name, edamage))
-            time.sleep(1)
+            text_speed("The {} dealt {} damage to you.".format(enemy.name, edamage), .03)
+            time.sleep(.5)
             if self.is_alive() == True:
-                print("You have {} HP remaining.".format(self.cHP))
-                time.sleep(1)
+                text_speed("You have {} HP remaining.".format(self.cHP), .03)
+                time.sleep(.5)
 
     def combat(self, enemy):
         chkSPD = self.chk_SPD(enemy)
@@ -350,7 +394,14 @@ class Player():
             if enemy.is_alive() == True:
                 self.efight(enemy)
             else:
-                print("You killed the {}!".format(enemy.name))
+                self.EXP += enemy.EXP
+                self.cash += enemy.gold
+                text_speed("You killed the {}!".format(enemy.name), .05)
+                time.sleep(1)
+                text_speed("You gained {} EXP!".format(enemy.EXP), .05)
+                time.sleep(1)
+                self.level_up()
+                text_speed("You gained {} gold!".format(enemy.gold), .05)
                 time.sleep(1)
         else:
             self.efight(enemy)

@@ -11,7 +11,7 @@ def play(saved_world=None, saved_player=None):
         player = saved_player
     else:
         world.load_tiles()
-        text_speed("What is your name? ", .05)
+        text_speed("What is your name?\n", .05)
         name=input()
         player = Player(name=name, LVL=1, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=2, LUCK=1, cash=5)
     game_loop(player)

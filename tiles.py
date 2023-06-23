@@ -7,19 +7,43 @@ class map_tile:
         self.x = x
         self.y = y
         self.entered = False
-        self.unlocked = False
+        self.unlocked = True
     
     def adjacent_moves(self):
         """Returns all move actions for adjacent tiles."""
         moves = []
         if world.tile_exists(self.x + 1, self.y):
-            moves.append(actions.move_east())
+            if isinstance(world.tile_exists(self.x + 1, self.y), locked_room):
+                if world.tile_exists(self.x + 1, self.y).unlocked == True:
+                    moves.append(actions.move_east())
+                else:
+                    moves.append(actions.unlock(world.tile_exists(self.x + 1, self.y)))
+            else:
+                moves.append(actions.move_east())
         if world.tile_exists(self.x - 1, self.y):
-            moves.append(actions.move_west())
+            if isinstance(world.tile_exists(self.x - 1, self.y), locked_room):
+                if world.tile_exists(self.x - 1, self.y).unlocked == True:
+                    moves.append(actions.move_west())
+                else:
+                    moves.append(actions.unlock(world.tile_exists(self.x - 1, self.y)))
+            else:
+                moves.append(actions.move_west())
         if world.tile_exists(self.x, self.y - 1):
-            moves.append(actions.move_north())
+            if isinstance(world.tile_exists(self.x, self.y - 1), locked_room):
+                if world.tile_exists(self.x, self.y - 1).unlocked == True:
+                    moves.append(actions.move_north())
+                else:
+                    moves.append(actions.unlock(world.tile_exists(self.x, self.y - 1)))
+            else:
+                moves.append(actions.move_north())
         if world.tile_exists(self.x, self.y + 1):
-            moves.append(actions.move_south())
+            if isinstance(world.tile_exists(self.x, self.y + 1), locked_room):
+                if world.tile_exists(self.x, self.y + 1).unlocked == True:
+                    moves.append(actions.move_south())
+                else:
+                    moves.append(actions.unlock(world.tile_exists(self.x, self.y + 1)))
+            else:
+                moves.append(actions.move_south())
         return moves
  
     def available_actions(self):
@@ -32,9 +56,6 @@ class map_tile:
         moves.append(actions.SaveAndExit())
         return moves
     
-    def unlock(self, unlocked):
-        raise NotImplementedError()
-    
     def search_text(self):
         raise NotImplementedError()
     
@@ -44,7 +65,6 @@ class map_tile:
 
     def intro_text(self, entered):
         raise NotImplementedError()
-
 
 class jail(map_tile):
     def __init__(self, x, y):
@@ -81,26 +101,52 @@ class stairs(map_tile):
 class locked_room(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.unlocked = False
+    
+class armory(locked_room):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.dagger()
 
-    def check_for_key(self, player):
-        if player.inventory == items.Key:
-            return True
+    def intro_text(self):
+        if self.entered == False:
+            text_speed("You enter a room that appears to have been an armory.\n", .05)
+            time.sleep(1)
+            text_speed("There are several suits of armor in massive states of decay.\n", .05)
+            time.sleep(1)
+            text_speed("Most all of the weapons have rusted beyond use, but some of\nthem might still be salvageable.\n", .05)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
         else:
-            return False
+            text_speed("You're back in the armory. What do you do?\n", .05)
+            time.sleep(1)
 
-    def intro_text(self, player):
-        print('You see a locked door.')
-        time.sleep(2)
+    def search_text(self):
+        text_speed("At first glance, it doesn't look like there's anything of use here,\n but you notice something close to a wall, behind a toppled display case...", .05)
+        time.sleep(1)
 
-    def unlock(self, player):
-        if self.check_for_key(player):
-            print('You unlock the door.')
-            time.sleep(2)
-            return True
+    def searched_text(self):
+        text_speed("Everything else in here is completely unuseable.\n", .05)
+        time.sleep(1)
+
+class enemy_room(map_tile):
+    def __init__(self, x, y, enemy):
+        self.enemy = enemy
+        super().__init__(x, y)
+        self.enemy.seen = False
+
+    def available_actions(self):
+        if self.enemy.is_alive():
+            return [actions.fight(enemy=self.enemy)]
         else:
-            print('The door is locked.')
-            time.sleep(2)
-            return False
+            return super.available_actions(self)
+    
+    def check_monster(self, player):
+        if self.enemy.seen == False:
+            self.enemy.seen = True
+            player.add_monster(self.enemy)
+        else:
+            pass
 
 class jail_cell(map_tile):
     def __init__(self, x, y):
@@ -113,9 +159,9 @@ class jail_cell(map_tile):
             # time.sleep(1)
             # text_speed("You've lost track of how long it's been down here.\n", .05)
             # time.sleep(1)
-            # text_speed("You hear something. . . \n", .1)
+            # text_speed("You hear something. . . \n", .5)
             # time.sleep(1)
-            # text_speed(". . . \n", .5)
+            # text_speed(". . . \n", 1)
             # time.sleep(2)
             # text_speed("Your cell door creaks open.\n", .05)
             # time.sleep(.5)

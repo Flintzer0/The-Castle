@@ -52,8 +52,8 @@ class view_compendium(Action):
         super().__init__(method=Player.view_compendium, name="Monster Compendium", hotkey="c")
 
 class unlock(Action):
-    def __init__(self, unlock):
-        super().__init__(method=Player.unlock, name="Unlock", hotkey="q", unlock=unlock)
+    def __init__(self, room):
+        super().__init__(method=Player.unlock, name="Unlock", hotkey="q", room=room)
 
 class SaveAndExit(Action):
     def __init__(self):
