@@ -1,3 +1,4 @@
+import tiles
 _world = {}
 starting_position = (0, 0)
  
@@ -13,7 +14,7 @@ def load_tiles():
             if tile_name == 'jail_cell':
                 global starting_position
                 starting_position = (x, y)
-            _world[(x, y)] = None if tile_name == '' else getattr(__import__('tiles'), tile_name)(x, y)
+            _world[(x, y)] = None if tile_name == '' else getattr(tiles, tile_name)(x, y)
 
 def tile_exists(x, y):
     return _world.get((x, y))
