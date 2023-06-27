@@ -320,28 +320,28 @@ class Player():
         return critical
 
     def pfight(self, enemy):
-        text_speed("You attack!", .03)
+        text_speed("You attack!\n", .03)
         best_weapon = self.chk_Weapon()
         chkCRIT = self.chk_CRIT()
         if chkCRIT == True:
             pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
-            text_speed("You use {} against {}!".format(best_weapon.name, enemy.name), .03)
+            text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
             time.sleep(.5)
-            print("Critical hit!")
+            print("Critical hit!\n")
             time.sleep(.5)
             enemy.hp -= pdamage
-            text_speed("You dealt {} damage to the {}.".format(pdamage, enemy.name), .03)
+            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
             time.sleep(.5)
             if enemy.is_alive() == False:
-                text_speed("You killed the {}!".format(enemy.name), .03)
+                text_speed("You killed the {}!\n".format(enemy.name), .03)
                 time.sleep(.5)
             else:
-                text_speed("The {} has {} HP remaining.".format(enemy.name, enemy.hp), .03)
+                text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
                 time.sleep(.5)
         else:
             pdamage = ((best_weapon.damage + self.STR) - enemy.DEF)
             enemy.hp -= pdamage
-            text_speed("You dealt {} damage to the {}.".format(pdamage, enemy.name), .03)
+            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
             time.sleep(.5)
 
 
@@ -351,7 +351,7 @@ class Player():
         pdef = (self.DEF + armor.armor)
         chkCrit = combat.chk_CRIT(enemy)
         if chkCrit == True:
-            text_speed("The {} scores a Critical Hit!".format(enemy.name), .03)
+            text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .03)
             time.sleep(.5)
             edamage = (enemy.damage * 2)
             if edamage < pdef:
@@ -377,14 +377,14 @@ class Player():
                 return edamage
 
     def efight(self, enemy):
-            text_speed("The {} attacks!".format(enemy.name), .03)
+            text_speed("The {} attacks!\n".format(enemy.name), .03)
             time.sleep(.5)
             edamage = self.chk_edamage(enemy)
             self.cHP -= edamage
-            text_speed("The {} dealt {} damage to you.".format(enemy.name, edamage), .03)
+            text_speed("The {} dealt {} damage to you.\n".format(enemy.name, edamage), .03)
             time.sleep(.5)
             if self.is_alive() == True:
-                text_speed("You have {} HP remaining.".format(self.cHP), .03)
+                text_speed("You have {} HP remaining.\n".format(self.cHP), .03)
                 time.sleep(.5)
 
     def combat(self, enemy):
@@ -396,12 +396,12 @@ class Player():
             else:
                 self.EXP += enemy.EXP
                 self.cash += enemy.gold
-                text_speed("You killed the {}!".format(enemy.name), .05)
+                text_speed("You killed the {}!\n".format(enemy.name), .05)
                 time.sleep(1)
-                text_speed("You gained {} EXP!".format(enemy.EXP), .05)
+                text_speed("You gained {} EXP!\n".format(enemy.EXP), .05)
                 time.sleep(1)
                 self.level_up()
-                text_speed("You gained {} gold!".format(enemy.gold), .05)
+                text_speed("You gained {} gold!\n".format(enemy.gold), .05)
                 time.sleep(1)
         else:
             self.efight(enemy)

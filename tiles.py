@@ -8,6 +8,7 @@ class map_tile:
         self.y = y
         self.entered = False
         self.unlocked = True
+        self.item = None
     
     def adjacent_moves(self):
         """Returns all move actions for adjacent tiles."""
@@ -17,6 +18,7 @@ class map_tile:
                 if world.tile_exists(self.x + 1, self.y).unlocked == True:
                     moves.append(actions.move_east())
                 else:
+                    text_speed("There's a locked door to the east.\n", .05)
                     moves.append(actions.unlock(world.tile_exists(self.x + 1, self.y)))
             else:
                 moves.append(actions.move_east())
@@ -25,6 +27,7 @@ class map_tile:
                 if world.tile_exists(self.x - 1, self.y).unlocked == True:
                     moves.append(actions.move_west())
                 else:
+                    text_speed("There's a locked door to the west.\n", .05)
                     moves.append(actions.unlock(world.tile_exists(self.x - 1, self.y)))
             else:
                 moves.append(actions.move_west())
@@ -33,6 +36,7 @@ class map_tile:
                 if world.tile_exists(self.x, self.y - 1).unlocked == True:
                     moves.append(actions.move_north())
                 else:
+                    text_speed("There's a locked door to the north.\n", .05)
                     moves.append(actions.unlock(world.tile_exists(self.x, self.y - 1)))
             else:
                 moves.append(actions.move_north())
@@ -41,6 +45,7 @@ class map_tile:
                 if world.tile_exists(self.x, self.y + 1).unlocked == True:
                     moves.append(actions.move_south())
                 else:
+                    text_speed("There's a locked door to the south.\n", .05)
                     moves.append(actions.unlock(world.tile_exists(self.x, self.y + 1)))
             else:
                 moves.append(actions.move_south())
