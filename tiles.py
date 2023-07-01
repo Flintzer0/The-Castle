@@ -68,13 +68,13 @@ class map_tile:
         text_speed("You find nothing of interest.\n", .05)
         time.sleep(1)
 
-    def intro_text(self, entered):
+    def intro_text(self):
         raise NotImplementedError()
 
 class jail(map_tile):
     def __init__(self, x, y):
-        self.item = items.small_red_potion(1)
         super().__init__(x, y)
+        self.item = items.small_red_potion(1)
 
     def intro_text(self):
         if self.entered == False:
@@ -86,12 +86,15 @@ class jail(map_tile):
             time.sleep(1)
             self.entered = True
         else:
-            text_speed("You're back in the dungeon. What do you do?\n", .05)
+            text_speed("You're back in the dungeon. \nWhat do you do?\n", .05)
             time.sleep(1)
     
     def search_text(self):
         text_speed("You can see something left on a dessicated table...\n", .05)
         time.sleep(1)
+
+    def searched_text(self):
+        text_speed("You find rotting wood and empty cells.\n", .05)
 
 class stairs(map_tile):
     def __init__(self, x, y):
@@ -123,7 +126,7 @@ class armory(locked_room):
             text_speed("What do you do?\n", .05)
             time.sleep(1)
         else:
-            text_speed("You're back in the armory. What do you do?\n", .05)
+            text_speed("You're back in the armory. \nWhat do you do?\n", .05)
             time.sleep(1)
 
     def search_text(self):
@@ -136,8 +139,8 @@ class armory(locked_room):
 
 class enemy_room(map_tile):
     def __init__(self, x, y, enemy):
-        self.enemy = enemy
         super().__init__(x, y)
+        self.enemy = enemy
         self.enemy.seen = False
 
     def available_actions(self):
@@ -191,11 +194,17 @@ class key_room(map_tile):
         self.item = items.wooden_key(1)
 
     def intro_text(self):
-        # text_speed("You enter a room that appears to have been a guard's quarters.\n", .05)
-        # time.sleep(1)
-        # text_speed("There seems to be something on the table.\n", .05)
-        # time.sleep(1)
-        text_speed("What do you do?\n", .05)
+        if self.entered == False:
+            # text_speed("You enter a room that appears to have been a guard's quarters.\n", .05)
+            # time.sleep(1)
+            # text_speed("There seems to be something on the table.\n", .05)
+            # time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+            self.entered = True
+        else:
+            text_speed("You're back in the guard's quarters. \nWhat do you do?\n", .05)
+            time.sleep(1)
 
     def search_text(self):
         text_speed("You rustle through the papers on the table...\n", .05)
@@ -211,10 +220,15 @@ class five_gold(map_tile):
         self.item = items.gold(5)
 
     def intro_text(self):
-        text_speed("It appears to be another unremarkable hallway.\n", .05)
-        time.sleep(1)
-        text_speed("what do you do?\n", .05)
-        time.sleep(1)
+        if self.entered == False:
+            text_speed("It appears to be another unremarkable hallway.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(.5)
+            self.entered = True
+        else:
+            text_speed("You're back in this unremarkable hallway. \nWhat do you do?\n", .05)
+            time.sleep(1)
 
     def search_text(self):
         text_speed("Something glitters off to the side of the hallway...\n", .05)
@@ -228,34 +242,42 @@ class enemy_room(map_tile):
     def __init__(self, x, y, enemy):
         self.enemy = enemy
         super().__init__(x, y)
-        self.enemy.seen = False
 
     def available_actions(self):
         if self.enemy.is_alive():
             return [actions.fight(enemy=self.enemy)]
         else:
             return map_tile.available_actions(self)
-    
-    def check_monster(self, player):
-        if self.enemy.seen == False:
-            self.enemy.seen = True
-            player.add_monster(self.enemy)
-        else:
-            pass
 
 class empty_passageway(map_tile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+
     def intro_text(self):
-        text_speed("It appears to be an unremarkable hallway.\n", .05)
-        time.sleep(1)
-        text_speed("What do you do?\n", .05)
-        time.sleep(1)
+        if self.entered == False:
+            text_speed("It appears to be another unremarkable hallway.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(.5)
+            self.entered = True
+        else:
+            text_speed("You're back in this unremarkable hallway. \nWhat do you do?\n", .05)
+            time.sleep(1)
 
 class empty_room(map_tile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+
     def intro_text(self):
-        text_speed("It appears to be an unremarkable room.\n", .05)
-        time.sleep(1)
-        text_speed("What do you do?\n", .05)
-        time.sleep(1)
+        if self.entered == False:
+            text_speed("It appears to be an unremarkable room.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+            self.entered = True
+        else:
+            text_speed("You're back in this unremarkable room. \nWhat do you do?\n", .05)
+            time.sleep(1)
 
 class giant_spider_room(enemy_room):
     def __init__(self, x, y):
@@ -297,12 +319,12 @@ class find_rusty_dagger_room(map_tile):
     def intro_text(self):
         text_speed("You're in a slightly larger room than the others.\n", .05)
         time.sleep(1)
-        # text_speed("You're not quite sure what it was used for.\n", .05)
-        # time.sleep(1)
-        # text_speed("You can make out what appears to be torture devices, though they have long since decayed.\n", .05)
-        # time.sleep(1)
-        # text_speed("What do you do?\n", .05)
-        # time.sleep(1)
+        text_speed("You're not quite sure what it was used for.\n", .05)
+        time.sleep(1)
+        text_speed("You can make out what appears to be torture devices, though they have long since decayed.\n", .05)
+        time.sleep(1)
+        text_speed("What do you do?\n", .05)
+        time.sleep(1)
 
     def search_text(self):
         text_speed("You can see something glinting on one of the racks...\n", .05)

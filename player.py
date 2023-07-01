@@ -126,9 +126,14 @@ class Player():
             print(room.locked_text())
             self.move(dx=0, dy=0)
 
-    def add_monster(self):
-        monster = world.tile_exists(self.location_x, self.location_y).enemy
-        self.compendium.append(monster)
+    def add_monster(self, enemy):
+        room = world.tile_exists(self.location_x, self.location_y)
+        if enemy not in self.compendium:
+            self.compendium.append(enemy)
+            text_speed("You encountered a {} for your first time!\n".format(room.enemy.name), .03)
+            time.sleep(.5)
+            text_speed("You added the {} to your Monster Compendium!\n".format(room.enemy.name), .03)
+            time.sleep(.5)
 
     def view_compendium(self):
         if len(self.compendium) != 0:
@@ -136,13 +141,13 @@ class Player():
             for i in r:
                 print(f'{i}: {self.compendium[i].name}')
             print(f'{len(self.compendium)}: Exit')
-            input("Which monster would you like to view? ")
-            if input.isdigit():
-                if int(input) < len(self.compendium):
-                    print(self.compendium[int(input)].__str__())
+            monster = input("Which monster would you like to view? ")
+            if monster.isdigit():
+                if int(monster) < len(self.compendium):
+                    print(self.compendium[int(monster)].__str__())
                 else:
                     print("Invalid choice.")
-            elif input == len(self.compendium):
+            elif monster == len(self.compendium):
                 pass
             else:
                 text_speed("Invalid choice.", .05)
@@ -172,9 +177,16 @@ class Player():
     def fight(self, enemy):
         self.combat(enemy)
         if not enemy.is_alive():
-            text_speed("You killed {}!\n".format(enemy.name), .05)
-        else:
-            text_speed("{} HP is {}.\n".format(enemy.name, enemy.hp), .05)
+            self.EXP += (enemy.EXP * (1)
+            self.cash += enemy.gold
+            text_speed("You killed the {}!\n".format(enemy.name), .03)
+            time.sleep(1)
+            text_speed("You gained {} EXP!\n".format(enemy.EXP), .03)
+            time.sleep(1)
+            self.level_up()
+            text_speed("You gained {} gold!\n".format(enemy.gold), .03)
+            time.sleep(1)
+            self.add_monster(enemy)
 
     def check_inventory(self, item):
         a=[]
@@ -253,29 +265,6 @@ class Player():
         else:
             return False
 
-    def attack(self, enemy):
-        best_weapon = None
-        max_dmg = 0
-        for i in self.inventory:
-            if isinstance(i, items.Weapon):
-                if i.damage > max_dmg:
-                    max_dmg = i.damage
-                    best_weapon = i
-            else:
-                if isinstance(i, items.Unarmed):
-                    if i.damage > max_dmg:
-                        max_dmg = i.damage
-                        best_weapon = i
-
-        text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name))
-        damage = best_weapon.damage + self.STR - enemy.DEF
-        enemy.hp -= damage
-        text_speed("You do {} damage to {}!\n".format(damage, enemy.name))
-        if not enemy.is_alive():
-            text_speed("You killed {}!\n".format(enemy.name))
-        else:
-            text_speed("{} HP is {}.\n".format(enemy.name, enemy.hp))
-
     def save_and_exit(self):
         pickle.dump(self, open( "saved_self.p", "wb" ))
         pickle.dump(world._world, open( "saved_world.p", "wb" ))
@@ -322,20 +311,17 @@ class Player():
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
         best_weapon = self.chk_Weapon()
-        chkCRIT = self.chk_CRIT()
-        if chkCRIT == True:
+        cCRIT = self.chk_CRIT()
+        if cCRIT == True:
             pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
             text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
             time.sleep(.5)
-            print("Critical hit!\n")
+            text_speed("Critical hit!\n", .01)
             time.sleep(.5)
             enemy.hp -= pdamage
             text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
             time.sleep(.5)
-            if enemy.is_alive() == False:
-                text_speed("You killed the {}!\n".format(enemy.name), .03)
-                time.sleep(.5)
-            else:
+            if enemy.is_alive() == True:
                 text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
                 time.sleep(.5)
         else:
@@ -343,15 +329,17 @@ class Player():
             enemy.hp -= pdamage
             text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
             time.sleep(.5)
-
+            if enemy.is_alive() == True:
+                text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+                time.sleep(.5)
 
     def chk_edamage(self, enemy):
         edamage = None
         armor = self.chk_armor()
         pdef = (self.DEF + armor.armor)
-        chkCrit = combat.chk_CRIT(enemy)
-        if chkCrit == True:
-            text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .03)
+        cCRIT = combat.chk_CRIT(enemy)
+        if cCRIT == True:
+            text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .01)
             time.sleep(.5)
             edamage = (enemy.damage * 2)
             if edamage < pdef:
@@ -393,16 +381,6 @@ class Player():
             self.pfight(enemy)
             if enemy.is_alive() == True:
                 self.efight(enemy)
-            else:
-                self.EXP += enemy.EXP
-                self.cash += enemy.gold
-                text_speed("You killed the {}!\n".format(enemy.name), .05)
-                time.sleep(1)
-                text_speed("You gained {} EXP!\n".format(enemy.EXP), .05)
-                time.sleep(1)
-                self.level_up()
-                text_speed("You gained {} gold!\n".format(enemy.gold), .05)
-                time.sleep(1)
         else:
             self.efight(enemy)
             if self.is_alive() == True:
