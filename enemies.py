@@ -22,15 +22,29 @@ class Enemy:
 
 class giant_spider(Enemy):
     def __init__(self):
-        super().__init__(name="Giant Spider", hp=10, mhp=10, damage=2, DEF=0, RES=1, SPD=3, SKL=2, LUCK=1, EXP=25, gold=5,
+        super().__init__(name="Giant Spider", hp=10, mhp=10, damage=2, DEF=0, RES=1, SPD=3, SKL=2, LUCK=1, EXP=13, gold=10,
                          description="A large spider with dripping fangs and a hairy body. They are quicker than most basic monsters. \nBeing all buggy, its defense isn't superb, but it has a bit of magic resistance.")
  
 class goblin(Enemy):
     def __init__(self):
-        super().__init__(name="Goblin", hp=5, mhp=5, damage=1, DEF=1, RES=0, SPD=2, SKL=1, LUCK=0, EXP=15, gold=3,
-                         description="A small, green humanoid with a large nose and pointed ears. \nThey aren't very special, but they have a bit of defense.")
+        super().__init__(name="Goblin", hp=5, mhp=5, damage=1, DEF=1, RES=0, SPD=2, SKL=1, LUCK=0, EXP=10, gold=16,
+                         description="A small, green humanoid with a large nose and pointed ears, wielding a wooden club. \nThey aren't very special, but they have a bit of defense.")
 
 class skeleton(Enemy):
     def __init__(self):
-        super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=40, gold=4,
+        super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=17, gold=13,
                          description="A walking skeleton. \nThey are slow, but they have a bit of defense and deal a little more damage.")
+        
+class large_rat(Enemy):
+    def __init__(self):
+        super().__init__(name="Large Rat", hp=15, mhp=10, damage=3, DEF=1, RES=1, SPD=1, SKL=0, LUCK=0, EXP=15, gold=15,
+                         description="An incredibly large rat. They aren't hard to hit, but their thick hide and hard teeth give them decent health and damage.")
+
+class demon_bat(Enemy):
+    def __init__(self):
+        super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9)
+        
+class centipede(Enemy):
+    def __init__(self):
+        super().__init__(name="Centipede", hp=20, mhp=20, damage=7, DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30,
+                         description="A giant centipede, with acid dripping off its mandibles. There also appeared to be several old weapons stuck in its hard shell. Being a centipede, it is quite dangerous, with high damage, some defense both physically and magically, quick, and capable of making skillful strikes. Only engage when you are ready.")
