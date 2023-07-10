@@ -48,3 +48,4 @@ class centipede(Enemy):
     def __init__(self):
         super().__init__(name="Centipede", hp=20, mhp=20, damage=7, DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30,
                          description="A giant centipede, with acid dripping off its mandibles. There also appeared to be several old weapons stuck in its hard shell. Being a centipede, it is quite dangerous, with high damage, some defense both physically and magically, quick, and capable of making skillful strikes. Only engage when you are ready.")
+        
