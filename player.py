@@ -177,7 +177,7 @@ class Player():
     def fight(self, enemy):
         self.combat(enemy)
         if not enemy.is_alive():
-            self.EXP += (enemy.EXP * (1)
+            self.EXP += (enemy.EXP * (((10-self.LVL)+1)/10))
             self.cash += enemy.gold
             text_speed("You killed the {}!\n".format(enemy.name), .03)
             time.sleep(1)

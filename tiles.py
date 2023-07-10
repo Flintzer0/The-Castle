@@ -68,8 +68,8 @@ class map_tile:
         text_speed("You find nothing of interest.\n", .05)
         time.sleep(1)
 
-    def intro_text(self):
-        raise NotImplementedError()
+    # def intro_text(self):
+    #     raise NotImplementedError()
 
 class jail(map_tile):
     def __init__(self, x, y):

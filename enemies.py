@@ -20,6 +20,8 @@ class Enemy:
     def is_alive(self):
         return self.hp > 0
 
+# Tier 1 Enemies
+
 class giant_spider(Enemy):
     def __init__(self):
         super().__init__(name="Giant Spider", hp=10, mhp=10, damage=2, DEF=0, RES=1, SPD=3, SKL=2, LUCK=1, EXP=13, gold=10,
@@ -44,8 +46,11 @@ class demon_bat(Enemy):
     def __init__(self):
         super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9)
         
+# Bosses
+
 class centipede(Enemy):
-    def __init__(self):
+    # Basement Floor Boss
+    def __init__(self): 
         super().__init__(name="Centipede", hp=20, mhp=20, damage=7, DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30,
                          description="A giant centipede, with acid dripping off its mandibles. There also appeared to be several old weapons stuck in its hard shell. Being a centipede, it is quite dangerous, with high damage, some defense both physically and magically, quick, and capable of making skillful strikes. Only engage when you are ready.")
         
