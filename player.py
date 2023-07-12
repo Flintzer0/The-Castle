@@ -92,7 +92,7 @@ class Player():
     def move(self, dx, dy):
         self.location_x += dx
         self.location_y += dy
-        print(world.tile_exists(self.location_x, self.location_y).intro_text())
+        # print(world.tile_exists(self.location_x, self.location_y).intro_text())
 
     def move_north(self):
         room = world.tile_exists(self.location_x, (self.location_y-1))
@@ -177,11 +177,12 @@ class Player():
     def fight(self, enemy):
         self.combat(enemy)
         if not enemy.is_alive():
-            self.EXP += (enemy.EXP * (((10-self.LVL)+1)/10))
+            exp = round(enemy.EXP * (((10-self.LVL)+1)/10))
+            self.EXP += exp
             self.cash += enemy.gold
             text_speed("You killed the {}!\n".format(enemy.name), .03)
             time.sleep(1)
-            text_speed("You gained {} EXP!\n".format(enemy.EXP), .03)
+            text_speed("You gained {} EXP!\n".format(exp), .03)
             time.sleep(1)
             self.level_up()
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
@@ -229,7 +230,8 @@ class Player():
 
     def use_potion(self):
         if self.cHP != self.mHP:
-            if self.list_inventory(items.Potion) is not False:
+            if self.check_inventory(items.Potion) is not False:
+                self.list_inventory(items.Potion)
                 potion = input("Which potion do you want to use? ")
                 if potion.isdigit():
                     potion = int(potion)

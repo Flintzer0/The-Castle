@@ -35,7 +35,7 @@ class goblin(Enemy):
 class skeleton(Enemy):
     def __init__(self):
         super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=17, gold=13,
-                         description="A walking skeleton. \nThey are slow, but they have a bit of defense and deal a little more damage.")
+                         description="A walking skeleton. \nThey are slow, but they have some defense and deal a little more damage.")
         
 class large_rat(Enemy):
     def __init__(self):
