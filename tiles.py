@@ -146,7 +146,20 @@ class empty_room(map_tile):
             text_speed("You're back in this unremarkable room. \nWhat do you do?\n", .05)
             time.sleep(1)
 
+# Basement 2 Tile Subclasses
+
+#===============================================================================
+
 # Basement 1 Tile Subclasses
+# Unique tiles still needed: 
+# Jail Cell
+# Dungeon
+# Guard Room
+# Torture Chamber
+# Low-Trader's Hideout
+# Flooded Hall
+# Ritual Room
+
 
 # Starting Room
 class jail_cell(map_tile):
@@ -363,3 +376,18 @@ class find_rusty_shield_room(map_tile):
         Your notice something up against a wall.
         It's a rusty shield! You pick it up.
         """
+    
+# Floor 1 Tile Subclasses
+# Unique tiles still needed:
+
+# Floor 2 Tile Subclasses
+# Unique tiles still needed:
+
+# Floor 3 Tile Subclasses
+# Unique tiles still needed:
+
+# Floor 4 Tile Subclasses
+# Unique tiles still needed:
+
+# Floor 5 Tile Subclasses
+# Unique tiles still needed:
