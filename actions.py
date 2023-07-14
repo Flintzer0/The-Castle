@@ -55,6 +55,10 @@ class unlock(Action):
     def __init__(self, room):
         super().__init__(method=Player.unlock, name="Unlock", hotkey="q", room=room)
 
+class buy(Action):
+    def __init__(self, shopkeep, item):
+        super().__init__(method=Player.buy, name="Buy", hotkey="b", shopkeep=shopkeep)
+
 class SaveAndExit(Action):
     def __init__(self):
         super().__init__(method=Player.save_and_exit, name="Save and Exit", hotkey='x')

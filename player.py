@@ -1,4 +1,4 @@
-import items, world
+import items, world, shop
 from utilities import text_speed
 import pickle, sys, time, random
 import combat
@@ -125,6 +125,26 @@ class Player():
         else:
             print(room.locked_text())
             self.move(dx=0, dy=0)
+
+    def buy(self, shopkeep):
+        shopkeep.display_shop(self)
+        item = input("Which item would you like to buy? ")
+        if item.isdigit():
+            item = int(item)
+            if item < len(shopkeep.inventory):
+                if self.cash >= shopkeep.inventory[item].value:
+                    self.inventory.append(shopkeep.inventory[item])
+                    self.cash -= shopkeep.inventory[item].value
+                    text_speed("You bought the {}!\n".format(shopkeep.inventory[item].name), .05)
+                    time.sleep(.5)
+                    text_speed("You now have {} gold!\n".format(self.cash), .05)
+                    time.sleep(.5)
+                else:
+                    text_speed("You don't have enough gold!\n", .05)
+                    time.sleep(.5)
+            else:
+                print("Invalid choice.")
+                time.sleep(.2)
 
     def add_monster(self, enemy):
         room = world.tile_exists(self.location_x, self.location_y)

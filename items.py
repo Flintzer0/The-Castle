@@ -7,7 +7,8 @@ class Item():
  
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
-
+    
+# These are all items used for purchasing and trading.
 class gold(Item):
     def __init__(self, amt):
         self.amt = amt
@@ -15,6 +16,7 @@ class gold(Item):
                          description="A valuable coin used for purchasing.".format(str(self.amt)),
                          value=self.amt)
 
+# These are all items used for damaging enemies.
 class Weapon(Item):
     def __init__(self, name, description, value, damage):
         self.damage = damage
@@ -23,6 +25,7 @@ class Weapon(Item):
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\nDamage: {}".format(self.name, self.description, self.value, self.damage)
 
+# Unarmed/Fist Items
 class Fists(Weapon):
     def __init__(self):
         super().__init__(name="Fists",
@@ -30,6 +33,7 @@ class Fists(Weapon):
                          value=0,
                          damage=1) 
 
+# Dagger Items
 class rusty_dagger(Weapon):
     def __init__(self):
         super().__init__(name="Rusty Dagger",
@@ -44,6 +48,16 @@ class dagger(Weapon):
                          value=5,
                          damage=5)
 
+# Sword Items
+# Polearm Items
+# Axe Items
+# Bow Items
+# Staff Items
+# Tome Items
+# Rod Items
+# Thrown Items
+
+# These are all items used for defending against enemy attacks.
 class Armor(Item):
     def __init__(self, name, description, value, armor):
         self.armor = armor
@@ -58,14 +72,32 @@ class unarmored(Armor):
                          description="You're not wearing any armor. You're vulnerable to attacks.",
                          value=0,
                          armor=0)
-        
+
+# Armor Items
+# Shield Items
 class rusty_shield(Armor):
     def __init__(self):
-        super().__init__(name="Rusety Shield",
+        super().__init__(name="Rusty Shield",
                          description="A bent and rusty shield. Provides minimal protection.",
                          value=3,
                          armor=1)
 
+# These items are all equipment used for increasing stats.
+# Accessory Items
+# Ring Items
+# Necklace Items
+# Bracelet Items
+# Earring Items
+# Belt Items
+# Headgear Items
+# Body Items
+# Foot Items
+# Hand Items
+# Leg Items
+# Arm Items
+
+# These items are all consumables, such as keys, potions, etc.
+# Keys Items
 class Key(Item):
     def __init__(self, name, description, value, unlock):
         self.unlock = unlock
@@ -90,6 +122,7 @@ class iron_key(Key):
                          description="An iron key. Good for" + str(self.unlock) + "uses.".format(str(self.qty)),
                          value=10)
 
+# Potion Items
 class Potion(Item):
     def __init__(self, name, description, value, heal):
         self.heal = heal
@@ -129,3 +162,10 @@ class small_blue_potion(Potion):
                          description="A small blue potion. Boosts MAG by 2 for 3 turns. ({})".format(str(self.qty)),
                          value=5,
                          heal=2)
+        
+# These items are all materials used for item upgrades and repairs.
+# Wood Items
+# Ore Items
+# Gem Items
+# Cloth Items
+# Monster Parts

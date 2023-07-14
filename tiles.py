@@ -114,6 +114,16 @@ class enemy_room(map_tile):
         else:
             return map_tile.available_actions(self)
 
+class shop_room(map_tile):
+    # Marks a room as containing a shopkeeper. The shopkeeper is passed in as an argument.
+    def __init__(self, x, y, shopkeep):
+        self.shopkeep = shopkeep
+        super().__init__(x, y)
+
+    # The available actions are overwritten to include the buy action.
+    def available_actions(self):
+        return [actions.buy(shopkeep=self.shopkeep), map_tile.adjacent_moves(), actions.view_inventory(), actions.potion(), actions.view_compendium(), actions.SaveAndExit()]
+
 # Empty Tile Subclasses
 
 class empty_passageway(map_tile):
