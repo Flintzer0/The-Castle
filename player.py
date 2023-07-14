@@ -132,11 +132,13 @@ class Player():
         if item.isdigit():
             item = int(item)
             if item < len(shopkeep.inventory):
-                if self.cash >= shopkeep.inventory[item].value:
-                    self.inventory.append(shopkeep.inventory[item])
-                    self.cash -= shopkeep.inventory[item].value
-                    text_speed("You bought the {}!\n".format(shopkeep.inventory[item].name), .05)
+                purchase = shopkeep.inventory[item]
+                if self.cash >= purchase.value:
+                    self.inventory.append(purchase)
+                    self.cash -= purchase.value
+                    text_speed("You bought the {}!\n".format(purchase.name), .05)
                     time.sleep(.5)
+                    shopkeep.inventory.remove(purchase)
                     text_speed("You now have {} gold!\n".format(self.cash), .05)
                     time.sleep(.5)
                 else:
