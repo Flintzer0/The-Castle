@@ -19,7 +19,7 @@ class Enemy:
  
     def is_alive(self):
         return self.hp > 0
-
+    
 # Tier 1 Enemies
 
 class giant_spider(Enemy):
@@ -35,12 +35,12 @@ class goblin(Enemy):
 class skeleton(Enemy):
     def __init__(self):
         super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=17, gold=13,
-                         description="A walking skeleton. \nThey are slow, but they have some defense and deal a little more damage.")
+                         description="A walking skeleton. \nThey are slow, but they have some defense and deal a little more \ndamage.")
         
 class large_rat(Enemy):
     def __init__(self):
         super().__init__(name="Large Rat", hp=15, mhp=10, damage=3, DEF=1, RES=1, SPD=1, SKL=0, LUCK=0, EXP=15, gold=15,
-                         description="An incredibly large rat. They aren't hard to hit, but their thick hide and hard teeth give them decent health and damage.")
+                         description="An incredibly large rat. They aren't hard to hit, but their thick hide and hard teeth \ngive them decent health and damage.")
 
 class demon_bat(Enemy):
     def __init__(self):
@@ -52,5 +52,5 @@ class centipede(Enemy):
     # Basement Floor Boss
     def __init__(self): 
         super().__init__(name="Centipede", hp=20, mhp=20, damage=7, DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30,
-                         description="A giant centipede, with acid dripping off its mandibles. There also appeared to be several old weapons stuck in its hard shell. Being a centipede, it is quite dangerous, with high damage, some defense both physically and magically, quick, and capable of making skillful strikes. Only engage when you are ready.")
+                         description="A giant centipede, with acid dripping off its mandibles. There also appeared to be several old weapons stuck in its hard shell. \nBeing a centipede, it is quite dangerous, with high damage, some defense both physically and magically, quick, and capable of making skillful strikes. Only engage when you are ready.")
         

@@ -1,3 +1,5 @@
+import enemies
+
 class Item():
     """The base class for all items"""
     def __init__(self, name, description, value):
@@ -40,15 +42,43 @@ class rusty_dagger(Weapon):
                          description="A small dagger with some rust.",
                          value=2,
                          damage=2)
-
-class dagger(Weapon):
+        
+class wooden_dagger(Weapon):
     def __init__(self):
-        super().__init__(name="Dagger",
+        super().__init__(name="Wooden Dagger",
+                         description="A small dagger made of wood. It may be wooden, but it's still better than \na rusty blade. It's surprisingly sturdy.",
+                         value=3,
+                         damage=3)
+
+class iron_dagger(Weapon):
+    def __init__(self):
+        super().__init__(name="Iron Dagger",
                          description="A small, clean dagger. It glints in the light.",
-                         value=5,
+                         value=10,
                          damage=5)
 
 # Sword Items
+class rusty_sword(Weapon):
+    def __init__(self):
+        super().__init__(name="Rusty Sword",
+                         description="A sword covered in rust.",
+                         value=3,
+                         damage=3)
+
+class wooden_sword(Weapon):
+    def __init__(self):
+        super().__init__(name="Wooden Sword",
+                         description="A wooden sword. It's not very sharp, but it's better than a rusty blade.",
+                         value=10,
+                         damage=5)
+
+class iron_sword(Weapon):
+    def __init__(self):
+        super().__init__(name="Iron Sword",
+                         description="A clean sword. It glints in the light.",
+                         value=25,
+                         damage=8)
+
 # Polearm Items
 # Axe Items
 # Bow Items
@@ -58,6 +88,7 @@ class dagger(Weapon):
 # Thrown Items
 
 # These are all items used for defending against enemy attacks.
+# Armor Items
 class Armor(Item):
     def __init__(self, name, description, value, armor):
         self.armor = armor
@@ -72,8 +103,14 @@ class unarmored(Armor):
                          description="You're not wearing any armor. You're vulnerable to attacks.",
                          value=0,
                          armor=0)
+        
+class cloth_armor(Armor):
+    def __init__(self):
+        super().__init__(name="Cloth Armor",
+                         description="A simple cloth armor. Provides minimal protection.",
+                         value=5,
+                         armor=1)
 
-# Armor Items
 # Shield Items
 class rusty_shield(Armor):
     def __init__(self):
@@ -85,6 +122,29 @@ class rusty_shield(Armor):
 # These items are all equipment used for increasing stats.
 # Accessory Items
 # Ring Items
+class Ring(Item):
+    def __init__(self, name, description, value, stat):
+        self.stat = stat
+        super().__init__(name, description, value)
+    # Strength Rings
+class strength_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Strength Ring",
+                         description="A ring that increases strength by 1.",
+                         value=10,
+                         stat=1)
+    # Defense Rings
+class defense_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Defense Ring",
+                         description="A ring that increases defense by 1.",
+                         value=10,
+                         stat=1)
+    # Magic Rings
+    # Resistance Rings
+    # Speed Rings
+    # Skill Rings
+    # Luck Rings
 # Necklace Items
 # Bracelet Items
 # Earring Items
@@ -163,9 +223,107 @@ class small_blue_potion(Potion):
                          value=5,
                          heal=2)
         
-# These items are all materials used for item upgrades and repairs.
+# These items are all materials used for item upgrades.
+class Material(Item):
+    def __init__(self, name, description, value, rarity):
+        self.rarity = rarity
+        super().__init__(name, description, value)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nRarity: {}".format
+
 # Wood Items
+class wood_plank(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Wood Plank",
+                         description="A simple wood plank. Used for upgrading. ({})".format(str(self.qty)),
+                         value=2,
+                         rarity=1)
+
+class wood_crossguard(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Wood Crossguard",
+                         description="A simple wood crossguard. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1)
+
 # Ore Items
+class stone(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Stone",
+                         description="A simple stone. Used for upgrading. ({})".format(str(self.qty)),
+                         value=1,
+                         rarity=1)
+        
+class iron_ore(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Iron Ore",
+                         description="A simple iron ore. Used for upgrading. ({})".format(str(self.qty)),
+                         value=10,
+                         rarity=1)
+
 # Gem Items
+class ruby(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Ruby",
+                         description="A simple ruby. Used for upgrading. ({})".format(str(self.qty)),
+                         value=200,
+                         rarity=5)
+
 # Cloth Items
 # Monster Parts
+class monster_part(Material):
+    def __init__(self, name, description, value, rarity, enemy):
+        self.rarity = rarity
+        self.enemy = enemy
+        super().__init__(name, description, value)
+
+class spider_leg(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        enemy = enemies.giant_spider()
+        super().__init__(name="Spider Leg",
+                         description="A spider's leg. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1)
+
+class goblin_ear(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        enemy = enemies.goblin()
+        super().__init__(name="Goblin Ear",
+                         description="A goblin's ear. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1)
+
+class femur_bone(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        enemy = enemies.skeleton()
+        super().__init__(name="Femur Bone",
+                         description="A femur bone from a walking skeleton. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1)
+        
+class rat_tail(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        enemy = enemies.large_rat()
+        super().__init__(name="Rat Tail",
+                         description="A rat's tail. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1)
+        
+class bat_wing(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        enemy = enemies.demon_bat()
+        super().__init__(name="Bat Wing",
+                         description="A bat's wing. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1)

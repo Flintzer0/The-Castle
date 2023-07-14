@@ -296,6 +296,9 @@ class Player():
         time.sleep(.5)
         exit()
 
+    def chk_monster_part(self, enemy):
+        
+
     def chk_Weapon(self):
         best_weapon = items.Fists()
         max_dmg = 0
