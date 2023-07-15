@@ -1,4 +1,4 @@
-import items, world, shop
+import items, world, shop, enemies
 from utilities import text_speed
 import pickle, sys, time, random
 import combat
@@ -210,6 +210,7 @@ class Player():
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
             time.sleep(1)
             self.add_monster(enemy)
+            self.monster_part_drop(enemy)
 
     def check_inventory(self, item):
         a=[]
@@ -297,7 +298,24 @@ class Player():
         exit()
 
     def chk_monster_part(self, enemy):
-        
+        enemy_part = None
+        for enemy in enemies.Enemy:
+            for p in items.monster_parts:
+                if p.enemy == enemy:
+                    enemy_part = p
+        return enemy_part
+    
+    def monster_part_drop(self, enemy):
+        enemy_part = self.chk_monster_part(enemy)
+        if enemy_part is not None:
+            if random.randint(1,100) <= ((((enemy_part.drop_rate) * 100) - (enemy_part.rarity * 2)) + (self.LUCK * 2)):
+                self.inventory.append(enemy_part)
+                text_speed("The {} dropped a {}!\n".format(enemy.name, enemy_part.name), .05)
+                time.sleep(.5)
+            else:
+                pass
+        else:
+            pass
 
     def chk_Weapon(self):
         best_weapon = items.Fists()

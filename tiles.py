@@ -271,7 +271,7 @@ class armory(locked_room):
         text_speed("Everything else in here is completely unuseable.\n", .05)
         time.sleep(1)
 
-class key_room(map_tile):
+class guard_room(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y) 
         self.item = items.wooden_key(1)
@@ -353,7 +353,7 @@ class goblin_room(enemy_room):
             text_speed("The corpse of a dead goblin rots on the ground.\n", .05)
             time.sleep(1)
 
-class find_rusty_dagger_room(map_tile):
+class torture_chamber(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y) 
         self.item = items.rusty_dagger()

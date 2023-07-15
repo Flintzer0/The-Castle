@@ -278,9 +278,10 @@ class ruby(Material):
 # Cloth Items
 # Monster Parts
 class monster_part(Material):
-    def __init__(self, name, description, value, rarity, enemy):
+    def __init__(self, name, description, value, rarity, enemy, drop_rate):
         self.rarity = rarity
         self.enemy = enemy
+        self.drop_rate = drop_rate
         super().__init__(name, description, value)
 
 class spider_leg(monster_part):
@@ -290,7 +291,8 @@ class spider_leg(monster_part):
         super().__init__(name="Spider Leg",
                          description="A spider's leg. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
-                         rarity=1)
+                         rarity=1,
+                         drop_rate=0.5)
 
 class goblin_ear(monster_part):
     def __init__(self, qty):
@@ -299,7 +301,8 @@ class goblin_ear(monster_part):
         super().__init__(name="Goblin Ear",
                          description="A goblin's ear. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
-                         rarity=1)
+                         rarity=1,
+                         drop_rate=0.5)
 
 class femur_bone(monster_part):
     def __init__(self, qty):
@@ -308,7 +311,8 @@ class femur_bone(monster_part):
         super().__init__(name="Femur Bone",
                          description="A femur bone from a walking skeleton. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
-                         rarity=1)
+                         rarity=1,
+                         drop_rate=0.5)
         
 class rat_tail(monster_part):
     def __init__(self, qty):
@@ -317,7 +321,8 @@ class rat_tail(monster_part):
         super().__init__(name="Rat Tail",
                          description="A rat's tail. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
-                         rarity=1)
+                         rarity=1,
+                         drop_rate=0.5)
         
 class bat_wing(monster_part):
     def __init__(self, qty):
@@ -326,4 +331,5 @@ class bat_wing(monster_part):
         super().__init__(name="Bat Wing",
                          description="A bat's wing. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
-                         rarity=1)
+                         rarity=1,
+                         drop_rate=0.5)
