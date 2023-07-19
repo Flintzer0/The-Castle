@@ -232,7 +232,7 @@ class dungeon_1(map_tile):
 class dungeon_2(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.item = items.rusty_shield(1)
+        self.item = items.rusty_shield()
 
     def intro_text(self):
         if self.entered == False:
@@ -378,7 +378,7 @@ class stairs(map_tile):
 
 class low_trader(shop_room):
     def __init__(self, x, y):
-        super().__init__(x, y, shopkeep=shop.low_trader())
+        super().__init__(x, y, shopkeep=shop.Trader())
 
     def intro_text(self):
         if self.entered == False:
@@ -536,6 +536,22 @@ class demon_bat_room(enemy_room):
             time.sleep(.5)
         else:
             text_speed("The corpse of the demon bat rots on the ground.\n", .05)
+            time.sleep(1)
+
+class large_rat_room(enemy_room):
+    def __init__(self, x, y):
+        super().__init__(x, y, enemies.large_rat())
+ 
+    def intro_text(self):
+        if self.enemy.is_alive():
+            text_speed("You enter a room covered in rotten food and bones.\n", .05)
+            time.sleep(1)
+            text_speed("You can hear a screech.\n", .05)
+            time.sleep(1)
+            text_speed("A giant rat scurries towards you!\n", .02)
+            time.sleep(.5)
+        else:
+            text_speed("The corpse of the giant rat rots on the ground.\n", .05)
             time.sleep(1)
 
 class giant_centipede_room(enemy_room):

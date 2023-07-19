@@ -44,7 +44,8 @@ class large_rat(Enemy):
 
 class demon_bat(Enemy):
     def __init__(self):
-        super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9)
+        super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9,
+                         description="A bat with red eyes and a demonic aura. \nThey are quick and have a bit of magic resistance, but physically weak.")
         
 # Bosses
 

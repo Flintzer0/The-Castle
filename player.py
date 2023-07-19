@@ -235,6 +235,8 @@ class Player():
         for item in self.inventory:
             if item.spcl != None:
                 self.spcl = item.spcl
+            else:
+                self.spcl = None
         
     def fight(self, enemy):
         self.combat(enemy)

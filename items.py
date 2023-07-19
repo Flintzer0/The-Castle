@@ -6,6 +6,7 @@ class Item():
         self.name = name
         self.description = description
         self.value = value
+        self.spcl = None
  
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
@@ -26,6 +27,14 @@ class Weapon(Item):
  
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\nDamage: {}".format(self.name, self.description, self.value, self.damage)
+    
+class Magic_Weapon(Weapon):
+    def __init__(self, name, description, value, damage, damage_type):
+        self.damage_type = damage_type
+        super().__init__(name, description, value, damage)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nDamage: {}\nDamage Type: {}".format(self.name, self.description, self.value, self.damage, self.damage_type)
 
 # Unarmed/Fist Items
 class Fists(Weapon):
@@ -80,13 +89,14 @@ class iron_sword(Weapon):
                          damage=8)
 
     # Magic Swords
-class cold_iron_sword(Weapon):
-    def __init__(self, cdamage):
+class cold_iron_sword(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Cold"
         super().__init__(name="Cold Iron Sword",
                          description="A solid blade of iron that glints a steely blue in the light. \nIt's cold to the touch. All damage dealt by this weapon is Cold damage.",
                          value=150,
                          damage=15,
-                         cdamage=True)
+                         damage_type="Cold")
 
 # Polearm Items
 # Axe Items

@@ -22,7 +22,7 @@ class Shopkeeper:
 
 class Trader(Shopkeeper):
     def __init__(self):
-        super().__init__(name="Dungeon Trader", inventory=[items.rusty_sword(), items.dagger(), items.small_red_potion(5), items.small_blue_potion(5)])
+        super().__init__(name="Dungeon Trader", inventory=[items.rusty_sword(), items.iron_dagger(), items.small_red_potion(5), items.small_blue_potion(5)])
 
     def shop_intro(self):
         text_speed("The toothy man smiles at you as you approach.\n", .05)
