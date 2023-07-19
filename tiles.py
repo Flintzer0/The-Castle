@@ -1,4 +1,4 @@
-import items, world, actions, enemies, time, sys, title_screen
+import items, world, actions, enemies, time, sys, title_screen, shop
 from player import Player
 from utilities import text_speed
 
@@ -163,10 +163,7 @@ class empty_room(map_tile):
 #===============================================================================
 
 # Basement 1 Tile Subclasses
-# Unique tiles still needed: 
-# Low-Trader's Hideout
-# Flooded Hall
-# Ritual Room
+# Unique tiles still needed:
 
 # Starting Room
 class jail_cell(map_tile):
@@ -214,10 +211,10 @@ class dungeon_1(map_tile):
 
     def intro_text(self):
         if self.entered == False:
-            # text_speed("You leave your cell and find yourself in the dungeon.\n", .05)
-            # time.sleep(1)
-            # text_speed("There doesn't seem to be anyone around.\n", .05)
-            # time.sleep(1)
+            text_speed("You leave your cell and find yourself in the dungeon.\n", .05)
+            time.sleep(1)
+            text_speed("There doesn't seem to be anyone around.\n", .05)
+            time.sleep(1)
             text_speed("What do you do?\n", .05)
             time.sleep(1)
             self.entered = True
@@ -235,7 +232,7 @@ class dungeon_1(map_tile):
 class dungeon_2(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.item = items.wooden_key(1)
+        self.item = items.rusty_shield(1)
 
     def intro_text(self):
         if self.entered == False:
@@ -258,40 +255,27 @@ class dungeon_2(map_tile):
         text_speed("The empty cells send a chill down your spine, but nothing more...\n", .05)
         time.sleep(1)
 
-class stairs(map_tile):
+class torture_chamber(map_tile):
     def __init__(self, x, y):
-        super().__init__(x, y)
-
-    def intro_text(self, player):
-        text_speed('You see a staircase leading up...\n', .05)
-        text_speed('This marks the end of the demo...\n', .05)
-        player.victory = True
-        title_screen()
-    
-class armory(locked_room):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.item = items.dagger()
-
+        super().__init__(x, y) 
+        self.item = items.rusty_dagger()
+ 
     def intro_text(self):
-        if self.entered == False:
-            text_speed("You enter a room that appears to have been an armory.\n", .05)
-            time.sleep(1)
-            text_speed("There are several suits of armor in massive states of decay.\n", .05)
-            time.sleep(1)
-            text_speed("Most all of the weapons have rusted beyond use, but some of\nthem might still be salvageable.\n", .05)
-            text_speed("What do you do?\n", .05)
-            time.sleep(1)
-        else:
-            text_speed("You're back in the armory. \nWhat do you do?\n", .05)
-            time.sleep(1)
-
-    def search_text(self):
-        text_speed("At first glance, it doesn't look like there's anything of use here,\n but you notice something close to a wall, behind a toppled display case...", .05)
+        text_speed("You're in a slightly larger room than the others.\n", .05)
+        time.sleep(1)
+        text_speed("You're not quite sure what it was used for.\n", .05)
+        time.sleep(1)
+        text_speed("You can make out what appears to be torture devices, though they have long since decayed.\n", .05)
+        time.sleep(1)
+        text_speed("What do you do?\n", .05)
         time.sleep(1)
 
+    def search_text(self):
+        text_speed("You can see something glinting on one of the racks...\n", .05)
+        time.sleep(1)
+    
     def searched_text(self):
-        text_speed("Everything else in here is completely unuseable.\n", .05)
+        text_speed("Just you and the torture devices.\n", .05)
         time.sleep(1)
 
 class guard_room(map_tile):
@@ -301,10 +285,10 @@ class guard_room(map_tile):
 
     def intro_text(self):
         if self.entered == False:
-            # text_speed("You enter a room that appears to have been a guard's quarters.\n", .05)
-            # time.sleep(1)
-            # text_speed("There seems to be something on the table.\n", .05)
-            # time.sleep(1)
+            text_speed("You enter a room that appears to have been a guard's quarters.\n", .05)
+            time.sleep(1)
+            text_speed("There is a table with broken legs and a few dessicated chairs.\n", .05)
+            time.sleep(1)
             text_speed("What do you do?\n", .05)
             time.sleep(1)
             self.entered = True
@@ -382,33 +366,110 @@ class flooded_hall(map_tile):
         text_speed("Probably best not to linger here.\n", .05)
         time.sleep(1)
 
-class ritual_room(map_tile):
+class stairs(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.item = items.cold_iron_sword()
 
-class five_gold(map_tile):
+    def intro_text(self, player):
+        text_speed('You see a staircase leading up...\n', .05)
+        text_speed('This marks the end of the demo...\n', .05)
+        player.victory = True
+        title_screen()
+
+class low_trader(shop_room):
     def __init__(self, x, y):
-        super().__init__(x, y) 
-        self.item = items.gold(5)
+        super().__init__(x, y, shopkeep=shop.low_trader())
 
     def intro_text(self):
         if self.entered == False:
-            text_speed("It appears to be another unremarkable hallway.\n", .05)
+            text_speed("You enter a room and are suddenly blinded by a bright light.\n", .05)
             time.sleep(1)
-            text_speed("What do you do?\n", .05)
-            time.sleep(.5)
+            text_speed("Once your eyes have adjusted to the ligh, you see a \nroom completely out of place in the bleak atmosphere you've grown accustomed to.\n", .05)
+            time.sleep(1)
+            text_speed("The room is brightly lit, and there are shelves full of \nvarious items lining the walls.\n", .05)
+            time.sleep(1)
+            text_speed("There is a countertop, with a stocky man standing behind it.\n", .05)
+            time.sleep(1)
+            self.shopkeep.shop_intro()
             self.entered = True
         else:
-            text_speed("You're back in this unremarkable hallway. \nWhat do you do?\n", .05)
+            text_speed("You're back in the room of the Low Trader. \nWhat do you do?\n", .05)
             time.sleep(1)
 
+    def searched_text(self):
+        text_speed("You probably shouldn't search through the Trader's wares.\n", .05)
+        time.sleep(1)
+
+class ritual_room(locked_room):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.cold_iron_sword()
+        self.choice = ""
+
+    def intro_text(self):
+        if self.entered == False:
+            text_speed("You enter a dark room dimly lit by a single torch.\n", .05)
+            time.sleep(1)
+            text_speed("The room is empty, save for a single pedestal in the center.\n", .05)
+            time.sleep(1)
+            text_speed("You can make out what seems to be ritualistic markings on the floor.\n", .05)
+            time.sleep(1)
+            text_speed("A cold chill runs down your spine as you realize that you can hear \nconstant whispers in the darkness.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+            self.entered = True
+        else:
+            if self.item != None:
+                text_speed("You're back in the dimly lit room.", .05)
+                time.sleep(1)
+                text_speed("The whisper seem to invite you to stay...\n", .05)
+                time.sleep(1)
+                text_speed("What do you do?\n", .05)
+                time.sleep(1)
+            else:
+                text_speed("You're back in the ritual room. \n", .05)
+                time.sleep(1)
+                text_speed("It's... quiet, here.\n", .05)
+                time.sleep(1)
+                text_speed("What do you do?\n", .05)
+
     def search_text(self):
-        text_speed("Something glitters off to the side of the hallway...\n", .05)
+        text_speed("As you move your hands across the floor, candles you didn't notice before light up.\n", .05)
+        time.sleep(1)
+        text_speed("The pedestal in the center of the room begins to glow and steadily rises.\n", .05)
+        time.sleep(1)
+        text_speed("You can see the pedestal is really an altar, with an eerie blue sword jammed into it.\n", .05)
+        time.sleep(1)
+        text_speed("You can hear the whispers more clearly now, and they seem to be coming from the sword.\n", .05)
+        time.sleep(1)
+        text_speed("The whipsers invite you to offer your blood in exchange for the sword.\n", .05)
+        time.sleep(1)
+        text_speed("What do you do?\n", .05)
+        time.sleep(1)
+        print("1. Offer your blood.\n 2. Leave the sword alone.")
+        self.choice = input()
+    
+    def choice_1_text(self):
+        text_speed("You offer your blood to the sword.\n", .05)
+        time.sleep(1)
+        text_speed("The whispers grow louder, and the sword begins to glow brighter.\n", .05)
+        time.sleep(1)
+        text_speed("You can feel the sword's power coursing through your veins.\n", .05)
+        time.sleep(1)
+        text_speed("You take the sword.\n", .05)
+        time.sleep(1)
+        text_speed("The whispers fade away.\n", .05)
+        time.sleep(1)
+
+    def choice_2_text(self):
+        text_speed("You decide to leave the sword alone.\n", .05)
+        time.sleep(1)
+        text_speed("You ignore the whispers urging you to reconsider.\n", .05)
         time.sleep(1)
 
     def searched_text(self):
-        text_speed("Just you and the hallway.\n", .05)
+        text_speed("The room is quiet now.\n", .05)
         time.sleep(1)
 
 class giant_spider_room(enemy_room):
@@ -443,31 +504,91 @@ class goblin_room(enemy_room):
             text_speed("The corpse of a dead goblin rots on the ground.\n", .05)
             time.sleep(1)
 
-class torture_chamber(map_tile):
+class skeleton_room(enemy_room):
     def __init__(self, x, y):
-        super().__init__(x, y) 
-        self.item = items.rusty_dagger()
+        super().__init__(x, y, enemies.skeleton())
  
     def intro_text(self):
-        text_speed("You're in a slightly larger room than the others.\n", .05)
-        time.sleep(1)
-        text_speed("You're not quite sure what it was used for.\n", .05)
-        time.sleep(1)
-        text_speed("You can make out what appears to be torture devices, though they have long since decayed.\n", .05)
-        time.sleep(1)
-        text_speed("What do you do?\n", .05)
-        time.sleep(1)
+        if self.enemy.is_alive():
+            text_speed("You enter a room with several heavily decayed corpses.\n", .05)
+            time.sleep(1)
+            text_speed("It seems to have been the site of a battle.\n", .05)
+            time.sleep(1)
+            text_speed("Suddenly, a figure stands up.\n", .05)
+            time.sleep(1)
+            text_speed("It's a skeleton!\n", .02)
+            time.sleep(.5)
+        else:
+            text_speed("The bones of the defeated skeleton lie scattered on the floor.\n", .05)
+            time.sleep(1)
 
-    def search_text(self):
-        text_speed("You can see something glinting on one of the racks...\n", .05)
-        time.sleep(1)
-    
-    def searched_text(self):
-        text_speed("Just you and the torture devices.\n", .05)
-        time.sleep(1)
+class demon_bat_room(enemy_room):
+    def __init__(self, x, y):
+        super().__init__(x, y, enemies.demon_bat())
+ 
+    def intro_text(self):
+        if self.enemy.is_alive():
+            text_speed("You enter a room with a high ceiling.\n", .05)
+            time.sleep(1)
+            text_speed("You can hear a faint flapping sound.\n", .05)
+            time.sleep(1)
+            text_speed("A demon bat swoops down from the ceiling!\n", .02)
+            time.sleep(.5)
+        else:
+            text_speed("The corpse of the demon bat rots on the ground.\n", .05)
+            time.sleep(1)
+
+class giant_centipede_room(enemy_room):
+    def __init__(self, x, y):
+        super().__init__(x, y, enemies.giant_centipede())
+ 
+    def intro_text(self):
+        if self.enemy.is_alive():
+            text_speed("You're in a large room with a curving rooftop.\n", .05)
+            time.sleep(1)
+            text_speed("The ceiling is too high and dark to make out.\n", .05)
+            time.sleep(1)
+            text_speed("However, up ahead you can see through the doorway to the next room.\n", .05)
+            time.sleep(1)
+            text_speed("There are stairs leading up to the next floor!\n Your escape from this dungeon seems close at hand!", .05)
+            time.sleep(1)
+            text_speed("As you stride towards the next room, you feel a rumbling in the ground and hear a skittering sound.\n", .05)
+            time.sleep(1)
+            text_speed("With an ear-splitting screech, a giant centipede drops from the ceiling!\n", .05)
+            time.sleep(1)
+            text_speed("It's time to fight your way out of this dungeon!\n", .05)
+            time.sleep(1)
+        else:
+            text_speed("The corpse of the giant centipede rots on the ground.\n", .05)
+            time.sleep(1)
     
 # Floor 1 Tile Subclasses
 # Unique tiles still needed:
+class armory(locked_room):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.iron_sword()
+
+    def intro_text(self):
+        if self.entered == False:
+            text_speed("You enter a room that appears to have been an armory.\n", .05)
+            time.sleep(1)
+            text_speed("There are several suits of armor in massive states of decay.\n", .05)
+            time.sleep(1)
+            text_speed("Most all of the weapons have rusted beyond use, but some of\nthem might still be salvageable.\n", .05)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+        else:
+            text_speed("You're back in the armory. \nWhat do you do?\n", .05)
+            time.sleep(1)
+
+    def search_text(self):
+        text_speed("At first glance, it doesn't look like there's anything of use here,\n but you notice something close to a wall, behind a toppled display case...", .05)
+        time.sleep(1)
+
+    def searched_text(self):
+        text_speed("Everything else in here is completely unuseable.\n", .05)
+        time.sleep(1)
 
 # Floor 2 Tile Subclasses
 # Unique tiles still needed:

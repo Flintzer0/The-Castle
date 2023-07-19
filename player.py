@@ -207,6 +207,23 @@ class Player():
             elif isinstance(item, items.Potion):
                 self.inventory.append(item)
                 text_speed("You found {} {}(s)!\n".format(item.qty, item.name), .05)
+            elif isinstance(item, items.cold_iron_sword):
+                if room.choice == "1":
+                    text_speed("You offer your blood to the altar.\n", .05)
+                    time.sleep(1)
+                    self.cHP -= 20
+                    if self.is_alive() == True:
+                        self.inventory.append(item)
+                        text_speed("You've obtained the {}!\n".format(item.name), .05)
+                    else:
+                        text_speed("You died.\n", .05)
+                        time.sleep(1)
+                        print("Game over.\n")
+                        time.sleep(1)
+                        sys.exit()
+                elif room.choice == "2":
+                    text_speed("You leave the altar alone.\n", .05)
+                    time.sleep(1)
             else:
                 self.inventory.append(item)
                 text_speed("You found a {}!\n".format(item.name), .05)
