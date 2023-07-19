@@ -48,7 +48,7 @@ class demon_bat(Enemy):
         
 # Bosses
 
-class centipede(Enemy):
+class giant_centipede(Enemy):
     # Basement Floor Boss
     def __init__(self): 
         super().__init__(name="Centipede", hp=20, mhp=20, damage=7, DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30,
