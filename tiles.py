@@ -17,10 +17,12 @@ class map_tile:
         self.unlocked = True
         # Indicates whether the room contains an item or not. If a room contains an item, it will be shown here in the __init__ method.
         self.item = None
+        self.flooded = False
 
     def adjacent_moves(self):
         # Returns all move actions for adjacent tiles.
         moves = []
+
         # Checks if the tile exists in that direction of the world.
         if world.tile_exists(self.x + 1, self.y):
             # Checks if the adjacent tile in this direction is a locked room. If it is, but is currently locked, 
@@ -162,14 +164,9 @@ class empty_room(map_tile):
 
 # Basement 1 Tile Subclasses
 # Unique tiles still needed: 
-# Jail Cell
-# Dungeon
-# Guard Room
-# Torture Chamber
 # Low-Trader's Hideout
 # Flooded Hall
 # Ritual Room
-
 
 # Starting Room
 class jail_cell(map_tile):
@@ -182,16 +179,16 @@ class jail_cell(map_tile):
         # Here we can see that the intro_text method is overwritten to display a unique message.
         # Also shown is what occurs when the player enters the room for the first time and when they return to the room.
         if self.entered == False:
-            # text_speed("You awake in a dreary cell, surrounded by darkness.\n", .05)
-            # time.sleep(1)
-            # text_speed("You've lost track of how long it's been down here.\n", .05)
-            # time.sleep(1)
-            # text_speed("You hear something. . . \n", .5)
-            # time.sleep(1)
-            # text_speed(". . . \n", 1)
-            # time.sleep(2)
-            # text_speed("Your cell door creaks open.\n", .05)
-            # time.sleep(.5)
+            text_speed("You awake in a dreary cell, surrounded by darkness.\n", .05)
+            time.sleep(1)
+            text_speed("You've lost track of how long it's been down here.\n", .05)
+            time.sleep(1)
+            text_speed("You hear something. . . \n", .5)
+            time.sleep(1)
+            text_speed(". . . \n", 1)
+            time.sleep(2)
+            text_speed("Your cell door creaks open.\n", .05)
+            time.sleep(.5)
             text_speed("What do you do?\n", .05)
             time.sleep(1)
             self.entered = True
@@ -210,7 +207,7 @@ class jail_cell(map_tile):
         text_speed("There doesn't appear to be anything else in your cell.\n", .05)
         time.sleep(1)
 
-class dungeon(map_tile):
+class dungeon_1(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.item = items.small_red_potion(1)
@@ -234,6 +231,32 @@ class dungeon(map_tile):
 
     def searched_text(self):
         text_speed("You find rotting wood and empty cells.\n", .05)
+
+class dungeon_2(map_tile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.wooden_key(1)
+
+    def intro_text(self):
+        if self.entered == False:
+            text_speed("You find another dungeon, not that you're surprised.\n", .05)
+            time.sleep(1)
+            text_speed("All of the cells are empty, from what you can tell.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+            self.entered = True
+        else:
+            text_speed("You're back in the dungeon. \nWhat do you do?\n", .05)
+            time.sleep(1)
+
+    def search_text(self):
+        text_speed("You notice something poking out of the straw of one of the cells...\n", .05)
+        time.sleep(1)
+
+    def searched_text(self):
+        text_speed("The empty cells send a chill down your spine, but nothing more...\n", .05)
+        time.sleep(1)
 
 class stairs(map_tile):
     def __init__(self, x, y):
@@ -296,6 +319,73 @@ class guard_room(map_tile):
     def searched_text(self):
         text_speed("Nothing else catches your attention.\n", .05)
         time.sleep(1)
+
+class pre_flooded_hall(map_tile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.gold(15)
+
+    def intro_text(self):
+        if self.entered == False:
+            text_speed("You enter what appears to be a normal hallway at first glance.\n", .05)
+            time.sleep(1)
+            text_speed("However, on closer inspection you notice that the floor is slightly damp.\n", .05)
+            time.sleep(1)
+            text_speed("Opposite you in the room, the hallway descends downwards into dark, murky water.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+            self.entered = True
+        else:
+            text_speed("You're back in the damp hallway. \nWhat do you do?\n", .05)
+            time.sleep(1)
+
+    def search_text(self):
+        text_speed("You notice something glinting in the water...\n", .05)
+        time.sleep(1)
+
+    def searched_text(self):
+        text_speed("The water is too murky to see anything else.\n", .05)
+        time.sleep(1)
+
+class flooded_hall(map_tile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.strength_1_ring()
+
+    def intro_text(self):
+        if self.entered == False:
+            text_speed("You enter a hallway that is completely submerged in water.\n", .05)
+            time.sleep(1)
+            text_speed("You can't see the bottom, and the water is murky.\n", .05)
+            time.sleep(1)
+            text_speed("Luckily, your Ring of the Sea is keeping you from drowning.\n", .05)
+            time.sleep(1)
+            text_speed("What do you do?\n", .05)
+            time.sleep(1)
+            self.entered = True
+        else:
+            text_speed("You're back in the flooded hallway. \nWhat do you do?\n", .05)
+            time.sleep(1)
+
+    def search_text(self):
+        text_speed("You notice something glinting in the water...\n", .05)
+        time.sleep(1)
+
+    def searched_text(self):
+        text_speed("You look into the depths of the water...\n", .05)
+        time.sleep(1)
+        text_speed("It looks back.\n", .05)
+        time.sleep(1)
+        text_speed(". . .\n", .01)
+        time.sleep(3)
+        text_speed("Probably best not to linger here.\n", .05)
+        time.sleep(1)
+
+class ritual_room(map_tile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.item = items.cold_iron_sword()
 
 class five_gold(map_tile):
     def __init__(self, x, y):
@@ -375,17 +465,6 @@ class torture_chamber(map_tile):
     def searched_text(self):
         text_speed("Just you and the torture devices.\n", .05)
         time.sleep(1)
-
-class find_rusty_shield_room(map_tile):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.item = items.rusty_shield()
- 
-    def intro_text(self):
-        return """
-        Your notice something up against a wall.
-        It's a rusty shield! You pick it up.
-        """
     
 # Floor 1 Tile Subclasses
 # Unique tiles still needed:

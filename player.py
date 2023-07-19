@@ -10,6 +10,7 @@ class Player():
         self.name = name
         self.LVL = LVL
         self.EXP = 0
+        self.spcl = None
         self.inventory = []
         self.compendium = []
         self.STR = STR
@@ -90,41 +91,58 @@ class Player():
             action_method(**kwargs)
 
     def move(self, dx, dy):
+        self.add_spcl()
         self.location_x += dx
         self.location_y += dy
         # print(world.tile_exists(self.location_x, self.location_y).intro_text())
 
     def move_north(self):
         room = world.tile_exists(self.location_x, (self.location_y-1))
-        if room.unlocked == True:
-            self.move(dx=0, dy=-1)
-        else:
-            print(room.locked_text())
+        if room.flooded == True and self.spcl != "Water Breathing":
+            text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
+        else:
+            if room.unlocked == True:
+                self.move(dx=0, dy=-1)
+            else:
+                print(room.locked_text())
+                self.move(dx=0, dy=0)
     
     def move_south(self):
         room = world.tile_exists(self.location_x, (self.location_y+1))
-        if room.unlocked == True:
-            self.move(dx=0, dy=1)
-        else:
-            print(room.locked_text())
+        if room.flooded == True and self.spcl != "Water Breathing":
+            text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
+        else:
+            if room.unlocked == True:
+                self.move(dx=0, dy=1)
+            else:
+                print(room.locked_text())
+                self.move(dx=0, dy=0)
     
     def move_east(self):
         room = world.tile_exists((self.location_x+1), self.location_y)
-        if room.unlocked == True:
-            self.move(dx=1, dy=0)
-        else:
-            print(room.locked_text())
+        if room.flooded == True and self.spcl != "Water Breathing":
+            text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
+        else:
+            if room.unlocked == True:
+                self.move(dx=1, dy=0)
+            else:
+                print(room.locked_text())
+                self.move(dx=0, dy=0)
     
     def move_west(self):
         room = world.tile_exists((self.location_x-1), self.location_y)
-        if room.unlocked == True:
-            self.move(dx=-1, dy=0)
-        else:
-            print(room.locked_text())
+        if room.flooded == True and self.spcl != "Water Breathing":
+            text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
+        else:
+            if room.unlocked == True:
+                self.move(dx=-1, dy=0)
+            else:
+                print(room.locked_text())
+                self.move(dx=0, dy=0)
 
     def buy(self, shopkeep):
         shopkeep.display_shop(self)
@@ -195,6 +213,11 @@ class Player():
             room.item = None
         else:
             return room.searched_text()
+        
+    def add_spcl(self):
+        for item in self.inventory:
+            if item.spcl != None:
+                self.spcl = item.spcl
         
     def fight(self, enemy):
         self.combat(enemy)

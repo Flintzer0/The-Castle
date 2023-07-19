@@ -79,6 +79,15 @@ class iron_sword(Weapon):
                          value=25,
                          damage=8)
 
+    # Magic Swords
+class cold_iron_sword(Weapon):
+    def __init__(self, cdamage):
+        super().__init__(name="Cold Iron Sword",
+                         description="A solid blade of iron that glints a steely blue in the light. \nIt's cold to the touch. All damage dealt by this weapon is Cold damage.",
+                         value=150,
+                         damage=15,
+                         cdamage=True)
+
 # Polearm Items
 # Axe Items
 # Bow Items
@@ -145,6 +154,14 @@ class defense_1_ring(Ring):
     # Speed Rings
     # Skill Rings
     # Luck Rings
+    # Special Rings
+class water_ring(Ring):
+    def __init__(self, spcl):
+        super().__init__(name="Ring of the Sea",
+                         description="This ring allows the wearer to breathe underwater.",
+                         value=10,
+                         stat=10,
+                         spcl="waterbreathing")
 # Necklace Items
 # Bracelet Items
 # Earring Items
@@ -277,6 +294,7 @@ class ruby(Material):
 
 # Cloth Items
 # Monster Parts
+# This is the base class for all monster parts.
 class monster_part(Material):
     def __init__(self, name, description, value, rarity, enemy, drop_rate):
         self.rarity = rarity
@@ -284,6 +302,7 @@ class monster_part(Material):
         self.drop_rate = drop_rate
         super().__init__(name, description, value)
 
+# Basic Monster Parts
 class spider_leg(monster_part):
     def __init__(self, qty):
         self.qty = qty
@@ -333,3 +352,14 @@ class bat_wing(monster_part):
                          value=5,
                          rarity=1,
                          drop_rate=0.5)
+        
+# Boss Monster Parts
+class centipede_carapace(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        enemy = enemies.giant_centipede()
+        super().__init__(name="Centipede Carapace",
+                         description="A centipede's carapace. Used for upgrading. ({})".format(str(self.qty)),
+                         value=20,
+                         rarity=2,
+                         drop_rate=0.3)
