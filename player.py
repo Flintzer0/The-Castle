@@ -31,7 +31,6 @@ class Player():
         self.SPDgrowth = .4
         self.SKLgrowth = .4
         self.LUCKgrowth = .3
-        self.add_spcl()
     
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.HP, self.name, self.inventory, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
@@ -101,6 +100,7 @@ class Player():
         # print(world.tile_exists(self.location_x, self.location_y).intro_text())
 
     def chk_spcl(self, spcl):
+        self.add_spcl()
         if spcl in self.spcl:
             return True
         else:
