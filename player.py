@@ -168,12 +168,12 @@ class Player():
 
     def add_monster(self, enemy):
         room = world.tile_exists(self.location_x, self.location_y)
-        if enemy not in self.compendium:
-            self.compendium.append(enemy)
-            text_speed("You encountered a {} for your first time!\n".format(room.enemy.name), .03)
-            time.sleep(.5)
-            text_speed("You added the {} to your Monster Compendium!\n".format(room.enemy.name), .03)
-            time.sleep(.5)
+        enemy = room.enemy
+        self.compendium.append(enemy)
+        text_speed("You encountered a {} for your first time!\n".format(room.enemy.name), .03)
+        time.sleep(.5)
+        text_speed("You added the {} to your Monster Compendium!\n".format(room.enemy.name), .03)
+        time.sleep(.5)
 
     def view_compendium(self):
         if len(self.compendium) != 0:
@@ -251,8 +251,9 @@ class Player():
             self.level_up()
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
             time.sleep(1)
-            self.add_monster(enemy)
-            self.monster_part_drop(enemy)
+            if enemy not in self.compendium:
+                self.add_monster(enemy)
+            # self.monster_part_drop(enemy)
 
     def check_inventory(self, item):
         a=[]
@@ -269,7 +270,7 @@ class Player():
             items = self.check_inventory(item)
             n = range(int(len(items)))
             for i in n:
-                print(f'{i}: {items[i].name} x{items[i].qty}')
+                print(f'{i}: {items[i].name} x{items[i].qty}\n{i}: Exit')
         return False
 
     def unlock(self, room):
@@ -339,25 +340,25 @@ class Player():
         time.sleep(.5)
         exit()
 
-    def chk_monster_part(self, enemy):
-        enemy_part = None
-        for enemy in enemies.Enemy:
-            for p in items.monster_parts:
-                if p.enemy == enemy:
-                    enemy_part = p
-        return enemy_part
+    # def chk_monster_part(self, enemy):
+    #     enemy_part = None
+    #     for enemy in enemies.Enemy.__subclasses__():
+    #         for p in items.monster_part.__subclasses__():
+    #             if enemy == p.epart:
+    #                 enemy_part = p
+    #     return enemy_part
     
-    def monster_part_drop(self, enemy):
-        enemy_part = self.chk_monster_part(enemy)
-        if enemy_part is not None:
-            if random.randint(1,100) <= ((((enemy_part.drop_rate) * 100) - (enemy_part.rarity * 2)) + (self.LUCK * 2)):
-                self.inventory.append(enemy_part)
-                text_speed("The {} dropped a {}!\n".format(enemy.name, enemy_part.name), .05)
-                time.sleep(.5)
-            else:
-                pass
-        else:
-            pass
+    # def monster_part_drop(self, enemy):
+    #     enemy_part = self.chk_monster_part(enemy)
+    #     if enemy_part is not None:
+    #         if random.randint(1,100) <= ((((enemy_part.drop_rate) * 100) - (enemy_part.rarity * 2)) + (self.LUCK * 2)):
+    #             self.inventory.append(enemy_part)
+    #             text_speed("The {} dropped a {}!\n".format(enemy.name, enemy_part.name), .05)
+    #             time.sleep(.5)
+    #         else:
+    #             pass
+    #     else:
+    #         pass
 
     def chk_Weapon(self):
         best_weapon = items.Fists()

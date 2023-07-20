@@ -4,10 +4,11 @@ from utilities import text_speed
 from pathlib import Path
 import pickle
 
-
+# This file is for debugging purposes only. It is not part of the game.
+# It skips the intro and removes the call for room.intro_text() in game_loop().
 def play():
     world.load_tiles()
-    player = Player(name="Debug", LVL=2, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=2, LUCK=1, cash=5)
+    player = Player(name="Debug", LVL=2, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=100, LUCK=1, cash=5)
     game_loop(player)
 
 def game_loop(player):

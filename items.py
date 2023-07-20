@@ -306,9 +306,9 @@ class ruby(Material):
 # Monster Parts
 # This is the base class for all monster parts.
 class monster_part(Material):
-    def __init__(self, name, description, value, rarity, enemy, drop_rate):
+    def __init__(self, epart, name, description, value, rarity, drop_rate):
+        self.epart = epart
         self.rarity = rarity
-        self.enemy = enemy
         self.drop_rate = drop_rate
         super().__init__(name, description, value)
 
@@ -316,8 +316,8 @@ class monster_part(Material):
 class spider_leg(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        enemy = enemies.giant_spider()
-        super().__init__(name="Spider Leg",
+        super().__init__(epart=enemies.giant_spider(),
+                         name="Spider Leg",
                          description="A spider's leg. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
@@ -326,50 +326,50 @@ class spider_leg(monster_part):
 class goblin_ear(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        enemy = enemies.goblin()
         super().__init__(name="Goblin Ear",
                          description="A goblin's ear. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5)
+                         drop_rate=0.5,
+                         epart=enemies.goblin())
 
 class femur_bone(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        enemy = enemies.skeleton()
         super().__init__(name="Femur Bone",
                          description="A femur bone from a walking skeleton. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5)
+                         drop_rate=0.5,
+                         epart=enemies.skeleton())
         
 class rat_tail(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        enemy = enemies.large_rat()
         super().__init__(name="Rat Tail",
                          description="A rat's tail. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5)
+                         drop_rate=0.5,
+                         epart=enemies.large_rat())
         
 class bat_wing(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        enemy = enemies.demon_bat()
         super().__init__(name="Bat Wing",
                          description="A bat's wing. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5)
+                         drop_rate=0.5,
+                         epart=enemies.demon_bat())
         
 # Boss Monster Parts
 class centipede_carapace(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        enemy = enemies.giant_centipede()
         super().__init__(name="Centipede Carapace",
                          description="A centipede's carapace. Used for upgrading. ({})".format(str(self.qty)),
                          value=20,
                          rarity=2,
-                         drop_rate=0.3)
+                         drop_rate=0.3,
+                         epart=enemies.giant_centipede())

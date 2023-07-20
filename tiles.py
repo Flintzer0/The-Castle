@@ -124,8 +124,15 @@ class shop_room(map_tile):
 
     # The available actions are overwritten to include the buy action.
     def available_actions(self):
-        return [actions.buy(shopkeep=self.shopkeep), map_tile.adjacent_moves(), actions.view_inventory(), actions.potion(), actions.view_compendium(), actions.SaveAndExit()]
-
+        moves = self.adjacent_moves()
+        moves.append(actions.view_inventory())
+        moves.append(actions.potion())
+        moves.append(actions.search())
+        moves.append(actions.view_compendium())
+        moves.append(actions.SaveAndExit())
+        moves.append(actions.buy(shopkeep=self.shopkeep))
+        return moves
+    
 # Empty Tile Subclasses
 
 class empty_passageway(map_tile):

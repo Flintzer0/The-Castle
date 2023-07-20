@@ -18,7 +18,8 @@ class Shopkeeper:
         for i in range(len(self.inventory)):
             item = self.inventory[i]
             print("{}. {} - {} Gold".format(i + 1, item.name, item.value))
-        print("0. Exit Shop")
+        print(f'{len(self.inventory)}: Exit Shop')
+            
 
 class Trader(Shopkeeper):
     def __init__(self):
