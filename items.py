@@ -142,10 +142,11 @@ class rusty_shield(Armor):
 # Accessory Items
 # Ring Items
 class Ring(Item):
-    def __init__(self, name, description, value, stat):
+    def __init__(self, name, description, value, stat, statval, spcl):
         super().__init__(name, description, value)
         self.stat = stat
-        self.spcl = ""
+        self.statval = statval
+        self.spcl = spcl
 
     # Strength Rings
 class strength_1_ring(Ring):
@@ -153,14 +154,18 @@ class strength_1_ring(Ring):
         super().__init__(name="+1 Strength Ring",
                          description="A ring that increases strength by 1.",
                          value=10,
-                         stat=1)
+                         stat="STR",
+                         statval=1,
+                         spcl="")
     # Defense Rings
 class defense_1_ring(Ring):
     def __init__(self):
         super().__init__(name="+1 Defense Ring",
                          description="A ring that increases defense by 1.",
                          value=10,
-                         stat=1)
+                         stat="DEF",
+                         statval=1,
+                         spcl="")
     # Magic Rings
     # Resistance Rings
     # Speed Rings
@@ -173,7 +178,9 @@ class water_ring(Ring):
         super().__init__(name="Ring of the Sea",
                          description="This ring allows the wearer to breathe underwater. \nSpecial: {}".format(self.spcl),
                          value=10,
-                         stat=10)
+                         stat="",
+                         statval=0,
+                         spcl=self.spcl)
 # Necklace Items
 # Bracelet Items
 # Earring Items

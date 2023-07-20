@@ -1,4 +1,4 @@
-import items, world, shop, enemies
+import items, world
 from utilities import text_speed
 import pickle, sys, time, random
 import combat
@@ -31,6 +31,7 @@ class Player():
         self.SPDgrowth = .4
         self.SKLgrowth = .4
         self.LUCKgrowth = .3
+        self.add_spcl()
     
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.HP, self.name, self.inventory, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
@@ -87,8 +88,7 @@ class Player():
 
     def add_spcl(self):
         for item in self.inventory:
-            if item.spcl != None:
-                self.spcl.append(item.spcl)
+            self.spcl.append(item.spcl)
     
     def do_action(self, action, **kwargs):
         action_method = getattr(self, action.method.__name__)
@@ -96,14 +96,19 @@ class Player():
             action_method(**kwargs)
 
     def move(self, dx, dy):
-        self.add_spcl()
         self.location_x += dx
         self.location_y += dy
         # print(world.tile_exists(self.location_x, self.location_y).intro_text())
 
+    def chk_spcl(self, spcl):
+        if spcl in self.spcl:
+            return True
+        else:
+            return False
+
     def move_north(self):
         room = world.tile_exists(self.location_x, (self.location_y-1))
-        if room.flooded == True and self.spcl != "Water Breathing":
+        if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
@@ -115,7 +120,7 @@ class Player():
     
     def move_south(self):
         room = world.tile_exists(self.location_x, (self.location_y+1))
-        if room.flooded == True and self.spcl != "Water Breathing":
+        if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
@@ -127,7 +132,7 @@ class Player():
     
     def move_east(self):
         room = world.tile_exists((self.location_x+1), self.location_y)
-        if room.flooded == True and self.spcl != "Water Breathing":
+        if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
@@ -139,7 +144,7 @@ class Player():
     
     def move_west(self):
         room = world.tile_exists((self.location_x-1), self.location_y)
-        if room.flooded == True and self.spcl != "Water Breathing":
+        if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:

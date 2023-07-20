@@ -1,5 +1,4 @@
-import items, world, actions, enemies, time, sys, title_screen, shop
-from player import Player
+import items, world, actions, enemies, time, title_screen, shop
 from utilities import text_speed
 
 # Base Class all other tiles are built off of
