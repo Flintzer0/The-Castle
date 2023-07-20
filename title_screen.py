@@ -1,4 +1,4 @@
-import world, sys, time, items
+import world, sys, time
 from player import Player
 from utilities import text_speed
 from pathlib import Path
