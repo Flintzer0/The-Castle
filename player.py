@@ -10,7 +10,7 @@ class Player():
         self.name = name
         self.LVL = LVL
         self.EXP = 0
-        self.spcl = None
+        self.spcl = []
         self.inventory = []
         self.compendium = []
         self.STR = STR
@@ -84,6 +84,11 @@ class Player():
         print(self.cash, "gold\n")
         for item in self.inventory:
             print(item, '\n')
+
+    def add_spcl(self):
+        for item in self.inventory:
+            if item.spcl != None:
+                self.spcl.append(item.spcl)
     
     def do_action(self, action, **kwargs):
         action_method = getattr(self, action.method.__name__)
@@ -174,6 +179,7 @@ class Player():
         time.sleep(.5)
         text_speed("You added the {} to your Monster Compendium!\n".format(room.enemy.name), .03)
         time.sleep(.5)
+        enemy.seen = True
 
     def view_compendium(self):
         if len(self.compendium) != 0:
@@ -231,13 +237,6 @@ class Player():
         else:
             return room.searched_text()
         
-    def add_spcl(self):
-        for item in self.inventory:
-            if item.spcl != None:
-                self.spcl = item.spcl
-            else:
-                self.spcl = None
-        
     def fight(self, enemy):
         self.combat(enemy)
         if not enemy.is_alive():
@@ -251,7 +250,7 @@ class Player():
             self.level_up()
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
             time.sleep(1)
-            if enemy not in self.compendium:
+            if enemy.seen == False:
                 self.add_monster(enemy)
             # self.monster_part_drop(enemy)
 

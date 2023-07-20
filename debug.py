@@ -6,9 +6,12 @@ import pickle
 
 # This file is for debugging purposes only. It is not part of the game.
 # It skips the intro and removes the call for room.intro_text() in game_loop().
+# Due to the nature of player move actions, the player file must also be edited to remove the intro text call from the move action.
 def play():
     world.load_tiles()
-    player = Player(name="Debug", LVL=2, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=100, LUCK=1, cash=5)
+    player = Player(name="Debug", LVL=1, mHP=100, cHP=100, STR=10, DEF=10, MAG=10, RES=10, SPD=10, SKL=100, LUCK=100, cash=5000)
+    player.inventory.append(items.cold_iron_sword())
+    player.inventory.append(items.water_ring())
     game_loop(player)
 
 def game_loop(player):

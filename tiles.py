@@ -150,6 +150,9 @@ class empty_passageway(map_tile):
             text_speed("You're back in this unremarkable hallway. \nWhat do you do?\n", .05)
             time.sleep(1)
 
+    def search_text(self):
+        pass
+
 class empty_room(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -165,9 +168,14 @@ class empty_room(map_tile):
             text_speed("You're back in this unremarkable room. \nWhat do you do?\n", .05)
             time.sleep(1)
 
+    def search_text(self):
+        pass
+
+#===============================================================================#
+
 # Basement 2 Tile Subclasses
 
-#===============================================================================
+#===============================================================================#
 
 # Basement 1 Tile Subclasses
 # Unique tiles still needed:
@@ -211,6 +219,7 @@ class jail_cell(map_tile):
         text_speed("There doesn't appear to be anything else in your cell.\n", .05)
         time.sleep(1)
 
+# Regular Rooms
 class dungeon_1(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -311,6 +320,7 @@ class guard_room(map_tile):
         text_speed("Nothing else catches your attention.\n", .05)
         time.sleep(1)
 
+# Flooded Rooms
 class pre_flooded_hall(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -343,6 +353,7 @@ class flooded_hall(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.item = items.strength_1_ring()
+        self.flooded = True
 
     def intro_text(self):
         if self.entered == False:
@@ -373,6 +384,7 @@ class flooded_hall(map_tile):
         text_speed("Probably best not to linger here.\n", .05)
         time.sleep(1)
 
+# Stairs
 class stairs(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -383,6 +395,7 @@ class stairs(map_tile):
         player.victory = True
         title_screen()
 
+# Special Tile Subclasses
 class low_trader(shop_room):
     def __init__(self, x, y):
         super().__init__(x, y, shopkeep=shop.Trader())
@@ -479,6 +492,7 @@ class ritual_room(locked_room):
         text_speed("The room is quiet now.\n", .05)
         time.sleep(1)
 
+# Enemy Rooms
 class giant_spider_room(enemy_room):
     def __init__(self, x, y):
         super().__init__(x, y, enemies.giant_spider())
@@ -495,6 +509,22 @@ class giant_spider_room(enemy_room):
             text_speed("The corpse of a dead spider rots on the ground.\n", .05)
             time.sleep(1)
  
+class giant_spider_room_2(enemy_room):
+    def __init__(self, x, y):
+        super().__init__(x, y, enemies.giant_spider())
+
+    def intro_text(self):
+        if self.enemy.is_alive():
+            text_speed("You enter a large, round room.\n", .05)
+            time.sleep(1)
+            text_speed("There are large webs covering the walls.\n", .05)
+            time.sleep(1)
+            text_speed("A giant spider drops from the ceiling!\n", .02)
+            time.sleep(.5)
+        else:
+            text_speed("The corpse of a dead spider rots on the ground.\n", .05)
+            time.sleep(1)
+
 class goblin_room(enemy_room):
     def __init__(self, x, y):
         super().__init__(x, y, enemies.goblin())
@@ -584,7 +614,9 @@ class giant_centipede_room(enemy_room):
         else:
             text_speed("The corpse of the giant centipede rots on the ground.\n", .05)
             time.sleep(1)
-    
+
+#===============================================================================#
+
 # Floor 1 Tile Subclasses
 # Unique tiles still needed:
 class armory(locked_room):
@@ -613,14 +645,22 @@ class armory(locked_room):
         text_speed("Everything else in here is completely unuseable.\n", .05)
         time.sleep(1)
 
+#===============================================================================#
+
 # Floor 2 Tile Subclasses
 # Unique tiles still needed:
+
+#===============================================================================#
 
 # Floor 3 Tile Subclasses
 # Unique tiles still needed:
 
+#===============================================================================#
+
 # Floor 4 Tile Subclasses
 # Unique tiles still needed:
+
+#===============================================================================#
 
 # Floor 5 Tile Subclasses
 # Unique tiles still needed:

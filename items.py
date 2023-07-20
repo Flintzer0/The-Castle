@@ -6,7 +6,7 @@ class Item():
         self.name = name
         self.description = description
         self.value = value
-        self.spcl = None
+        self.spcl = ""
  
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
@@ -88,7 +88,7 @@ class iron_sword(Weapon):
                          value=25,
                          damage=8)
 
-    # Magic Swords
+# Magic Swords
 class cold_iron_sword(Magic_Weapon):
     def __init__(self):
         self.damage_type = "Cold"
@@ -143,8 +143,10 @@ class rusty_shield(Armor):
 # Ring Items
 class Ring(Item):
     def __init__(self, name, description, value, stat):
-        self.stat = stat
         super().__init__(name, description, value)
+        self.stat = stat
+        self.spcl = ""
+
     # Strength Rings
 class strength_1_ring(Ring):
     def __init__(self):
@@ -166,12 +168,12 @@ class defense_1_ring(Ring):
     # Luck Rings
     # Special Rings
 class water_ring(Ring):
-    def __init__(self, spcl):
+    def __init__(self):
+        self.spcl = "Water Breathing"
         super().__init__(name="Ring of the Sea",
-                         description="This ring allows the wearer to breathe underwater.",
+                         description="This ring allows the wearer to breathe underwater. \nSpecial: {}".format(self.spcl),
                          value=10,
-                         stat=10,
-                         spcl="waterbreathing")
+                         stat=10)
 # Necklace Items
 # Bracelet Items
 # Earring Items
