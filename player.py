@@ -1,5 +1,5 @@
 import items, world
-from utilities import text_speed, chk_CRIT
+from utilities import *
 import pickle, sys, time, random
 # import combat
 
@@ -400,21 +400,11 @@ class Player():
         else:
             return False
 
-    
-
-    def chk_weakness(self, enemy):
-        weakness = None
-        if enemy.weak != None:
-            weakness = enemy.weak
-            return weakness
-        else:
-            return weakness
-
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
         best_weapon = self.chk_Weapon()
-        cCRIT = chk_CRIT()
-        enemyWeakness = self.chk_weakness(enemy)
+        cCRIT = chk_CRIT(self)
+        enemyWeakness = chk_weakness(enemy)
         if cCRIT == True:
             if best_weapon.damage_type == enemyWeakness:
                 pdamage = ((((best_weapon.damage * 2)+ self.STR) * 2) - enemy.DEF)

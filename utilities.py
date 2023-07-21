@@ -10,6 +10,9 @@ def text_speed(text, speed):
         sys.stdout.flush()
         time.sleep(speed)
 
+
+# Combat Utilities
+
 # This functions is used in combat to determine if the attack is a critical hit.
 def chk_CRIT(object):
     critical = False
@@ -18,3 +21,11 @@ def chk_CRIT(object):
     else:
         critical = False
     return critical
+
+def chk_weakness(target):
+    weakness = None
+    if target.weak != None:
+        weakness = target.weak
+        return weakness
+    else:
+        return weakness
