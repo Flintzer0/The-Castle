@@ -4,15 +4,16 @@ import pickle, sys, time, random
 import combat
 
 class Player():
+    spcl = []
+    inventory = []
+    compendium = []
+
     def __init__(self, name, mHP, cHP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash):
         self.mHP = mHP
         self.cHP = cHP
         self.name = name
         self.LVL = LVL
         self.EXP = 0
-        self.spcl = []
-        self.inventory = []
-        self.compendium = []
         self.STR = STR
         self.DEF = DEF
         self.MAG = MAG
@@ -33,7 +34,7 @@ class Player():
         self.LUCKgrowth = .3
     
     def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.HP, self.name, self.inventory, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
+        return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.LVL, self.mHP, self.name, self.inventory, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
  
     def is_alive(self):
         return self.cHP > 0
@@ -176,15 +177,20 @@ class Player():
                 print("Invalid choice.")
                 time.sleep(.2)
 
+    def chk_compendium(self, enemy):
+        if enemy.now_seen() == True:
+            return True
+        else:
+            return False
+
     def add_monster(self, enemy):
-        room = world.tile_exists(self.location_x, self.location_y)
-        enemy = room.enemy
-        self.compendium.append(enemy)
-        text_speed("You encountered a {} for your first time!\n".format(room.enemy.name), .03)
-        time.sleep(.5)
-        text_speed("You added the {} to your Monster Compendium!\n".format(room.enemy.name), .03)
-        time.sleep(.5)
-        enemy.seen = True
+        if self.chk_compendium(enemy) == False:
+            self.compendium.append(enemy)
+            text_speed("You encountered a {} for your first time!\n".format(enemy.name), .03)
+            time.sleep(.5)
+            text_speed("You added the {} to your Monster Compendium!\n".format(enemy.name), .03)
+            time.sleep(.5)
+            enemy.see()
 
     def view_compendium(self):
         if len(self.compendium) != 0:
@@ -192,10 +198,12 @@ class Player():
             for i in r:
                 print(f'{i}: {self.compendium[i].name}')
             print(f'{len(self.compendium)}: Exit')
-            monster = input("Which monster would you like to view? ")
+            monster = input("Which monster would you like to view? \n")
             if monster.isdigit():
                 if int(monster) < len(self.compendium):
-                    print(self.compendium[int(monster)].__str__())
+                    print("\n" + self.compendium[int(monster)].__str__())
+                elif int(monster) == len(self.compendium):
+                    pass
                 else:
                     print("Invalid choice.")
             elif monster == len(self.compendium):
@@ -255,7 +263,7 @@ class Player():
             self.level_up()
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
             time.sleep(1)
-            if enemy.seen == False:
+            if self.chk_compendium(enemy) == False:
                 self.add_monster(enemy)
             # self.monster_part_drop(enemy)
 
@@ -400,30 +408,67 @@ class Player():
             critical = False
         return critical
 
+    def chk_weakness(self, enemy):
+        weakness = None
+        if enemy.weak != None:
+            weakness = enemy.weak
+            return weakness
+        else:
+            return weakness
+
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
         best_weapon = self.chk_Weapon()
         cCRIT = self.chk_CRIT()
+        enemyWeakness = self.chk_weakness(enemy)
         if cCRIT == True:
-            pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
-            text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
-            time.sleep(.5)
-            text_speed("Critical hit!\n", .01)
-            time.sleep(.5)
-            enemy.hp -= pdamage
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.5)
-            if enemy.is_alive() == True:
-                text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+            if best_weapon.damage_type == enemyWeakness:
+                pdamage = ((((best_weapon.damage * 2)+ self.STR) * 2) - enemy.DEF)
+                text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
                 time.sleep(.5)
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.5)
+                text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
+                time.sleep(.5)
+                enemy.hp -= pdamage
+                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+                time.sleep(.5)
+                if enemy.is_alive() == True:
+                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+                    time.sleep(.5)
+            else:
+                pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
+                text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
+                time.sleep(.5)
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.5)
+                enemy.hp -= pdamage
+                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+                time.sleep(.5)
+                if enemy.is_alive() == True:
+                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+                    time.sleep(.5)
         else:
-            pdamage = ((best_weapon.damage + self.STR) - enemy.DEF)
-            enemy.hp -= pdamage
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.5)
-            if enemy.is_alive() == True:
-                text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+            if best_weapon.damage_type == enemyWeakness:
+                pdamage = ((((best_weapon.damage * 2)+ self.STR) * 2) - enemy.DEF)
+                text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
                 time.sleep(.5)
+                text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
+                time.sleep(.5)
+                enemy.hp -= pdamage
+                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+                time.sleep(.5)
+                if enemy.is_alive() == True:
+                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+                    time.sleep(.5)
+            else:
+                pdamage = ((best_weapon.damage + self.STR) - enemy.DEF)
+                enemy.hp -= pdamage
+                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+                time.sleep(.5)
+                if enemy.is_alive() == True:
+                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+                    time.sleep(.5)
 
     def chk_edamage(self, enemy):
         edamage = None

@@ -2,6 +2,14 @@ import items
 import random
 import sys
 
+def chk_weakness(enemy):
+    weakness = None
+    if enemy.weakness != None:
+        weakness = enemy.weak
+        return weakness
+    else:
+        return weakness
+
 def chk_Weapon(player):
     best_weapon = items.Fists()
     max_dmg = 0
@@ -42,20 +50,45 @@ def pfight(player, enemy):
     print("You attack!")
     best_weapon = chk_Weapon(player)
     chkCRIT = chk_CRIT(player)
+    enemyWeakness = chk_weakness(enemy)
     if chkCRIT == True:
-        pdamage = (((best_weapon.damage + player.STR) * 2) - enemy.DEF)
-        print("You use {} against {}!".format(best_weapon.name, enemy.name))
-        print("Critical hit!")
-        enemy.hp -= pdamage
-        print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
-        if enemy.is_alive() == False:
-            print("You killed the {}!".format(enemy.name))
+        if best_weapon.damage_type == enemyWeakness:
+            pdamage = ((((best_weapon.damage * 2) + player.STR) * 2) - enemy.DEF)
+            print("You use {} against {}!".format(best_weapon.name, enemy.name))
+            print("Critical hit!")
+            print("You hit the {}'s weakness!".format(enemy.name))
+            enemy.hp -= pdamage
+            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
+            if enemy.is_alive() == False:
+                print("You killed the {}!".format(enemy.name))
+            else:
+                print("The {} has {} HP remaining.".format(enemy.name, enemy.hp))
         else:
-            print("The {} has {} HP remaining.".format(enemy.name, enemy.hp))
+            pdamage = (((best_weapon.damage + player.STR) * 2) - enemy.DEF)
+            print("You use {} against {}!".format(best_weapon.name, enemy.name))
+            print("Critical hit!")
+            enemy.hp -= pdamage
+            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
+            if enemy.is_alive() == False:
+                print("You killed the {}!".format(enemy.name))
+            else:
+                print("The {} has {} HP remaining.".format(enemy.name, enemy.hp))
     else:
-        pdamage = ((best_weapon.damage + player.STR) - enemy.DEF)
-        enemy.hp -= pdamage
-        print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
+        if best_weapon.element == enemyWeakness:
+            pdamage = ((((best_weapon.damage * 2) + player.STR) * 2) - enemy.DEF)
+            print("You use {} against {}!".format(best_weapon.name, enemy.name))
+            print("You hit the {}'s weakness!".format(enemy.name))
+            enemy.hp -= pdamage
+            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
+            if enemy.is_alive() == False:
+                print("You killed the {}!".format(enemy.name))
+            else:
+                print("The {} has {} HP remaining.".format(enemy.name, enemy.hp))
+        else:
+            print("You use {} against {}!".format(best_weapon.name, enemy.name))
+            pdamage = ((best_weapon.damage + player.STR) - enemy.DEF)
+            enemy.hp -= pdamage
+            print("You dealt {} damage to the {}.".format(pdamage, enemy.name))
 
 
 def chk_edamage(player, enemy):
