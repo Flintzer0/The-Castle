@@ -181,8 +181,12 @@ class Player():
                 time.sleep(.2)
 
     def chk_compendium(self, enemy):
-        if enemy.now_seen() == True:
-            return True
+        if len(self.compendium) != 0:
+            for m in self.compendium:
+                if enemy.__class__ == m.__class__:
+                    return True
+                else:
+                    return False
         else:
             return False
 
@@ -194,6 +198,8 @@ class Player():
             text_speed("You added the {} to your Monster Compendium!\n".format(enemy.name), .03)
             time.sleep(.5)
             enemy.see()
+        else:
+            pass
 
     def view_compendium(self):
         if len(self.compendium) != 0:
