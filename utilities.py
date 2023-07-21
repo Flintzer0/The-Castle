@@ -1,4 +1,4 @@
-import sys, time
+import sys, time, random
 
 # This module contains functions that are used in multiple files.
 
@@ -9,3 +9,12 @@ def text_speed(text, speed):
         sys.stdout.write(l)
         sys.stdout.flush()
         time.sleep(speed)
+
+# This functions is used in combat to determine if the attack is a critical hit.
+def chk_CRIT(object):
+    critical = False
+    if random.randint(1,100) <= ((object.SKL*2) + object.LUCK):
+        critical = True
+    else:
+        critical = False
+    return critical

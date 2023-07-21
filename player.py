@@ -1,7 +1,7 @@
 import items, world
-from utilities import text_speed
+from utilities import text_speed, chk_CRIT
 import pickle, sys, time, random
-import combat
+# import combat
 
 class Player():
     spcl = []
@@ -185,7 +185,7 @@ class Player():
 
     def add_monster(self, enemy):
         if self.chk_compendium(enemy) == False:
-            self.compendium.append(enemy)
+            self.compendium.append(enemy.__class__)
             text_speed("You encountered a {} for your first time!\n".format(enemy.name), .03)
             time.sleep(.5)
             text_speed("You added the {} to your Monster Compendium!\n".format(enemy.name), .03)
@@ -400,13 +400,7 @@ class Player():
         else:
             return False
 
-    def chk_CRIT(object):
-        critical = False
-        if random.randint(1,100) <= ((object.SKL*2) + object.LUCK):
-            critical = True
-        else:
-            critical = False
-        return critical
+    
 
     def chk_weakness(self, enemy):
         weakness = None
@@ -419,7 +413,7 @@ class Player():
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
         best_weapon = self.chk_Weapon()
-        cCRIT = self.chk_CRIT()
+        cCRIT = chk_CRIT()
         enemyWeakness = self.chk_weakness(enemy)
         if cCRIT == True:
             if best_weapon.damage_type == enemyWeakness:
@@ -474,7 +468,7 @@ class Player():
         edamage = None
         armor = self.chk_armor()
         pdef = (self.DEF + armor.armor)
-        cCRIT = combat.chk_CRIT(enemy)
+        cCRIT = chk_CRIT(enemy)
         if cCRIT == True:
             text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .01)
             time.sleep(.5)
