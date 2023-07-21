@@ -7,7 +7,7 @@ from player import Player
 def play():
     world.load_tiles()
     player = Player(name="Debug", LVL=1, mHP=100, cHP=100, STR=100, DEF=100, MAG=100, RES=100, SPD=100, SKL=100, LUCK=100, cash=5000)
-    # player.inventory.append(items.cold_iron_sword())
+    player.inventory.append(items.cold_iron_sword())
     player.inventory.append(items.water_ring())
     game_loop(player)
 

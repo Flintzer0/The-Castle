@@ -388,11 +388,18 @@ class stairs(map_tile):
     def __init__(self, x, y):
         super().__init__(x, y)
 
-    def intro_text(self, player):
+    def intro_text(self):
         text_speed('You see a staircase leading up...\n', .05)
+        time.sleep(1)
         text_speed('This marks the end of the demo...\n', .05)
+        time.sleep(1)
+        
+    def end_demo(self, player):
+        text_speed('You completed the demo!\n', .05)
+        time.sleep(1)
+        text_speed('Thanks for playing!\n', .05)
+        time.sleep(1)
         player.victory = True
-        title_screen()
 
 # Special Tile Subclasses
 class low_trader(shop_room):

@@ -1,6 +1,6 @@
 import items, world
 from utilities import *
-import pickle, sys, time, random
+import pickle, sys, time, random, tiles
 # import combat
 
 class Player():
@@ -99,6 +99,9 @@ class Player():
         self.location_x += dx
         self.location_y += dy
         # print(world.tile_exists(self.location_x, self.location_y).intro_text())
+        location = world.tile_exists(self.location_x, self.location_y)
+        if isinstance(location, tiles.stairs):
+            location.end_demo(self)
 
     def chk_spcl(self, spcl):
         self.add_spcl()

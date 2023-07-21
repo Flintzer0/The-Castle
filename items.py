@@ -2,12 +2,12 @@ import enemies
 
 class Item():
     """The base class for all items"""
+    damage_type = ""
     def __init__(self, name, description, value):
         self.name = name
         self.description = description
         self.value = value
         self.spcl = ""
-        self.damage_type = ""
  
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
