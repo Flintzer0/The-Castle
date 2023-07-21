@@ -197,7 +197,6 @@ class Player():
             time.sleep(.5)
             text_speed("You added the {} to your Monster Compendium!\n".format(enemy.name), .03)
             time.sleep(.5)
-            enemy.see()
         else:
             pass
 

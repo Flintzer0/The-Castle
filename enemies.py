@@ -13,7 +13,6 @@ class Enemy:
         self.EXP = EXP
         self.gold = gold
         self.description = description
-        self.seen = False
     
     def __repr__(self):
         return self.name
@@ -23,12 +22,6 @@ class Enemy:
  
     def is_alive(self):
         return self.hp > 0
-    
-    def see(self):
-        self.seen = True
-
-    def now_seen(self):
-        return self.seen
     
 # Tier 1 Enemies
 
