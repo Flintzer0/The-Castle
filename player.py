@@ -185,7 +185,7 @@ class Player():
 
     def add_monster(self, enemy):
         if self.chk_compendium(enemy) == False:
-            self.compendium.append(enemy.__class__)
+            self.compendium.append(enemy)
             text_speed("You encountered a {} for your first time!\n".format(enemy.name), .03)
             time.sleep(.5)
             text_speed("You added the {} to your Monster Compendium!\n".format(enemy.name), .03)
