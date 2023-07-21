@@ -15,12 +15,7 @@ def text_speed(text, speed):
 
 # This functions is used in combat to determine if the attack is a critical hit.
 def chk_CRIT(object):
-    critical = False
-    if random.randint(1,100) <= ((object.SKL*2) + object.LUCK):
-        critical = True
-    else:
-        critical = False
-    return critical
+    return random.randint(1,100) <= ((object.SKL*2) + object.LUCK)
 
 def chk_weakness(target):
     weakness = None

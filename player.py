@@ -401,12 +401,7 @@ class Player():
         return armor
 
     def chk_SPD(self, enemy):
-        if self.SPD > enemy.SPD:
-            return True
-        elif self.SPD == enemy.SPD:
-            return True
-        else:
-            return False
+        return self.SPD >= enemy.SPD
 
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
@@ -442,7 +437,7 @@ class Player():
                     time.sleep(.5)
         else:
             if best_weapon.damage_type == enemyWeakness:
-                pdamage = ((((best_weapon.damage * 2)+ self.STR) * 2) - enemy.DEF)
+                pdamage = (((best_weapon.damage * 2)+ self.STR) - enemy.DEF)
                 text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
                 time.sleep(.5)
                 text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
