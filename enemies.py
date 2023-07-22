@@ -37,7 +37,7 @@ class goblin(Enemy):
 
 class skeleton(Enemy):
     def __init__(self):
-        super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, weak="Holy", DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=17, gold=13,
+        super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, weak="Turn Undead", DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=17, gold=13,
                          description="A walking skeleton. \nThey are slow, but they have some defense and deal a little more \ndamage.\n")
         
 class large_rat(Enemy):
@@ -47,7 +47,7 @@ class large_rat(Enemy):
 
 class demon_bat(Enemy):
     def __init__(self):
-        super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, weak=None, DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9,
+        super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, weak="Holy", DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9,
                          description="A bat with red eyes and a demonic aura. \nThey are quick and have a bit of magic resistance, but physically weak.\n")
         
 # Bosses
