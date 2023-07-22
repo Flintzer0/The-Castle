@@ -37,6 +37,19 @@ class Magic_Weapon(Weapon):
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\nDamage: {}\nDamage Type: {}".format(self.name, self.description, self.value, self.damage, self.damage_type)
 
+# Damage Types
+# Fire
+# Cold
+# Lightning
+# Water
+# Earth
+# Wind
+# Holy
+# Demonic
+# Necrotic
+# Poison
+# Turn Undead (labeled as Turn in-code)
+
 # Unarmed/Fist Items
 class Fists(Weapon):
     def __init__(self):
@@ -98,6 +111,33 @@ class cold_iron_sword(Magic_Weapon):
                          value=150,
                          damage=15,
                          damage_type="Cold")
+
+class demonsbane(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Holy"
+        super().__init__(name="Demonsbane",
+                         description="A blade of brightly shining, white steel. It fills you with warmth. \nAll damage dealt by this weapon is Holy damage.",
+                         value=200,
+                         damage=20,
+                         damage_type="Holy")
+
+class flamelash(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Fire"
+        super().__init__(name="Flamelash",
+                         description="When drawn, the blade of this immediately ignites. The flames flicker wickedly. \nAll damage dealt by this weapon is Fire damage.",
+                         value=120,
+                         damage=12,
+                         damage_type="Fire")
+        
+class sparktongue(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Lightning"
+        super().__init__(name="Sparktongue",
+                         description="A blade of pure lightning. It crackles and sparks when drawn. \nAll damage dealt by this weapon is Lightning damage.",
+                         value=120,
+                         damage=12,
+                         damage_type="Lightning")
 
 # Polearm Items
 # Axe Items
