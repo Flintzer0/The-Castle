@@ -1,5 +1,5 @@
 import world, sys, time
-from player import Player
+from player import *
 from utilities import text_speed
 from pathlib import Path
 import pickle
@@ -13,7 +13,17 @@ def play(saved_world=None, saved_player=None):
         world.load_tiles()
         text_speed("What is your name?\n", .05)
         name=input()
-        player = Player(name=name, LVL=1, mHP=10, cHP=10, STR=2, DEF=1, MAG=1, RES=0, SPD=2, SKL=2, LUCK=1, cash=5)
+        text_speed("Alright, " + name + ". What is your class?\n", .05)
+        text_speed("1. Fighter\n", .05)
+        text_speed("2. Mage\n", .05)
+        text_speed("3. Rogue\n", .05)
+        class_choice = input()
+        if class_choice == '1':
+            player = Fighter(name=name, LVL=1)
+        elif class_choice == '2':
+            player = Mage(name=name, LVL=1)
+        elif class_choice == '3':
+            player = Rogue(name=name, LVL=1)
     game_loop(player)
 
 def game_loop(player):
@@ -33,9 +43,9 @@ def game_loop(player):
                     player.do_action(action, **action.kwargs)
                     break
         else:
-            print("You died.\n")
+            text_speed("You died.\n", .05)
             time.sleep(2)
-            print("Game over.\n")
+            text_speed("Game over.\n", .05)
             time.sleep(2)
             sys.exit()
 

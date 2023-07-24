@@ -1,4 +1,4 @@
-import items, world
+import items, world, magic
 from utilities import *
 import pickle, sys, time, random
 
@@ -6,11 +6,14 @@ class Player():
     spcl = []
     inventory = []
     compendium = []
+    spells = []
 
-    def __init__(self, name, mHP, cHP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash):
+    def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash):
         self.mHP = mHP
         self.cHP = cHP
         self.name = name
+        self.mMP = mMP
+        self.cMP = cMP
         self.LVL = LVL
         self.EXP = 0
         self.STR = STR
@@ -24,6 +27,7 @@ class Player():
         self.location_x, self.location_y = world.starting_position
         self.victory = False
         self.mHPgrowth = .6
+        self.mMPgrowth = .5
         self.STRgrowth = .5
         self.DEFgrowth = .4
         self.MAGgrowth = .3
@@ -33,7 +37,7 @@ class Player():
         self.LUCKgrowth = .3
     
     def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.LVL, self.mHP, self.name, self.inventory, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
+        return "{}\n=====\n{}\nLevel: {}\nEXP: {}\nMaximum HP: {}\nStrength: {}\nDefense: {}\nMagic: {}\nResistance: {}\nSpeed: {}\nSkill: {}\nLuck: {}\n".format(self.name, self.LVL, self.EXP, self.mHP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
  
     def is_alive(self):
         return self.cHP > 0
@@ -43,6 +47,10 @@ class Player():
             return 1
         else:
             return 0
+        
+    def view_character(self):
+        print(self.__str__())
+        print("Current HP: {}\n".format(self.cHP))
 
     def level_up(self):
         if self.EXP >= 100:
@@ -88,6 +96,12 @@ class Player():
     def add_spcl(self):
         for item in self.inventory:
             self.spcl.append(item.spcl)
+
+    def add_statval(self, stat):
+        stat = [self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK]
+        for item in self.inventory:
+            if item.stat == stat:
+                stat += item.value
     
     def do_action(self, action, **kwargs):
         action_method = getattr(self, action.method.__name__)
@@ -258,23 +272,6 @@ class Player():
         else:
             return room.searched_text()
         
-    def fight(self, enemy):
-        self.combat(enemy)
-        if not enemy.is_alive():
-            exp = round(enemy.EXP * (((10-self.LVL)+1)/10))
-            self.EXP += exp
-            self.cash += enemy.gold
-            text_speed("You killed the {}!\n".format(enemy.name), .03)
-            time.sleep(1)
-            text_speed("You gained {} EXP!\n".format(exp), .03)
-            time.sleep(1)
-            self.level_up()
-            text_speed("You gained {} gold!\n".format(enemy.gold), .03)
-            time.sleep(1)
-            if self.chk_compendium(enemy) == False:
-                self.add_monster(enemy)
-            # self.monster_part_drop(enemy)
-
     def check_inventory(self, item):
         a=[]
         items = []
@@ -380,6 +377,25 @@ class Player():
     #     else:
     #         pass
 
+    def fight(self, enemy):
+        # for item in self.inventory:
+        #     self.add_statval(item)
+        self.combat(enemy)
+        if not enemy.is_alive():
+            exp = round(enemy.EXP * (((10-self.LVL)+1)/10))
+            self.EXP += exp
+            self.cash += enemy.gold
+            text_speed("You killed the {}!\n".format(enemy.name), .03)
+            time.sleep(1)
+            text_speed("You gained {} EXP!\n".format(exp), .03)
+            time.sleep(1)
+            self.level_up()
+            text_speed("You gained {} gold!\n".format(enemy.gold), .03)
+            time.sleep(1)
+            if self.chk_compendium(enemy) == False:
+                self.add_monster(enemy)
+            # self.monster_part_drop(enemy)
+
     def chk_Weapon(self):
         best_weapon = items.Fists()
         max_dmg = 0
@@ -396,8 +412,8 @@ class Player():
         for i in self.inventory:
             if isinstance(i, items.Armor):
                 if i.armor > max_armor:
-                    max_armor = i.armor
-                    armor = i
+                    max_armor += i.armor
+                    armor = max_armor
         return armor
 
     def chk_SPD(self, enemy):
@@ -407,55 +423,15 @@ class Player():
         text_speed("You attack!\n", .03)
         best_weapon = self.chk_Weapon()
         cCRIT = chk_CRIT(self)
-        enemyWeakness = chk_weakness(enemy)
+        pdamage = self.generate_damage(self.STR, best_weapon, enemy)
+        text_speed("You use {}!\n".format(best_weapon.name), .03)
+        time.sleep(.5)
         if cCRIT == True:
-            if best_weapon.damage_type == enemyWeakness:
-                pdamage = ((((best_weapon.damage * 2)+ self.STR) * 2) - enemy.DEF)
-                text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
-                time.sleep(.5)
-                text_speed("Critical hit!\n", .01)
-                time.sleep(.5)
-                text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
-                time.sleep(.5)
-                enemy.hp -= pdamage
-                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-                time.sleep(.5)
-                if enemy.is_alive() == True:
-                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
-                    time.sleep(.5)
-            else:
-                pdamage = (((best_weapon.damage + self.STR) * 2) - enemy.DEF)
-                text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
-                time.sleep(.5)
-                text_speed("Critical hit!\n", .01)
-                time.sleep(.5)
-                enemy.hp -= pdamage
-                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-                time.sleep(.5)
-                if enemy.is_alive() == True:
-                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
-                    time.sleep(.5)
-        else:
-            if best_weapon.damage_type == enemyWeakness:
-                pdamage = (((best_weapon.damage * 2)+ self.STR) - enemy.DEF)
-                text_speed("You use {} against {}!\n".format(best_weapon.name, enemy.name), .03)
-                time.sleep(.5)
-                text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
-                time.sleep(.5)
-                enemy.hp -= pdamage
-                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-                time.sleep(.5)
-                if enemy.is_alive() == True:
-                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
-                    time.sleep(.5)
-            else:
-                pdamage = ((best_weapon.damage + self.STR) - enemy.DEF)
-                enemy.hp -= pdamage
-                text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-                time.sleep(.5)
-                if enemy.is_alive() == True:
-                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
-                    time.sleep(.5)
+            pdamage *= 2
+            text_speed("Critical hit!\n", .01)
+            time.sleep(.5)
+        text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+        enemy.hp -= (pdamage - enemy.DEF)
 
     def chk_edamage(self, enemy):
         edamage = None
@@ -500,12 +476,119 @@ class Player():
                 time.sleep(.5)
 
     def combat(self, enemy):
-        chkSPD = self.chk_SPD(enemy)
-        if chkSPD == True:
-            self.pfight(enemy)
-            if enemy.is_alive() == True:
-                self.efight(enemy)
-        else:
-            self.efight(enemy)
-            if self.is_alive() == True:
+        text_speed("What will you do?\n", .05)
+        time.sleep(.5)
+        choice = input("1. Attack\n2. Cast Spell\n")
+        if choice == "1":
+            chkSPD = self.chk_SPD(enemy)
+            if chkSPD == True:
                 self.pfight(enemy)
+                if enemy.is_alive() == True:
+                    self.efight(enemy)
+            else:
+                self.efight(enemy)
+                if self.is_alive() == True:
+                    self.pfight(enemy)
+        elif choice == "2":
+            chkSPD = self.chk_SPD(enemy)
+            spell = self.cast_spell()
+            if chkSPD == True:
+                self.pmagatk(enemy, spell)
+                if enemy.is_alive() == True:
+                    self.efight(enemy)
+            else:
+                self.efight(enemy)
+                if self.is_alive() == True:
+                    self.pmagatk(enemy, spell)
+
+    def chk_spells(self):
+        spell = []
+        for i in self.spells:
+            if isinstance(i, magic.Spell):
+                spell.append(i)
+        return spell
+    
+    def list_spells(self):
+        spell = self.chk_spells()
+        n = range(int(len(spell)))
+        for i in n:
+            print(f'{i}: {spell[i].name}')
+
+    def cast_spell(self):
+        self.list_spells()
+        text_speed("Which spell do you want to cast? ", .05)
+        choice = input()
+        if choice.isdigit():
+            choice = int(choice)
+            if choice < len(self.chk_spells()):
+                return self.chk_spells()[choice]
+
+    def generate_damage(self, stat, attack, enemy):
+        adamage = attack.damage
+        eweak = chk_weakness(enemy)
+        if attack.damage_type == eweak:
+            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+            return random.randrange(1 + stat, stat + (adamage * 2))
+        else:
+            return random.randrange(1 + stat, stat + adamage)
+
+    def pmagatk(self, enemy, spell):
+        text_speed("You cast {}!\n".format(spell.name), .05)
+        time.sleep(.5)
+        pdamage = self.generate_damage(self.MAG, spell, enemy)
+        if chk_CRIT(self) == True:
+            pdamage *= 2
+            text_speed("Critical hit!\n", .01)
+            time.sleep(.5)
+        text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .05)
+        enemy.hp -= (pdamage - enemy.RES)
+
+class Fighter(Player):
+    def __init__(self):
+        super.__init__(self, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=2, MAG=0, RES=0, SPD=1, SKL=2, LUCK=1, cash=5)
+        self.inventory.append(items.rusty_sword)
+        self.inventory.append(items.rusty_armor)
+        self.spells.append(magic.quake)
+        self.mHPgrowth = .7
+        self.mMPgrowth = .3
+        self.STRgrowth = .7
+        self.DEFgrowth = .5
+        self.MAGgrowth = .2
+        self.RESgrowth = .1
+        self.SPDgrowth = .3
+        self.SKLgrowth = .4
+        self.LUCKgrowth = .3
+
+class Mage(Player):
+    def __init__(self):
+        super.__init__(self, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5)
+        self.inventory.append(items.wooden_staff)
+        self.inventory.append(items.cloth_armor)
+        self.spells.append(magic.fire)
+        self.spells.append(magic.ice)
+        self.spells.append(magic.shock)
+        self.mHPgrowth = .2
+        self.mMPgrowth = .7
+        self.STRgrowth = .1
+        self.DEFgrowth = .2
+        self.MAGgrowth = .8
+        self.RESgrowth = .5
+        self.SPDgrowth = .4
+        self.SKLgrowth = .3
+        self.LUCKgrowth = .3
+
+class Rogue(Player):
+    def __init__(self):
+        super.__init__(self, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=2, cash=15)
+        self.inventory.append(items.rusty_dagger)
+        self.inventory.append(items.luck_1_ring)
+        self.spells.append(magic.poison)
+        self.mHPgrowth = .3
+        self.mMPgrowth = .4
+        self.STRgrowth = .4
+        self.DEFgrowth = .2
+        self.MAGgrowth = .2
+        self.RESgrowth = .1
+        self.SPDgrowth = .7
+        self.SKLgrowth = .7
+        self.LUCKgrowth = .5

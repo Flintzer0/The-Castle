@@ -1,0 +1,8 @@
+*.json
+*.code-workspace
+*.ini
+*.xlsx
+.venv/pyvenv.cfg
+.venv/*
+__pycache__/*
+test_chamber.py

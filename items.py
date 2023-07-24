@@ -143,6 +143,13 @@ class sparktongue(Magic_Weapon):
 # Axe Items
 # Bow Items
 # Staff Items
+class wooden_staff(Magic_Weapon):
+    def __init__(self):
+        super().__init__(name="Wooden Staff",
+                         description="A simple wooden staff. It's not very sturdy, but it's better than nothing.",
+                         value=10,
+                         damage=1)
+# Wand Items
 # Tome Items
 # Rod Items
 # Thrown Items
@@ -170,6 +177,27 @@ class cloth_armor(Armor):
                          description="A simple cloth armor. Provides minimal protection.",
                          value=5,
                          armor=1)
+        
+class rusty_armor(Armor):
+    def __init__(self):
+        super().__init__(name="Rusty Armor",
+                         description="Rusted iron armor. Provides minimal protection.",
+                         value=5,
+                         armor=2)
+
+class leather_armor(Armor):
+    def __init__(self):
+        super().__init__(name="Leather Armor",
+                         description="A simple leather armor. Provides minimal protection.",
+                         value=10,
+                         armor=2)
+        
+class chainmail(Armor):
+    def __init__(self):
+        super().__init__(name="Chainmail",
+                         description="A simple chainmail. Provides minimal protection.",
+                         value=15,
+                         armor=3)
 
 # Shield Items
 class rusty_shield(Armor):
@@ -181,15 +209,14 @@ class rusty_shield(Armor):
 
 # These items are all equipment used for increasing stats.
 # Accessory Items
-# Ring Items
+    # Ring Items
 class Ring(Item):
     def __init__(self, name, description, value, stat, statval, spcl):
         super().__init__(name, description, value)
         self.stat = stat
         self.statval = statval
-        self.spcl = spcl
-
-    # Strength Rings
+        self.spcl = spcl        
+# Strength Rings
 class strength_1_ring(Ring):
     def __init__(self):
         super().__init__(name="+1 Strength Ring",
@@ -198,7 +225,7 @@ class strength_1_ring(Ring):
                          stat="STR",
                          statval=1,
                          spcl="")
-    # Defense Rings
+# Defense Rings
 class defense_1_ring(Ring):
     def __init__(self):
         super().__init__(name="+1 Defense Ring",
@@ -207,12 +234,52 @@ class defense_1_ring(Ring):
                          stat="DEF",
                          statval=1,
                          spcl="")
-    # Magic Rings
-    # Resistance Rings
-    # Speed Rings
-    # Skill Rings
-    # Luck Rings
-    # Special Rings
+# Magic Rings
+class magic_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Magic Ring",
+                         description="A ring that increases magic by 1.",
+                         value=10,
+                         stat="MAG",
+                         statval=1,
+                         spcl="")   
+# Resistance Rings
+class resistance_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Resistance Ring",
+                         description="A ring that increases resistance by 1.",
+                         value=10,
+                         stat="RES",
+                         statval=1,
+                         spcl="")
+# Speed Rings
+class speed_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Speed Ring",
+                         description="A ring that increases speed by 1.",
+                         value=10,
+                         stat="SPD",
+                         statval=1,
+                         spcl="")
+# Skill Rings
+class skill_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Skill Ring",
+                         description="A ring that increases skill by 1.",
+                         value=10,
+                         stat="SKL",
+                         statval=1,
+                         spcl="")
+# Luck Rings
+class luck_1_ring(Ring):
+    def __init__(self):
+        super().__init__(name="+1 Luck Ring",
+                         description="A ring that increases luck by 1.",
+                         value=10,
+                         stat="LUCK",
+                         statval=1,
+                         spcl="")
+# Special Rings
 class water_ring(Ring):
     def __init__(self):
         self.spcl = "Water Breathing"
@@ -261,12 +328,13 @@ class iron_key(Key):
 
 # Potion Items
 class Potion(Item):
-    def __init__(self, name, description, value, heal):
+    def __init__(self, name, description, value, heal, mheal):
         self.heal = heal
+        self.mheal = mheal
         super().__init__(name, description, value)
     
     def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\nHeal: {}".format(self.name, self.description, self.value, self.heal)
+        return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
     
 class small_red_potion(Potion):
     def __init__(self, qty):
@@ -274,7 +342,8 @@ class small_red_potion(Potion):
         super().__init__(name="Small Red Potion",
                          description="A small red potion. Heals 5 HP. ({})".format(str(self.qty)),
                          value=5,
-                         heal=5)
+                         heal=5,
+                         mheal=0)
 
 class large_red_potion(Potion):
     def __init__(self, qty):
@@ -282,24 +351,27 @@ class large_red_potion(Potion):
         super().__init__(name="Large Red Potion",
                          description="A large red potion. Heals 10 HP. ({})".format(str(self.qty)),
                          value=10,
-                         heal=10)
-
-class elixir(Potion):
-    def __init__(self, qty):
-        self.qty = qty
-        super().__init__(name="Elixir",
-                         description="A magical elixir. Fully restores HP. ({})".format(str(self.qty)),
-                         value=15,
-                         heal=999)
+                         heal=10,
+                         mheal=0)
 
 class small_blue_potion(Potion):
     def __init__(self, qty):
         self.qty = qty
         super().__init__(name="Small Blue Potion",
-                         description="A small blue potion. Boosts MAG by 2 for 3 turns. ({})".format(str(self.qty)),
+                         description="A small blue potion. Recovers 5 MP. ({})".format(str(self.qty)),
                          value=5,
-                         heal=2)
+                         heal=0,
+                         mheal=5)
         
+class elixir(Potion):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Elixir",
+                         description="A magical elixir. Fully restores HP and MP. ({})".format(str(self.qty)),
+                         value=15,
+                         heal=999,
+                         mheal=999)
+
 # These items are all materials used for item upgrades.
 class Material(Item):
     def __init__(self, name, description, value, rarity):

@@ -1,4 +1,4 @@
-import world, sys, time, items
+import world, sys, time, items, magic
 from player import Player
 
 # This file is for debugging purposes only. It is not part of the game.
@@ -6,9 +6,10 @@ from player import Player
 # Due to the nature of player move actions, the player file must also be edited to remove the intro text call from the move action.
 def play():
     world.load_tiles()
-    player = Player(name="Debug", LVL=1, mHP=100, cHP=100, STR=100, DEF=100, MAG=100, RES=100, SPD=100, SKL=100, LUCK=100, cash=5000)
+    player = Player(name="Debug", LVL=1, mHP=100, cHP=100, mMP=200, cMP=200, STR=100, DEF=100, MAG=100, RES=100, SPD=100, SKL=100, LUCK=100, cash=5000)
     player.inventory.append(items.cold_iron_sword())
     player.inventory.append(items.water_ring())
+    player.spells.append(magic.fire())
     game_loop(player)
 
 def game_loop(player):

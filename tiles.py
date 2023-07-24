@@ -72,6 +72,7 @@ class map_tile:
         # Returns all of the standard available actions in this room.
         moves = self.adjacent_moves()
         moves.append(actions.view_inventory())
+        moves.append(actions.view_stats())
         moves.append(actions.potion())
         moves.append(actions.search())
         moves.append(actions.view_compendium())
@@ -124,12 +125,13 @@ class shop_room(map_tile):
     # The available actions are overwritten to include the buy action.
     def available_actions(self):
         moves = self.adjacent_moves()
+        moves.append(actions.buy(shopkeep=self.shopkeep))
         moves.append(actions.view_inventory())
+        moves.append(actions.view_stats())
         moves.append(actions.potion())
         moves.append(actions.search())
         moves.append(actions.view_compendium())
         moves.append(actions.SaveAndExit())
-        moves.append(actions.buy(shopkeep=self.shopkeep))
         return moves
     
 # Empty Tile Subclasses
@@ -177,7 +179,6 @@ class empty_room(map_tile):
 #===============================================================================#
 
 # Basement 1 Tile Subclasses
-# Unique tiles still needed:
 
 # Starting Room
 class jail_cell(map_tile):
@@ -194,7 +195,7 @@ class jail_cell(map_tile):
             time.sleep(1)
             text_speed("You've lost track of how long it's been down here.\n", .05)
             time.sleep(1)
-            text_speed("You hear something. . . \n", .5)
+            text_speed("You hear something. . . \n", .1)
             time.sleep(1)
             text_speed(". . . \n", 1)
             time.sleep(2)
@@ -410,7 +411,7 @@ class low_trader(shop_room):
         if self.entered == False:
             text_speed("You enter a room and are suddenly blinded by a bright light.\n", .05)
             time.sleep(1)
-            text_speed("Once your eyes have adjusted to the ligh, you see a \nroom completely out of place in the bleak atmosphere you've grown accustomed to.\n", .05)
+            text_speed("Once your eyes have adjusted to the light, you see a room \ncompletely out of place in the bleak atmosphere you've grown accustomed to.\n", .05)
             time.sleep(1)
             text_speed("The room is brightly lit, and there are shelves full of \nvarious items lining the walls.\n", .05)
             time.sleep(1)
