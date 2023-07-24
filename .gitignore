@@ -1,6 +1,5 @@
 *.json
 *.code-workspace
-*.ini
 *.xlsx
 .venv/pyvenv.cfg
 .venv/*
