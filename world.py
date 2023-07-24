@@ -1,8 +1,8 @@
-import tiles
 _world = {}
 starting_position = (0, 0)
  
 def load_tiles():
+    import tiles
     """Parses a file that describes the world space into the _world object"""
     with open('resources/bf1.txt', 'r') as f:
         rows = f.readlines()

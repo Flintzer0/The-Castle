@@ -1,7 +1,6 @@
 import items, world
 from utilities import *
-import pickle, sys, time, random, tiles
-# import combat
+import pickle, sys, time, random
 
 class Player():
     spcl = []
@@ -96,6 +95,7 @@ class Player():
             action_method(**kwargs)
 
     def move(self, dx, dy):
+        import tiles
         self.location_x += dx
         self.location_y += dy
         # print(world.tile_exists(self.location_x, self.location_y).intro_text())
