@@ -1,4 +1,4 @@
-import world, sys, time
+import world, sys, time, items, magic, skills
 from player import *
 from utilities import text_speed
 from pathlib import Path
@@ -17,13 +17,28 @@ def play(saved_world=None, saved_player=None):
         text_speed("1. Fighter\n", .05)
         text_speed("2. Mage\n", .05)
         text_speed("3. Rogue\n", .05)
+        text_speed("4. Cleric\n", .05)
+        text_speed("5. Paladin\n", .05)
+        text_speed("6. Ranger\n", .05)
         class_choice = input()
         if class_choice == '1':
-            player = Fighter(name=name, LVL=1)
+            player = Fighter()
+            player.name = name
         elif class_choice == '2':
-            player = Mage(name=name, LVL=1)
+            player = Mage()
+            player.name = name
         elif class_choice == '3':
-            player = Rogue(name=name, LVL=1)
+            player = Rogue()
+            player.name = name
+        elif class_choice == '4':
+            player = Cleric()
+            player.name = name
+        elif class_choice == '5':
+            player = Paladin()
+            player.name = name
+        elif class_choice == '6':
+            player = Ranger()
+            player.name = name
     game_loop(player)
 
 def game_loop(player):

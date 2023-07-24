@@ -1,4 +1,4 @@
-import items, world, magic
+import items, world, magic, skills
 from utilities import *
 import pickle, sys, time, random
 
@@ -7,6 +7,7 @@ class Player():
     inventory = []
     compendium = []
     spells = []
+    skills = []
 
     def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash):
         self.mHP = mHP
@@ -38,6 +39,9 @@ class Player():
     
     def __str__(self):
         return "{}\n=====\n{}\nLevel: {}\nEXP: {}\nMaximum HP: {}\nStrength: {}\nDefense: {}\nMagic: {}\nResistance: {}\nSpeed: {}\nSkill: {}\nLuck: {}\n".format(self.name, self.LVL, self.EXP, self.mHP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
+    
+    def __repr__(self):
+        return self.name
  
     def is_alive(self):
         return self.cHP > 0
@@ -436,7 +440,7 @@ class Player():
     def chk_edamage(self, enemy):
         edamage = None
         armor = self.chk_armor()
-        pdef = (self.DEF + armor.armor)
+        pdef = (self.DEF + armor)
         cCRIT = chk_CRIT(enemy)
         if cCRIT == True:
             text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .01)
@@ -528,9 +532,9 @@ class Player():
         eweak = chk_weakness(enemy)
         if attack.damage_type == eweak:
             text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
-            return random.randrange(1 + stat, stat + (adamage * 2))
+            return random.randrange(stat, stat + (adamage * 2))
         else:
-            return random.randrange(1 + stat, stat + adamage)
+            return random.randrange(stat, stat + adamage)
 
     def pmagatk(self, enemy, spell):
         text_speed("You cast {}!\n".format(spell.name), .05)
@@ -545,10 +549,11 @@ class Player():
 
 class Fighter(Player):
     def __init__(self):
-        super.__init__(self, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=2, MAG=0, RES=0, SPD=1, SKL=2, LUCK=1, cash=5)
-        self.inventory.append(items.rusty_sword)
-        self.inventory.append(items.rusty_armor)
-        self.spells.append(magic.quake)
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=2, MAG=0, RES=0, SPD=1, SKL=2, LUCK=1, cash=5)
+        self.inventory.append(items.rusty_sword())
+        self.inventory.append(items.rusty_shield())
+        self.spells.append(magic.quake())
+        self.skills.append(skills.cleave())
         self.mHPgrowth = .7
         self.mMPgrowth = .3
         self.STRgrowth = .7
@@ -561,12 +566,12 @@ class Fighter(Player):
 
 class Mage(Player):
     def __init__(self):
-        super.__init__(self, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5)
-        self.inventory.append(items.wooden_staff)
-        self.inventory.append(items.cloth_armor)
-        self.spells.append(magic.fire)
-        self.spells.append(magic.ice)
-        self.spells.append(magic.shock)
+        super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5)
+        self.inventory.append(items.wooden_staff())
+        self.inventory.append(items.cloth_armor())
+        self.spells.append(magic.fire())
+        self.spells.append(magic.ice())
+        self.spells.append(magic.shock())
         self.mHPgrowth = .2
         self.mMPgrowth = .7
         self.STRgrowth = .1
@@ -579,10 +584,11 @@ class Mage(Player):
 
 class Rogue(Player):
     def __init__(self):
-        super.__init__(self, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=2, cash=15)
-        self.inventory.append(items.rusty_dagger)
-        self.inventory.append(items.luck_1_ring)
-        self.spells.append(magic.poison)
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15)
+        self.inventory.append(items.rusty_dagger())
+        self.inventory.append(items.luck_1_ring())
+        self.spells.append(magic.poison())
+        self.skills.append(skills.sneak_attack())
         self.mHPgrowth = .3
         self.mMPgrowth = .4
         self.STRgrowth = .4
@@ -592,3 +598,55 @@ class Rogue(Player):
         self.SPDgrowth = .7
         self.SKLgrowth = .7
         self.LUCKgrowth = .5
+
+class Cleric(Player):
+    def __init__(self):
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=20, cMP=20, STR=2, DEF=1, MAG=2, RES=3, SPD=1, SKL=2, LUCK=2, cash=10)
+        self.inventory.append(items.rusty_hammer())
+        self.inventory.append(items.cloth_armor())
+        self.spells.append(magic.smite())
+        self.spells.append(magic.turn())
+        self.mHPgrowth = .5
+        self.mMPgrowth = .5
+        self.STRgrowth = .3
+        self.DEFgrowth = .2
+        self.MAGgrowth = .4
+        self.RESgrowth = .7
+        self.SPDgrowth = .2
+        self.SKLgrowth = .3
+        self.LUCKgrowth = .4
+
+class Paladin(Player):
+    def __init__(self):
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=3, DEF=3, MAG=1, RES=2, SPD=1, SKL=3, LUCK=2, cash=5)
+        self.inventory.append(items.rusty_sword())
+        self.inventory.append(items.rusty_shield())
+        self.inventory.append(items.rusty_armor())
+        self.spells.append(magic.smite())
+        self.skills.append(skills.cleave())
+        self.mHPgrowth = .5
+        self.mMPgrowth = .4
+        self.STRgrowth = .6
+        self.DEFgrowth = .6
+        self.MAGgrowth = .2
+        self.RESgrowth = .3
+        self.SPDgrowth = .1
+        self.SKLgrowth = .5
+        self.LUCKgrowth = .3
+
+class Ranger(Player):
+    def __init__(self):
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=4, SKL=4, LUCK=1, cash=15)
+        self.inventory.append(items.wooden_bow())
+        self.inventory.append(items.speed_1_ring())
+        self.spells.append(magic.wind())
+        self.skills.append(skills.precision_strike())
+        self.mHPgrowth = .4
+        self.mMPgrowth = .4
+        self.STRgrowth = .6
+        self.DEFgrowth = .3
+        self.MAGgrowth = .2
+        self.RESgrowth = .1
+        self.SPDgrowth = .6
+        self.SKLgrowth = .5
+        self.LUCKgrowth = .4

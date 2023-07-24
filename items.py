@@ -12,6 +12,9 @@ class Item():
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
     
+    def __repr__(self):
+        return self.name
+    
 # These are all items used for purchasing and trading.
 class gold(Item):
     def __init__(self, amt):
@@ -141,7 +144,27 @@ class sparktongue(Magic_Weapon):
 
 # Polearm Items
 # Axe Items
+# Hammer Items
+class rusty_hammer(Weapon):
+    def __init__(self):
+        super().__init__(name="Rusty Hammer",
+                         description="A hammer covered in rust.",
+                         value=3,
+                         damage=3)
+# Mace Items
+class rusty_mace(Weapon):
+    def __init__(self):
+        super().__init__(name="Rusty Mace",
+                         description="A mace covered in rust.",
+                         value=3,
+                         damage=3)
 # Bow Items
+class wooden_bow(Weapon):
+    def __init__(self):
+        super().__init__(name="Wooden Bow",
+                         description="A simple wooden bow. It's not very sturdy, but it's better than nothing.",
+                         value=10,
+                         damage=2)
 # Staff Items
 class wooden_staff(Magic_Weapon):
     def __init__(self):
