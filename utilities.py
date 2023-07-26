@@ -24,3 +24,11 @@ def chk_weakness(target):
         return weakness
     else:
         return weakness
+    
+def calculate_hit(attacker, defender):
+    Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO)
+    return random.randint(1,100) <= Hit_rate
+
+def skill_hit(skill, attacker, defender):
+    Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO)
+    return random.randint(1,100) <= Hit_rate

@@ -1,3 +1,5 @@
+import random
+
 class Enemy:
     def __init__(self, name, hp, mhp, damage, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, description):
         self.name = name
@@ -12,6 +14,7 @@ class Enemy:
         self.LUCK = LUCK
         self.EXP = EXP
         self.gold = gold
+        self.AVO = (self.SPD + self.SKL) + ((self.SPD + self.SKL) * (self.LUCK / random.randint(1, 100)))
         self.description = description
     
     def __repr__(self):

@@ -71,11 +71,9 @@ class map_tile:
     def available_actions(self):
         # Returns all of the standard available actions in this room.
         moves = self.adjacent_moves()
-        moves.append(actions.view_inventory())
-        moves.append(actions.view_stats())
         moves.append(actions.potion())
         moves.append(actions.search())
-        moves.append(actions.view_compendium())
+        moves.append(actions.menu())
         moves.append(actions.SaveAndExit())
         return moves
     
@@ -126,11 +124,9 @@ class shop_room(map_tile):
     def available_actions(self):
         moves = self.adjacent_moves()
         moves.append(actions.buy(shopkeep=self.shopkeep))
-        moves.append(actions.view_inventory())
-        moves.append(actions.view_stats())
         moves.append(actions.potion())
         moves.append(actions.search())
-        moves.append(actions.view_compendium())
+        moves.append(actions.menu())
         moves.append(actions.SaveAndExit())
         return moves
     
@@ -379,7 +375,7 @@ class flooded_hall(map_tile):
         time.sleep(1)
         text_speed("It looks back.\n", .05)
         time.sleep(1)
-        text_speed(". . .\n", .01)
+        text_speed(". . .\n", .1)
         time.sleep(3)
         text_speed("Probably best not to linger here.\n", .05)
         time.sleep(1)

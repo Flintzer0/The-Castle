@@ -30,15 +30,6 @@ class search(Action):
     def __init__(self):
         super().__init__(method=Player.search, name='Search', hotkey='e')
  
-class view_inventory(Action):
-    """Prints the player's inventory"""
-    def __init__(self):
-        super().__init__(method=Player.print_inventory, name='View inventory', hotkey='i')
-
-class view_stats(Action):
-    def __init__(self):
-        super().__init__(method=Player.view_character, name='View stats', hotkey='v')
-
 class fight(Action):
     def __init__(self, enemy):
         super().__init__(method=Player.fight, name="Fight", hotkey="f", enemy=enemy)
@@ -47,10 +38,6 @@ class potion(Action):
     def __init__(self):
         super().__init__(method=Player.use_potion, name="Use Potion", hotkey="p")
 
-class view_compendium(Action):
-    def __init__(self):
-        super().__init__(method=Player.view_compendium, name="Monster Compendium", hotkey="c")
-
 class unlock(Action):
     def __init__(self, room):
         super().__init__(method=Player.unlock, name="Unlock", hotkey="q", room=room)
@@ -58,6 +45,10 @@ class unlock(Action):
 class buy(Action):
     def __init__(self, shopkeep):
         super().__init__(method=Player.buy, name="Buy", hotkey="b", shopkeep=shopkeep)
+
+class menu(Action):
+    def __init__(self):
+        super().__init__(method=Player.menu, name="Menu", hotkey="m")
 
 class SaveAndExit(Action):
     def __init__(self):

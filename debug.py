@@ -1,4 +1,4 @@
-import world, sys, time, items, magic
+import world, sys, time, items, magic, skills
 from player import Player
 
 # This file is for debugging purposes only. It is not part of the game.
@@ -6,10 +6,17 @@ from player import Player
 # Due to the nature of player move actions, the player file must also be edited to remove the intro text call from the move action.
 def play():
     world.load_tiles()
-    player = Player(name="Debug", LVL=1, mHP=100, cHP=100, mMP=200, cMP=200, STR=100, DEF=100, MAG=100, RES=100, SPD=100, SKL=100, LUCK=100, cash=5000)
+    player = Player(name="Debug", LVL=1, mHP=100, cHP=100, mMP=200, cMP=200, STR=100, DEF=100, MAG=100, RES=100, SPD=100, SKL=100, LUCK=100, cash=5000, char_class="Debug")
     player.inventory.append(items.cold_iron_sword())
     player.inventory.append(items.water_ring())
-    player.spells.append(magic.fire())
+    player.spells.append(magic.quake())
+    player.spells.append(magic.wind())
+    player.spells.append(magic.smite())
+    player.skills.append(skills.cleave())
+    player.skills.append(skills.sneak_attack())
+    player.skills.append(skills.precision_strike())
+    player.equipped['weapon'] = items.cold_iron_sword()
+    player.equipped['accessory_1'] = items.water_ring()
     game_loop(player)
 
 def game_loop(player):
@@ -27,12 +34,5 @@ def game_loop(player):
                 if action_input == action.hotkey:
                     player.do_action(action, **action.kwargs)
                     break
-        else:
-            print("You died.\n")
-            time.sleep(2)
-            print("Game over.\n")
-            time.sleep(2)
-            sys.exit()
-
 if __name__ == "__main__":
     play()

@@ -144,6 +144,12 @@ class sparktongue(Magic_Weapon):
 
 # Polearm Items
 # Axe Items
+class rusty_axe(Weapon):
+    def __init__(self):
+        super().__init__(name="Rusty Axe",
+                         description="An axe covered in rust.",
+                         value=3,
+                         damage=4)
 # Hammer Items
 class rusty_hammer(Weapon):
     def __init__(self):
@@ -223,7 +229,22 @@ class chainmail(Armor):
                          armor=3)
 
 # Shield Items
-class rusty_shield(Armor):
+class Shield(Item):
+    def __init__(self, name, description, value, armor):
+        self.armor = armor
+        super().__init__(name, description, value)
+
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nArmor: {}".format(self.name, self.description, self.value, self.armor)
+    
+class open_hand(Shield):
+    def __init__(self):
+        super().__init__(name="Open Hand",
+                         description="You're not using a shield.",
+                         value=0,
+                         armor=0)
+
+class rusty_shield(Shield):
     def __init__(self):
         super().__init__(name="Rusty Shield",
                          description="A bent and rusty shield. Provides minimal protection.",
@@ -232,8 +253,19 @@ class rusty_shield(Armor):
 
 # These items are all equipment used for increasing stats.
 # Accessory Items
+class Accessory(Item):
+    def __init__(self, name, description, value):
+        super().__init__(name, description, value)
+
     # Ring Items
-class Ring(Item):
+
+class empty(Accessory):
+    def __init__(self):
+        super().__init__(name="Empty",
+                         description="This slot is open.",
+                         value=0)
+
+class Ring(Accessory):
     def __init__(self, name, description, value, stat, statval, spcl):
         super().__init__(name, description, value)
         self.stat = stat
@@ -315,12 +347,10 @@ class water_ring(Ring):
 # Necklace Items
 # Bracelet Items
 # Earring Items
-# Belt Items
+# Waist Items
 # Headgear Items
-# Body Items
 # Foot Items
 # Hand Items
-# Leg Items
 # Arm Items
 
 # These items are all consumables, such as keys, potions, etc.

@@ -8,8 +8,29 @@ class Player():
     compendium = []
     spells = []
     skills = []
+    equipped = {
+        'weapon': items.Fists(),
+        'armor': items.unarmored(),
+        'shield': items.open_hand(),
+        'accessory_1': items.empty(),
+        'accessory_2': items.empty(),
+        'accessory_3': items.empty(),
+        'accessory_4': items.empty(),
+    }
+    status = {
+        'poison': False,
+        'paralysis': False,
+        'blind': False,
+        'silence': False,
+        'sleep': False,
+        'confusion': False,
+        'charm': False,
+        'fear': False,
+        'petrification': False,
+        'water_breathing': False
+        }
 
-    def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash):
+    def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash, char_class):
         self.mHP = mHP
         self.cHP = cHP
         self.name = name
@@ -25,6 +46,8 @@ class Player():
         self.SKL = SKL
         self.LUCK = LUCK
         self.cash = cash
+        self.AVO = (self.SPD + self.SKL) + ((self.SPD + self.SKL) * (self.LUCK / random.randint(1, 100)))
+        self.char_class = char_class
         self.location_x, self.location_y = world.starting_position
         self.victory = False
         self.mHPgrowth = .6
@@ -38,7 +61,7 @@ class Player():
         self.LUCKgrowth = .3
     
     def __str__(self):
-        return "{}\n=====\n{}\nLevel: {}\nEXP: {}\nMaximum HP: {}\nStrength: {}\nDefense: {}\nMagic: {}\nResistance: {}\nSpeed: {}\nSkill: {}\nLuck: {}\n".format(self.name, self.LVL, self.EXP, self.mHP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
+        return "{}    Class: {}\n======================\nLevel: {}    EXP: {}\nHP: {}/{} MP: {}/{}\nSTR: {}    DEF: {}\nMAG: {}    RES: {}\nSPD: {}    SKL: {}\nLUCK: {}\n".format(self.name, self.char_class, self.LVL, self.EXP, self.cHP, self.mHP, self.cMP, self.mMP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
     
     def __repr__(self):
         return self.name
@@ -53,8 +76,7 @@ class Player():
             return 0
         
     def view_character(self):
-        print(self.__str__())
-        print("Current HP: {}\n".format(self.cHP))
+        print("\n" + self.__str__())
 
     def level_up(self):
         if self.EXP >= 100:
@@ -92,20 +114,500 @@ class Player():
         else:
             pass
 
+    def menu(self):
+        print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equip  7. Exit\n")
+        text_speed("What would you like to do?\n", .05)
+        choice = input()
+        if choice == "1":
+            self.view_character()
+        elif choice == "2":
+            self.print_inventory()
+        elif choice == "3":
+            self.view_compendium()
+        elif choice == "4":
+            self.print_spells()
+        elif choice == "5":
+            self.print_skills()
+        elif choice == "6":
+            self.equip()
+        elif choice == "7":
+            pass
+
     def print_inventory(self):
         print(self.cash, "gold\n")
         for item in self.inventory:
             print(item, '\n')
 
-    def add_spcl(self):
-        for item in self.inventory:
-            self.spcl.append(item.spcl)
+    def print_spells(self):
+        for spell in self.spells:
+            print(spell, '\n')
 
-    def add_statval(self, stat):
-        stat = [self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK]
+    def print_skills(self):
+        for skill in self.skills:
+            print(skill, '\n')
+
+    def equip(self):
+        print("Weapon: {}  Shield: {}  Armor: {}\n".format(self.equipped['weapon'].name, self.equipped['shield'].name, self.equipped['armor'].name))
+        print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}\n".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
+        text_speed("What would you like to equip?\n", .05)
+        text_speed("1. Weapon\n", .05)
+        text_speed("2. Armor\n", .05)
+        text_speed("3. Accessory\n", .05)
+        text_speed("4. Exit\n", .05)
+        choice = input()
+        if choice == "1":
+            self.equip_weapon()
+        elif choice == "2":
+            self.equip_armor()
+        elif choice == "3":
+            self.equip_accessory_slots()
+        elif choice == "4":
+            pass
+
+    def unequip(self):
+        print("Weapon: {}  Shield: {}  Armor: {}\n".format(self.equipped['weapon'].name, self.equipped['shield'].name, self.equipped['armor'].name))
+        print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}\n".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
+        text_speed("What would you like to unequip?\n", .05)
+        text_speed("1. Weapon\n", .05)
+        text_speed("2. Armor\n", .05)
+        text_speed("3. Accessory\n", .05)
+        text_speed("4. Exit\n", .05)
+        choice = input()
+        if choice == "1":
+            self.unequip_weapon()
+        elif choice == "2":
+            self.unequip_armor()
+        elif choice == "3":
+            self.unequip_accessory_slots()
+        elif choice == "4":
+            pass
+
+    def list_weapons(self):
+        weapons = []
         for item in self.inventory:
-            if item.stat == stat:
-                stat += item.value
+            if isinstance(item, items.Weapon):
+                weapons.append(item)
+        return weapons
+    
+    def list_armor(self):
+        armor = []
+        for item in self.inventory:
+            if isinstance(item, items.Armor):
+                armor.append(item)
+        return armor
+    
+    def list_shields(self):
+        shields = []
+        for item in self.inventory:
+            if isinstance(item, items.Shield):
+                shields.append(item)
+        return shields
+    
+    def list_accessories(self):
+        accessories = []
+        for item in self.inventory:
+            if isinstance(item, items.Accessory):
+                accessories.append(item)
+        return accessories
+    
+    def equip_weapon(self):
+        weapons = self.list_weapons()
+        if len(weapons) != 0:
+            n = range(int(len(weapons)))
+            for i in n:
+                print(f'{i}: {weapons[i].name}')
+            print(f'{len(weapons)}: Exit')
+            weapon = input("Which weapon do you want to equip? ")
+            if weapon.isdigit():
+                weapon = int(weapon)
+                if weapon < len(weapons):
+                    self.equipped['weapon'] = weapons[weapon]
+                    self.inventory.remove(weapons[weapon])
+                    text_speed("You equipped the {}!\n".format(weapons[weapon].name), .05)
+                elif weapon == len(weapons):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif weapon == len(weapons):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any weapons!", .05)
+
+    def unequip_weapon(self):
+        if self.equipped['weapon'] != items.Fists():
+            self.inventory.append(self.equipped['weapon'])
+            self.equipped['weapon'] = items.Fists()
+            text_speed("You unequipped your weapon!\n", .05)
+        else:
+            text_speed("You don't have a weapon equipped!\n", .05)
+
+    def equip_armor(self):
+        armor = self.list_armor()
+        if len(armor) != 0:
+            n = range(int(len(armor)))
+            for i in n:
+                print(f'{i}: {armor[i].name}')
+            print(f'{len(armor)}: Exit')
+            armor = input("Which armor do you want to equip? ")
+            if armor.isdigit():
+                armor = int(armor)
+                if armor < len(armor):
+                    self.equipped['armor'] = armor[armor]
+                    self.inventory.remove(armor[armor])
+                    text_speed("You equipped the {}!\n".format(armor[armor].name), .05)
+                elif armor == len(armor):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif armor == len(armor):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any armor!", .05)
+
+    def unequip_armor(self):
+        if self.equipped['armor'] != items.unarmored():
+            self.inventory.append(self.equipped['armor'])
+            self.equipped['armor'] = items.unarmored()
+            text_speed("You unequipped your armor!\n", .05)
+        else:
+            text_speed("You don't have any armor equipped!\n", .05)
+
+    def equip_shield(self):
+        shields = self.list_shields()
+        if len(shields) != 0:
+            n = range(int(len(shields)))
+            for i in n:
+                print(f'{i}: {shields[i].name}')
+            print(f'{len(shields)}: Exit')
+            shield = input("Which shield do you want to equip? ")
+            if shield.isdigit():
+                shield = int(shield)
+                if shield < len(shields):
+                    self.equipped['shield'] = shields[shield]
+                    self.inventory.remove(shields[shield])
+                    text_speed("You equipped the {}!\n".format(shields[shield].name), .05)
+                elif shield == len(shields):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif shield == len(shields):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any shields!", .05)
+
+    def unequip_shield(self):
+        if self.equipped['shield'] != items.open_hand():
+            self.inventory.append(self.equipped['shield'])
+            self.equipped['shield'] = items.open_hand()
+            text_speed("You unequipped your shield!\n", .05)
+        else:
+            text_speed("You don't have a shield equipped!\n", .05)
+
+    def equip_accessory_slots(self):
+        print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}\n".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
+        text_speed("Which accessory slot do you want to equip?\n", .05)
+        text_speed("1. Accessory 1\n", .05)
+        text_speed("2. Accessory 2\n", .05)
+        text_speed("3. Accessory 3\n", .05)
+        text_speed("4. Accessory 4\n", .05)
+        text_speed("5. Exit\n", .05)
+        choice = input()
+        if choice == "1":
+            self.equip_accessory_1()
+        elif choice == "2":
+            self.equip_accessory_2()
+        elif choice == "3":
+            self.equip_accessory_3()
+        elif choice == "4":
+            self.equip_accessory_4()
+        elif choice == "5":
+            pass
+
+    def equip_accessory_1(self):
+        accessories = self.list_accessories()
+        if len(accessories) != 0:
+            n = range(int(len(accessories)))
+            for i in n:
+                print(f'{i}: {accessories[i].name}')
+            print(f'{len(accessories)}: Exit')
+            accessory = input("Which accessory do you want to equip? ")
+            if accessory.isdigit():
+                accessory = int(accessory)
+                if accessory < len(accessories):
+                    self.equipped['accessory_1'] = accessories[accessory]
+                    text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
+                    if accessories[accessory].stat == "STR":
+                        self.STR += accessories[accessory].statval
+                    elif accessories[accessory].stat == "DEF":
+                        self.DEF += accessories[accessory].statval
+                    elif accessories[accessory].stat == "MAG":
+                        self.MAG += accessories[accessory].statval
+                    elif accessories[accessory].stat == "RES":
+                        self.RES += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SPD":
+                        self.SPD += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SKL":
+                        self.SKL += accessories[accessory].statval
+                    elif accessories[accessory].stat == "LUCK":
+                        self.LUCK += accessories[accessory].statval
+                    elif accessories[accessory].spcl == "water_breathing":
+                        self.status['water_breathing'] = True
+                    self.inventory.remove(accessories[accessory])
+                elif accessory == len(accessories):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif accessory == len(accessories):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any accessories!", .05)
+
+    def equip_accessory_2(self):
+        accessories = self.list_accessories()
+        if len(accessories) != 0:
+            n = range(int(len(accessories)))
+            for i in n:
+                print(f'{i}: {accessories[i].name}')
+            print(f'{len(accessories)}: Exit')
+            accessory = input("Which accessory do you want to equip? ")
+            if accessory.isdigit():
+                accessory = int(accessory)
+                if accessory < len(accessories):
+                    self.equipped['accessory_2'] = accessories[accessory]
+                    text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
+                    if accessories[accessory].stat == "STR":
+                        self.STR += accessories[accessory].statval
+                    elif accessories[accessory].stat == "DEF":
+                        self.DEF += accessories[accessory].statval
+                    elif accessories[accessory].stat == "MAG":
+                        self.MAG += accessories[accessory].statval
+                    elif accessories[accessory].stat == "RES":
+                        self.RES += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SPD":
+                        self.SPD += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SKL":
+                        self.SKL += accessories[accessory].statval
+                    elif accessories[accessory].stat == "LUCK":
+                        self.LUCK += accessories[accessory].statval
+                    elif accessories[accessory].spcl == "water_breathing":
+                        self.status['water_breathing'] = True
+                    self.inventory.remove(accessories[accessory])
+                elif accessory == len(accessories):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif accessory == len(accessories):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any accessories!", .05)
+
+    def equip_accessory_3(self):
+        accessories = self.list_accessories()
+        if len(accessories) != 0:
+            n = range(int(len(accessories)))
+            for i in n:
+                print(f'{i}: {accessories[i].name}')
+            print(f'{len(accessories)}: Exit')
+            accessory = input("Which accessory do you want to equip? ")
+            if accessory.isdigit():
+                accessory = int(accessory)
+                if accessory < len(accessories):
+                    self.equipped['accessory_3'] = accessories[accessory]
+                    text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
+                    if accessories[accessory].stat == "STR":
+                        self.STR += accessories[accessory].statval
+                    elif accessories[accessory].stat == "DEF":
+                        self.DEF += accessories[accessory].statval
+                    elif accessories[accessory].stat == "MAG":
+                        self.MAG += accessories[accessory].statval
+                    elif accessories[accessory].stat == "RES":
+                        self.RES += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SPD":
+                        self.SPD += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SKL":
+                        self.SKL += accessories[accessory].statval
+                    elif accessories[accessory].stat == "LUCK":
+                        self.LUCK += accessories[accessory].statval
+                    elif accessories[accessory].spcl == "water_breathing":
+                        self.status['water_breathing'] = True
+                    self.inventory.remove(accessories[accessory])
+                elif accessory == len(accessories):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif accessory == len(accessories):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any accessories!", .05)
+
+    def equip_accessory_4(self):
+        accessories = self.list_accessories()
+        if len(accessories) != 0:
+            n = range(int(len(accessories)))
+            for i in n:
+                print(f'{i}: {accessories[i].name}')
+            print(f'{len(accessories)}: Exit')
+            accessory = input("Which accessory do you want to equip? ")
+            if accessory.isdigit():
+                accessory = int(accessory)
+                if accessory < len(accessories):
+                    self.equipped['accessory_4'] = accessories[accessory]
+                    text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
+                    if accessories[accessory].stat == "STR":
+                        self.STR += accessories[accessory].statval
+                    elif accessories[accessory].stat == "DEF":
+                        self.DEF += accessories[accessory].statval
+                    elif accessories[accessory].stat == "MAG":
+                        self.MAG += accessories[accessory].statval
+                    elif accessories[accessory].stat == "RES":
+                        self.RES += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SPD":
+                        self.SPD += accessories[accessory].statval
+                    elif accessories[accessory].stat == "SKL":
+                        self.SKL += accessories[accessory].statval
+                    elif accessories[accessory].stat == "LUCK":
+                        self.LUCK += accessories[accessory].statval
+                    elif accessories[accessory].spcl == "water_breathing":
+                        self.status['water_breathing'] = True
+                    self.inventory.remove(accessories[accessory])
+                elif accessory == len(accessories):
+                    pass
+                else:
+                    print("Invalid choice.")
+            elif accessory == len(accessories):
+                pass
+            else:
+                text_speed("Invalid choice.", .05)
+        else:
+            text_speed("You don't have any accessories!", .05)
+
+    def unequip_accessory_slots(self):
+        print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}\n".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
+        text_speed("Which accessory slot do you want to unequip?\n", .05)
+        text_speed("1. Accessory 1\n", .05)
+        text_speed("2. Accessory 2\n", .05)
+        text_speed("3. Accessory 3\n", .05)
+        text_speed("4. Accessory 4\n", .05)
+        text_speed("5. Exit\n", .05)
+        choice = input()
+        if choice == "1":
+            self.unequip_accessory_1()
+        elif choice == "2":
+            self.unequip_accessory_2()
+        elif choice == "3":
+            self.unequip_accessory_3()
+        elif choice == "4":
+            self.unequip_accessory_4()
+        elif choice == "5":
+            pass
+
+    def unequip_accessory_1(self):
+        if self.equipped['accessory_1'] != None:
+            self.inventory.append(self.equipped['accessory_1'])
+            if self.equipped['accessory_1'].stat == "STR":
+                self.STR -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "MAG":
+                self.MAG -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "RES":
+                self.RES -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SPD":
+                self.SPD -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SKL":
+                self.SKL -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].spcl == "water_breathing":
+                self.status['water_breathing'] = False
+            self.equipped['accessory_1'] = None
+            text_speed("You unequipped your accessory!\n", .05)
+        else:
+            text_speed("You don't have an accessory equipped!\n", .05)
+
+    def unequip_accessory_2(self):
+        if self.equipped['accessory_2'] != None:
+            self.inventory.append(self.equipped['accessory_2'])
+            if self.equipped['accessory_1'].stat == "STR":
+                self.STR -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "MAG":
+                self.MAG -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "RES":
+                self.RES -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SPD":
+                self.SPD -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SKL":
+                self.SKL -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].spcl == "water_breathing":
+                self.status['water_breathing'] = False
+            self.equipped['accessory_2'] = None
+            text_speed("You unequipped your accessory!\n", .05)
+        else:
+            text_speed("You don't have an accessory equipped!\n", .05)
+
+    def unequip_accessory_3(self):
+        if self.equipped['accessory_3'] != None:
+            self.inventory.append(self.equipped['accessory_3'])
+            if self.equipped['accessory_1'].stat == "STR":
+                self.STR -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "MAG":
+                self.MAG -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "RES":
+                self.RES -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SPD":
+                self.SPD -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SKL":
+                self.SKL -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].spcl == "water_breathing":
+                self.status['water_breathing'] = False
+            self.equipped['accessory_3'] = None
+            text_speed("You unequipped your accessory!\n", .05)
+        else:
+            text_speed("You don't have an accessory equipped!\n", .05)
+
+    def unequip_accessory_4(self):
+        if self.equipped['accessory_4'] != None:
+            self.inventory.append(self.equipped['accessory_4'])
+            if self.equipped['accessory_1'].stat == "STR":
+                self.STR -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "MAG":
+                self.MAG -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "RES":
+                self.RES -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SPD":
+                self.SPD -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "SKL":
+                self.SKL -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_1'].statval
+            elif self.equipped['accessory_1'].spcl == "water_breathing":
+                self.status['water_breathing'] = False
+            self.equipped['accessory_4'] = None
+            text_speed("You unequipped your accessory!\n", .05)
+        else:
+            text_speed("You don't have an accessory equipped!\n", .05)
     
     def do_action(self, action, **kwargs):
         action_method = getattr(self, action.method.__name__)
@@ -130,7 +632,7 @@ class Player():
 
     def move_north(self):
         room = world.tile_exists(self.location_x, (self.location_y-1))
-        if room.flooded == True and self.chk_spcl("Water Breathing") == False:
+        if room.flooded == True and self.status['water_breathing'] == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
@@ -347,12 +849,6 @@ class Player():
                 text_speed("You don't have any potions!", .05)
         else:
             text_speed("You are already at full health!", .05)
-    
-    def check_SPD(self, enemy):
-        if self.SPD > enemy.SPD:
-            return True
-        else:
-            return False
 
     def save_and_exit(self):
         pickle.dump(self, open( "saved_self.p", "wb" ))
@@ -360,45 +856,6 @@ class Player():
         print("Game saved!")
         time.sleep(.5)
         exit()
-
-    # def chk_monster_part(self, enemy):
-    #     enemy_part = None
-    #     for enemy in enemies.Enemy.__subclasses__():
-    #         for p in items.monster_part.__subclasses__():
-    #             if enemy == p.epart:
-    #                 enemy_part = p
-    #     return enemy_part
-    
-    # def monster_part_drop(self, enemy):
-    #     enemy_part = self.chk_monster_part(enemy)
-    #     if enemy_part is not None:
-    #         if random.randint(1,100) <= ((((enemy_part.drop_rate) * 100) - (enemy_part.rarity * 2)) + (self.LUCK * 2)):
-    #             self.inventory.append(enemy_part)
-    #             text_speed("The {} dropped a {}!\n".format(enemy.name, enemy_part.name), .05)
-    #             time.sleep(.5)
-    #         else:
-    #             pass
-    #     else:
-    #         pass
-
-    def fight(self, enemy):
-        # for item in self.inventory:
-        #     self.add_statval(item)
-        self.combat(enemy)
-        if not enemy.is_alive():
-            exp = round(enemy.EXP * (((10-self.LVL)+1)/10))
-            self.EXP += exp
-            self.cash += enemy.gold
-            text_speed("You killed the {}!\n".format(enemy.name), .03)
-            time.sleep(1)
-            text_speed("You gained {} EXP!\n".format(exp), .03)
-            time.sleep(1)
-            self.level_up()
-            text_speed("You gained {} gold!\n".format(enemy.gold), .03)
-            time.sleep(1)
-            if self.chk_compendium(enemy) == False:
-                self.add_monster(enemy)
-            # self.monster_part_drop(enemy)
 
     def chk_Weapon(self):
         best_weapon = items.Fists()
@@ -411,31 +868,32 @@ class Player():
         return best_weapon
 
     def chk_armor(self):
-        armor = items.unarmored()
-        max_armor = 0
-        for i in self.inventory:
-            if isinstance(i, items.Armor):
-                if i.armor > max_armor:
-                    max_armor += i.armor
-                    armor = max_armor
-        return armor
+        return self.equipped['armor'].armor + self.equipped['shield'].armor
 
     def chk_SPD(self, enemy):
         return self.SPD >= enemy.SPD
 
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
-        best_weapon = self.chk_Weapon()
-        cCRIT = chk_CRIT(self)
-        pdamage = self.generate_damage(self.STR, best_weapon, enemy)
-        text_speed("You use {}!\n".format(best_weapon.name), .03)
-        time.sleep(.5)
-        if cCRIT == True:
-            pdamage *= 2
-            text_speed("Critical hit!\n", .01)
-            time.sleep(.5)
-        text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-        enemy.hp -= (pdamage - enemy.DEF)
+        time.sleep(.3)
+        weapon = self.equipped['weapon']
+        if calculate_hit(self, enemy):
+            cCRIT = chk_CRIT(self)
+            pdamage = self.generate_damage(self.STR, weapon, enemy)
+            text_speed("You use {}!\n".format(weapon.name), .03)
+            time.sleep(.2)
+            if cCRIT == True:
+                pdamage *= 2
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.3)
+            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+            enemy.hp -= (pdamage - enemy.DEF)
+            time.sleep(.3)
+        else:
+            text_speed("You use {}!\n".format(weapon.name), .03)
+            time.sleep(.2)
+            text_speed("You missed!\n", .03)
+            time.sleep(.3)
 
     def chk_edamage(self, enemy):
         edamage = None
@@ -444,7 +902,7 @@ class Player():
         cCRIT = chk_CRIT(enemy)
         if cCRIT == True:
             text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .01)
-            time.sleep(.5)
+            time.sleep(.2)
             edamage = (enemy.damage * 2)
             if edamage < pdef:
                 edamage = 1
@@ -470,19 +928,106 @@ class Player():
 
     def efight(self, enemy):
             text_speed("The {} attacks!\n".format(enemy.name), .03)
-            time.sleep(.5)
-            edamage = self.chk_edamage(enemy)
-            self.cHP -= edamage
-            text_speed("The {} dealt {} damage to you.\n".format(enemy.name, edamage), .03)
-            time.sleep(.5)
-            if self.is_alive() == True:
-                text_speed("You have {} HP remaining.\n".format(self.cHP), .03)
-                time.sleep(.5)
+            time.sleep(.2)
+            if calculate_hit(enemy, self):
+                edamage = self.chk_edamage(enemy)
+                self.cHP -= edamage
+                text_speed("The {} dealt {} damage to you.\n".format(enemy.name, edamage), .03)
+                time.sleep(.2)
+                if self.is_alive() == True:
+                    text_speed("You have {} HP remaining.\n".format(self.cHP), .03)
+                    time.sleep(.2)
+            else:
+                text_speed("The {} missed!\n".format(enemy.name), .03)
+                time.sleep(.2)
+    
+    def chk_spells(self):
+        spell = []
+        for i in self.spells:
+            if isinstance(i, magic.Spell):
+                spell.append(i)
+        return spell
+    
+    def list_spells(self):
+        spell = self.chk_spells()
+        n = range(int(len(spell)))
+        for i in n:
+            print(f'{i}: {spell[i].name} Cost: {spell[i].cost}MP')
+
+    def cast_spell(self):
+        self.list_spells()
+        text_speed("Which spell do you want to cast? ", .05)
+        choice = input()
+        if choice.isdigit():
+            choice = int(choice)
+            if choice < len(self.chk_spells()):
+                if self.cMP >= self.chk_spells()[choice].cost:
+                    self.cMP -= self.chk_spells()[choice].cost
+                    return self.chk_spells()[choice]
+                else:
+                    text_speed("You don't have enough MP!\n", .05)
+                    time.sleep(.5)
+
+    def pmagatk(self, enemy, spell):
+        text_speed("You cast {}!\n".format(spell.name), .05)
+        time.sleep(.2)
+        if calculate_hit(self, enemy):
+            pdamage = self.generate_damage(self.MAG, spell, enemy)
+            if chk_CRIT(self) == True:
+                pdamage *= 2
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.2)
+            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .05)
+            enemy.hp -= (pdamage - enemy.RES)
+            time.sleep(.2)
+        else:
+            text_speed("You cast {}!\n".format(spell.name), .05)
+            time.sleep(.2)
+            text_speed("You missed!\n", .05)
+            time.sleep(.2)
+
+    def chk_skills(self):
+        skill = []
+        for i in self.skills:
+            if isinstance(i, skills.Skill):
+                skill.append(i)
+        return skill
+    
+    def list_skills(self):
+        skill = self.chk_skills()
+        n = range(int(len(skill)))
+        for i in n:
+            print(f'{i}: {skill[i].name} Cost: {skill[i].cost}MP')
+
+    def use_skill(self):
+        self.list_skills()
+        text_speed("Which skill do you want to use? ", .05)
+        choice = input()
+        if choice.isdigit():
+            choice = int(choice)
+            if choice < len(self.chk_skills()):
+                if self.cMP >= self.chk_skills()[choice].cost:
+                    return self.chk_skills()[choice]
+                else:
+                    text_speed("You don't have enough MP!\n", .05)
+                    time.sleep(.2)
+            
+    def pskillatk(self, enemy, skill):
+        skill.use_ability(self, enemy)
+
+    def generate_damage(self, stat, attack, enemy):
+        adamage = attack.damage
+        eweak = chk_weakness(enemy)
+        if attack.damage_type == eweak:
+            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+            return random.randrange(stat, stat + (adamage * 2))
+        else:
+            return random.randrange(stat, stat + adamage)
 
     def combat(self, enemy):
         text_speed("What will you do?\n", .05)
         time.sleep(.5)
-        choice = input("1. Attack\n2. Cast Spell\n")
+        choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n")
         if choice == "1":
             chkSPD = self.chk_SPD(enemy)
             if chkSPD == True:
@@ -504,52 +1049,47 @@ class Player():
                 self.efight(enemy)
                 if self.is_alive() == True:
                     self.pmagatk(enemy, spell)
+        elif choice == "3":
+            chkSPD = self.chk_SPD(enemy)
+            skill = self.use_skill()
+            if chkSPD == True:
+                self.pskillatk(enemy, skill)
+                if enemy.is_alive() == True:
+                    self.efight(enemy)
+            else:
+                self.efight(enemy)
+                if self.is_alive() == True:
+                    self.pskillatk(enemy, skill)
 
-    def chk_spells(self):
-        spell = []
-        for i in self.spells:
-            if isinstance(i, magic.Spell):
-                spell.append(i)
-        return spell
-    
-    def list_spells(self):
-        spell = self.chk_spells()
-        n = range(int(len(spell)))
-        for i in n:
-            print(f'{i}: {spell[i].name}')
-
-    def cast_spell(self):
-        self.list_spells()
-        text_speed("Which spell do you want to cast? ", .05)
-        choice = input()
-        if choice.isdigit():
-            choice = int(choice)
-            if choice < len(self.chk_spells()):
-                return self.chk_spells()[choice]
-
-    def generate_damage(self, stat, attack, enemy):
-        adamage = attack.damage
-        eweak = chk_weakness(enemy)
-        if attack.damage_type == eweak:
-            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
-            return random.randrange(stat, stat + (adamage * 2))
-        else:
-            return random.randrange(stat, stat + adamage)
-
-    def pmagatk(self, enemy, spell):
-        text_speed("You cast {}!\n".format(spell.name), .05)
-        time.sleep(.5)
-        pdamage = self.generate_damage(self.MAG, spell, enemy)
-        if chk_CRIT(self) == True:
-            pdamage *= 2
-            text_speed("Critical hit!\n", .01)
+    def fight(self, enemy):
+        # for item in self.inventory:
+        #     self.add_statval(item)
+        self.combat(enemy)
+        if not enemy.is_alive():
+            exp = round(enemy.EXP * (((10-self.LVL)+1)/10))
+            self.EXP += exp
+            self.cash += enemy.gold
+            text_speed("You killed the {}!\n".format(enemy.name), .03)
             time.sleep(.5)
-        text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .05)
-        enemy.hp -= (pdamage - enemy.RES)
+            text_speed("You gained {} EXP!\n".format(exp), .03)
+            time.sleep(.5)
+            self.level_up()
+            text_speed("You gained {} gold!\n".format(enemy.gold), .03)
+            time.sleep(.5)
+            if self.chk_compendium(enemy) == False:
+                self.add_monster(enemy)
+            # self.monster_part_drop(enemy)
+        elif not self.is_alive():
+            text_speed("You died.\n", .05)
+            time.sleep(1)
+            text_speed("Game over.\n", .05)
+            time.sleep(1)
+            sys.exit()
 
+# Character Classes
 class Fighter(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=2, MAG=0, RES=0, SPD=1, SKL=2, LUCK=1, cash=5)
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=2, MAG=0, RES=0, SPD=1, SKL=2, LUCK=1, cash=5, char_class="Fighter")
         self.inventory.append(items.rusty_sword())
         self.inventory.append(items.rusty_shield())
         self.spells.append(magic.quake())
@@ -563,10 +1103,12 @@ class Fighter(Player):
         self.SPDgrowth = .3
         self.SKLgrowth = .4
         self.LUCKgrowth = .3
+        self.equipped['weapon'] = items.rusty_sword()
+        self.equipped['shield'] = items.rusty_shield()
 
 class Mage(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5)
+        super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5, char_class="Mage")
         self.inventory.append(items.wooden_staff())
         self.inventory.append(items.cloth_armor())
         self.spells.append(magic.fire())
@@ -581,10 +1123,12 @@ class Mage(Player):
         self.SPDgrowth = .4
         self.SKLgrowth = .3
         self.LUCKgrowth = .3
+        self.equipped['weapon'] = items.wooden_staff()
+        self.equipped['armor'] = items.cloth_armor()
 
 class Rogue(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15)
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
         self.inventory.append(items.rusty_dagger())
         self.inventory.append(items.luck_1_ring())
         self.spells.append(magic.poison())
@@ -598,12 +1142,15 @@ class Rogue(Player):
         self.SPDgrowth = .7
         self.SKLgrowth = .7
         self.LUCKgrowth = .5
+        self.equipped['weapon'] = items.rusty_dagger()
+        self.equipped['accessory_1'] = items.luck_1_ring()
 
 class Cleric(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=20, cMP=20, STR=2, DEF=1, MAG=2, RES=3, SPD=1, SKL=2, LUCK=2, cash=10)
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=20, cMP=20, STR=2, DEF=1, MAG=2, RES=3, SPD=1, SKL=2, LUCK=2, cash=10, char_class="Cleric")
         self.inventory.append(items.rusty_hammer())
         self.inventory.append(items.cloth_armor())
+        self.inventory.append(items.small_red_potion(3))
         self.spells.append(magic.smite())
         self.spells.append(magic.turn())
         self.mHPgrowth = .5
@@ -615,12 +1162,13 @@ class Cleric(Player):
         self.SPDgrowth = .2
         self.SKLgrowth = .3
         self.LUCKgrowth = .4
+        self.equipped['weapon'] = items.rusty_hammer()
+        self.equipped['armor'] = items.cloth_armor()
 
 class Paladin(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=3, DEF=3, MAG=1, RES=2, SPD=1, SKL=3, LUCK=2, cash=5)
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=3, DEF=3, MAG=1, RES=2, SPD=1, SKL=3, LUCK=2, cash=5, char_class="Paladin")
         self.inventory.append(items.rusty_sword())
-        self.inventory.append(items.rusty_shield())
         self.inventory.append(items.rusty_armor())
         self.spells.append(magic.smite())
         self.skills.append(skills.cleave())
@@ -633,10 +1181,12 @@ class Paladin(Player):
         self.SPDgrowth = .1
         self.SKLgrowth = .5
         self.LUCKgrowth = .3
+        self.equipped['weapon'] = items.rusty_sword()
+        self.equipped['armor'] = items.rusty_armor()
 
 class Ranger(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=4, SKL=4, LUCK=1, cash=15)
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=4, SKL=4, LUCK=1, cash=15, char_class="Ranger")
         self.inventory.append(items.wooden_bow())
         self.inventory.append(items.speed_1_ring())
         self.spells.append(magic.wind())
@@ -650,3 +1200,5 @@ class Ranger(Player):
         self.SPDgrowth = .6
         self.SKLgrowth = .5
         self.LUCKgrowth = .4
+        self.equipped['weapon'] = items.wooden_bow()
+        self.equipped['accessory_1'] = items.speed_1_ring()
