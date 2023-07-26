@@ -1,8 +1,8 @@
 stairs						
 giant_centipede_room						
-empty_passageway		empty_room	empty_passageway	skeleton_room	empty_passageway	
-large_rat_room	empty_passageway	demon_bat_room			guard_room	
-		empty_passageway		empty_passageway	goblin_room	dungeon_2
+empty_passageway		demon_bat_room	empty_passageway	skeleton_room	empty_passageway	
+large_rat_room	empty_passageway	empty_room			goblin_room	
+		zombie_room		empty_passageway	guard_room	dungeon_2
 		empty_passageway	empty_passageway	giant_spider_room_2		
 low_trader		guard_room				
 torture_chamber	goblin_room	empty_passageway	empty_passageway	giant_spider_room	pre_flooded_hall	

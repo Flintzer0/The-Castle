@@ -594,6 +594,22 @@ class large_rat_room(enemy_room):
             text_speed("The corpse of the giant rat rots on the ground.\n", .05)
             time.sleep(1)
 
+class zombie_room(enemy_room):
+    def __init__(self, x, y):
+        super().__init__(x, y, enemies.zombie())
+ 
+    def intro_text(self):
+        if self.enemy.is_alive():
+            text_speed("You enter a room with a dark feeling in the air.\n", .05)
+            time.sleep(1)
+            text_speed("You can hear a low moaning sound.\n", .05)
+            time.sleep(1)
+            text_speed("A zombie shambles towards you!\n", .02)
+            time.sleep(.5)
+        else:
+            text_speed("The zombie rots on the ground, unmoving.\n", .05)
+            time.sleep(1)
+
 class giant_centipede_room(enemy_room):
     def __init__(self, x, y):
         super().__init__(x, y, enemies.giant_centipede())
