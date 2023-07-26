@@ -1,5 +1,20 @@
 import enemies
 
+'''
+Damage Types:
+    Fire
+    Cold
+    Lightning
+    Water
+    Earth
+    Wind
+    Holy
+    Demonic
+    Necrotic
+    Poison
+    Turn Undead (labeled as Turn in-code)
+'''
+
 class Item():
     """The base class for all items"""
     damage_type = ""
@@ -39,19 +54,6 @@ class Magic_Weapon(Weapon):
     
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\nDamage: {}\nDamage Type: {}".format(self.name, self.description, self.value, self.damage, self.damage_type)
-
-# Damage Types
-# Fire
-# Cold
-# Lightning
-# Water
-# Earth
-# Wind
-# Holy
-# Demonic
-# Necrotic
-# Poison
-# Turn Undead (labeled as Turn in-code)
 
 # Unarmed/Fist Items
 class Fists(Weapon):
