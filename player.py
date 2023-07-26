@@ -221,6 +221,8 @@ class Player():
             if weapon.isdigit():
                 weapon = int(weapon)
                 if weapon < len(weapons):
+                    if self.equipped['weapon'] != items.Fists():
+                        self.unequip_weapon()
                     self.equipped['weapon'] = weapons[weapon]
                     self.inventory.remove(weapons[weapon])
                     text_speed("You equipped the {}!\n".format(weapons[weapon].name), .05)
@@ -254,6 +256,8 @@ class Player():
             if armor.isdigit():
                 armor = int(armor)
                 if armor < len(armor):
+                    if self.equipped['armor'] != items.unarmored():
+                        self.unequip_armor()
                     self.equipped['armor'] = armor[armor]
                     self.inventory.remove(armor[armor])
                     text_speed("You equipped the {}!\n".format(armor[armor].name), .05)
@@ -287,6 +291,8 @@ class Player():
             if shield.isdigit():
                 shield = int(shield)
                 if shield < len(shields):
+                    if self.equipped['shield'] != items.open_hand():
+                        self.unequip_shield()
                     self.equipped['shield'] = shields[shield]
                     self.inventory.remove(shields[shield])
                     text_speed("You equipped the {}!\n".format(shields[shield].name), .05)
@@ -340,6 +346,8 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
+                    if self.equipped['accessory_1'] != items.empty():
+                        self.unequip_accessory_1()
                     self.equipped['accessory_1'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
@@ -381,6 +389,8 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
+                    if self.equipped['accessory_2'] != items.empty():
+                        self.unequip_accessory_2()
                     self.equipped['accessory_2'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
@@ -422,6 +432,8 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
+                    if self.equipped['accessory_3'] != items.empty():
+                        self.unequip_accessory_3()
                     self.equipped['accessory_3'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
@@ -463,6 +475,8 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
+                    if self.equipped['accessory_4'] != items.empty():
+                        self.unequip_accessory_4()
                     self.equipped['accessory_4'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
@@ -514,7 +528,7 @@ class Player():
             pass
 
     def unequip_accessory_1(self):
-        if self.equipped['accessory_1'] != None:
+        if self.equipped['accessory_1'] != items.empty():
             self.inventory.append(self.equipped['accessory_1'])
             if self.equipped['accessory_1'].stat == "STR":
                 self.STR -= self.equipped['accessory_1'].statval
