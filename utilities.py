@@ -26,9 +26,15 @@ def chk_weakness(target):
         return weakness
     
 def calculate_hit(attacker, defender):
+    if attacker.status['blind'] == True:
+        Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO) - 20
+        return random.randint(1,100) <= Hit_rate
     Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO)
     return random.randint(1,100) <= Hit_rate
 
 def skill_hit(skill, attacker, defender):
+    if attacker.status['blind'] == True:
+        Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO) - 20
+        return random.randint(1,100) <= Hit_rate
     Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO)
     return random.randint(1,100) <= Hit_rate

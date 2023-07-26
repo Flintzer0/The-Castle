@@ -25,8 +25,7 @@ class Player():
         'sleep': False,
         'confusion': False,
         'charm': False,
-        'fear': False,
-        'petrification': False,
+        'crippled': False,
         'water_breathing': False
         }
 
@@ -82,8 +81,10 @@ class Player():
         if self.EXP >= 100:
             self.LVL += 1
             self.EXP -= 100
-            self.mHP += 2 + self.chk_stat_roll(self.mHPgrowth, self.mHP)
+            self.mHP += 5 + self.chk_stat_roll(self.mHPgrowth, self.mHP)
             self.cHP = self.mHP
+            self.mMP += 2 + self.chk_stat_roll(self.mMPgrowth, self.mMP)
+            self.cMP = self.mMP
             self.STR += self.chk_stat_roll(self.STRgrowth, self.STR)
             self.DEF += self.chk_stat_roll(self.DEFgrowth, self.DEF)
             self.MAG += self.chk_stat_roll(self.MAGgrowth, self.MAG)
@@ -870,6 +871,43 @@ class Player():
         print("Game saved!")
         time.sleep(.5)
         exit()
+    
+    def apply_poison(self):
+        if self.status['poison'] == True:
+            damage = random.randint(1, 5)
+            self.cHP -= damage
+            text_speed("You took {} damage from poison!\n".format(damage), .03)
+            time.sleep(.2)
+            if self.is_alive() == False:
+                text_speed("You died.\n", .05)
+                time.sleep(1)
+                print("Game over.\n")
+                time.sleep(1)
+                sys.exit()
+
+    def roll_paralyze(self):
+        if self.status['paralyze'] == True:
+            text_speed("You are paralyzed!\n", .03)
+            time.sleep(.2)
+            roll = random.randint(1, 10)
+            if roll == 1 or 2 or 3:
+                return True
+            else:
+                return False
+        else:
+            return False
+        
+    def roll_confusion(self):
+        if self.status['confusion'] == True:
+            text_speed("You are confused!\n", .03)
+            time.sleep(.2)
+            roll = random.randint(1, 10)
+            if roll == 1 or 2:
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def chk_Weapon(self):
         best_weapon = items.Fists()
@@ -891,23 +929,36 @@ class Player():
         text_speed("You attack!\n", .03)
         time.sleep(.3)
         weapon = self.equipped['weapon']
-        if calculate_hit(self, enemy):
-            cCRIT = chk_CRIT(self)
-            pdamage = self.generate_damage(self.STR, weapon, enemy)
-            text_speed("You use {}!\n".format(weapon.name), .03)
-            time.sleep(.2)
-            if cCRIT == True:
-                pdamage *= 2
-                text_speed("Critical hit!\n", .01)
+        if self.roll_paralyze() == True:
+            text_speed("You are paralyzed and cannot move!\n", .03)
+            time.sleep(.3)
+            self.apply_poison()
+        elif self.roll_paralyze() == False:
+            if self.roll_confusion() == True:
+                text_speed("You trip over your own feet!\n", .03)
                 time.sleep(.3)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            enemy.hp -= (pdamage - enemy.DEF)
-            time.sleep(.3)
-        else:
-            text_speed("You use {}!\n".format(weapon.name), .03)
-            time.sleep(.2)
-            text_speed("You missed!\n", .03)
-            time.sleep(.3)
+                self.cHP -= 1
+                self.apply_poison()
+            elif self.roll_confusion() == False:
+                if calculate_hit(self, enemy):
+                    cCRIT = chk_CRIT(self)
+                    pdamage = self.generate_damage(self.STR, weapon, enemy)
+                    text_speed("You use {}!\n".format(weapon.name), .03)
+                    time.sleep(.2)
+                    if cCRIT == True:
+                        pdamage *= 2
+                        text_speed("Critical hit!\n", .01)
+                        time.sleep(.3)
+                    text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
+                    enemy.hp -= (pdamage - enemy.DEF)
+                    time.sleep(.3)
+                    self.apply_poison()
+                else:
+                    text_speed("You use {}!\n".format(weapon.name), .03)
+                    time.sleep(.2)
+                    text_speed("You missed!\n", .03)
+                    time.sleep(.3)
+                    self.apply_poison()
 
     def chk_edamage(self, enemy):
         edamage = None
@@ -949,6 +1000,11 @@ class Player():
                 text_speed("The {} dealt {} damage to you.\n".format(enemy.name, edamage), .03)
                 time.sleep(.2)
                 if self.is_alive() == True:
+                    if enemy.roll_status(self):
+                        if enemy.statusatk in self.status:
+                            text_speed("The {} inflicts {} on you!\n".format(enemy.name, enemy.statusatk), .03)
+                            time.sleep(.2)
+                            self.status[enemy.statusatk] = True
                     text_speed("You have {} HP remaining.\n".format(self.cHP), .03)
                     time.sleep(.2)
             else:
@@ -1039,8 +1095,8 @@ class Player():
             return random.randrange(stat, stat + adamage)
 
     def combat(self, enemy):
-        text_speed("What will you do?\n", .05)
-        time.sleep(.5)
+        text_speed("What will you do?\n", .03)
+        time.sleep(.2)
         choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n")
         if choice == "1":
             chkSPD = self.chk_SPD(enemy)
@@ -1053,6 +1109,10 @@ class Player():
                 if self.is_alive() == True:
                     self.pfight(enemy)
         elif choice == "2":
+            if self.status['silence'] == True:
+                text_speed("You can't cast spells while silenced!\n", .03)
+                time.sleep(.2)
+                self.combat(enemy)
             chkSPD = self.chk_SPD(enemy)
             spell = self.cast_spell()
             if chkSPD == True:
@@ -1064,6 +1124,10 @@ class Player():
                 if self.is_alive() == True:
                     self.pmagatk(enemy, spell)
         elif choice == "3":
+            if self.status['crippled'] == True:
+                text_speed("You can't use skills while crippled!\n", .03)
+                time.sleep(.2)
+                self.combat(enemy)
             chkSPD = self.chk_SPD(enemy)
             skill = self.use_skill()
             if chkSPD == True:
@@ -1103,21 +1167,21 @@ class Player():
 # Character Classes
 class Fighter(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=2, MAG=0, RES=0, SPD=1, SKL=2, LUCK=1, cash=5, char_class="Fighter")
-        self.inventory.append(items.rusty_sword())
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=1, MAG=0, RES=0, SPD=1, SKL=3, LUCK=1, cash=5, char_class="Fighter")
+        self.inventory.append(items.rusty_axe())
         self.inventory.append(items.rusty_shield())
         self.spells.append(magic.quake())
         self.skills.append(skills.cleave())
         self.mHPgrowth = .7
         self.mMPgrowth = .3
         self.STRgrowth = .7
-        self.DEFgrowth = .5
+        self.DEFgrowth = .4
         self.MAGgrowth = .2
         self.RESgrowth = .1
         self.SPDgrowth = .3
-        self.SKLgrowth = .4
+        self.SKLgrowth = .5
         self.LUCKgrowth = .3
-        self.equipped['weapon'] = items.rusty_sword()
+        self.equipped['weapon'] = items.rusty_axe()
         self.equipped['shield'] = items.rusty_shield()
 
 class Mage(Player):
@@ -1125,6 +1189,7 @@ class Mage(Player):
         super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5, char_class="Mage")
         self.inventory.append(items.wooden_staff())
         self.inventory.append(items.cloth_armor())
+        self.inventory.append(items.small_blue_potion(3))
         self.spells.append(magic.fire())
         self.spells.append(magic.ice())
         self.spells.append(magic.shock())
