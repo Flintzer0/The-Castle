@@ -1,5 +1,3 @@
-import enemies
-
 '''
 Damage Types:
     Fire
@@ -145,6 +143,20 @@ class sparktongue(Magic_Weapon):
                          damage_type="Lightning")
 
 # Polearm Items
+class wooden_spear(Weapon):
+    def __init__(self):
+        super().__init__(name="Wooden Spear",
+                         description="A simple wooden spear. It's not very sturdy, but it's better than nothing.",
+                         value=10,
+                         damage=3)
+        
+class iron_spear(Weapon):
+    def __init__(self):
+        super().__init__(name="Iron Spear",
+                         description="A simple iron spear. It's not very sturdy, but it's better than nothing.",
+                         value=25,
+                         damage=6)
+        
 # Axe Items
 class rusty_axe(Weapon):
     def __init__(self):
@@ -479,23 +491,85 @@ class ruby(Material):
                          value=200,
                          rarity=5)
 
+class emerald(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Emerald",
+                         description="A simple emerald. Used for upgrading. ({})".format(str(self.qty)),
+                         value=200,
+                         rarity=5)
+        
+class sapphire(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Sapphire",
+                         description="A simple sapphire. Used for upgrading. ({})".format(str(self.qty)),
+                         value=200,
+                         rarity=5)
+        
+class diamond(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Diamond",
+                         description="A simple diamond. Used for upgrading. ({})".format(str(self.qty)),
+                         value=1000,
+                         rarity=5)
+        
+class topaz(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Topaz",
+                         description="A simple topaz. Used for upgrading. ({})".format(str(self.qty)),
+                         value=150,
+                         rarity=5)
+        
+class amethyst(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Amethyst",
+                         description="A simple amethyst. Used for upgrading. ({})".format(str(self.qty)),
+                         value=50,
+                         rarity=5)
+        
+class opal(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Opal",
+                         description="A simple opal. Used for upgrading. ({})".format(str(self.qty)),
+                         value=100,
+                         rarity=5)
+        
+class garnet(Material):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Garnet",
+                         description="A simple garnet. Used for upgrading. ({})".format(str(self.qty)),
+                         value=50,
+                         rarity=5)
+
 # Cloth Items
 # Monster Parts
 # This is the base class for all monster parts.
 class monster_part(Material):
-    def __init__(self, epart, name, description, value, rarity, drop_rate):
-        self.epart = epart
-        self.rarity = rarity
+    def __init__(self, name, description, value, rarity, drop_rate):
         self.drop_rate = drop_rate
-        super().__init__(name, description, value)
+        super().__init__(name, description, value, rarity)
 
 # Basic Monster Parts
 class spider_leg(monster_part):
     def __init__(self, qty):
         self.qty = qty
-        super().__init__(epart=enemies.giant_spider(),
-                         name="Spider Leg",
+        super().__init__(name="Spider Leg",
                          description="A spider's leg. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1,
+                         drop_rate=0.5)
+        
+class spider_silk(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Spider Silk",
+                         description="A spider's silk. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
                          drop_rate=0.5)
@@ -507,8 +581,25 @@ class goblin_ear(monster_part):
                          description="A goblin's ear. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5,
-                         epart=enemies.goblin())
+                         drop_rate=0.5)
+        
+class goblin_fingernail(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Goblin Fingernail",
+                         description="A goblin's fingernail. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1,
+                         drop_rate=0.5)
+
+class bone(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Bone",
+                         description="A bone from a skeleton. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1,
+                         drop_rate=0.5)
 
 class femur_bone(monster_part):
     def __init__(self, qty):
@@ -517,9 +608,17 @@ class femur_bone(monster_part):
                          description="A femur bone from a walking skeleton. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5,
-                         epart=enemies.skeleton())
+                         drop_rate=0.5)
         
+class rat_fur(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Rat Fur",
+                         description="A rat's fur. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1,
+                         drop_rate=0.5)
+
 class rat_tail(monster_part):
     def __init__(self, qty):
         self.qty = qty
@@ -527,8 +626,7 @@ class rat_tail(monster_part):
                          description="A rat's tail. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5,
-                         epart=enemies.large_rat())
+                         drop_rate=0.5)
         
 class bat_wing(monster_part):
     def __init__(self, qty):
@@ -537,8 +635,16 @@ class bat_wing(monster_part):
                          description="A bat's wing. Used for upgrading. ({})".format(str(self.qty)),
                          value=5,
                          rarity=1,
-                         drop_rate=0.5,
-                         epart=enemies.demon_bat())
+                         drop_rate=0.5)
+        
+class rotting_flesh(monster_part):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Rotting Flesh",
+                         description="A piece of rotting flesh. Used for upgrading. ({})".format(str(self.qty)),
+                         value=5,
+                         rarity=1,
+                         drop_rate=0.5)
         
 # Boss Monster Parts
 class centipede_carapace(monster_part):
@@ -548,5 +654,4 @@ class centipede_carapace(monster_part):
                          description="A centipede's carapace. Used for upgrading. ({})".format(str(self.qty)),
                          value=20,
                          rarity=2,
-                         drop_rate=0.3,
-                         epart=enemies.giant_centipede())
+                         drop_rate=0.3)

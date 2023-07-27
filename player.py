@@ -1,4 +1,4 @@
-import items, world, magic, skills
+import world, items, magic, skills
 from utilities import *
 import pickle, sys, time, random
 
@@ -28,6 +28,31 @@ class Player():
         'crippled': False,
         'water_breathing': False
         }
+    materials = {
+        items.wood_plank(0).name: 0,
+        items.wood_crossguard(0).name: 0,
+        items.stone(0).name: 0,
+        items.iron_ore(0).name: 0,
+        items.amethyst(0).name: 0,
+        items.garnet(0).name: 0,
+        items.opal(0).name: 0,
+        items.ruby(0).name: 0,
+        items.sapphire(0).name: 0,
+        items.emerald(0).name: 0,
+        items.topaz(0).name: 0,
+        items.diamond(0).name: 0,
+        items.spider_silk(0).name: 0,
+        items.spider_leg(0).name: 0,
+        items.goblin_fingernail(0).name: 0,
+        items.goblin_ear(0).name: 0,
+        items.bone(0).name: 0,
+        items.femur_bone(0).name: 0,
+        items.rat_fur(0).name: 0,
+        items.rat_tail(0).name: 0,
+        items.bat_wing(0).name: 0,
+        items.rotting_flesh(0).name: 0,
+        items.centipede_carapace(0).name: 0
+    }
 
     def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash, char_class):
         self.mHP = mHP
@@ -1140,6 +1165,10 @@ class Player():
             self.level_up()
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
             time.sleep(.5)
+            if enemy.drop_part():
+                self.materials[enemy.part.name] += 1
+                text_speed("You obtained a {}!\n".format(enemy.part.name), .03)
+                time.sleep(.5)
             if self.chk_compendium(enemy) == False:
                 self.add_monster(enemy)
             # self.monster_part_drop(enemy)
@@ -1153,7 +1182,7 @@ class Player():
 # Character Classes
 class Fighter(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=1, MAG=0, RES=0, SPD=1, SKL=3, LUCK=1, cash=5, char_class="Fighter")
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=5, DEF=1, MAG=0, RES=0, SPD=2, SKL=4, LUCK=3, cash=10, char_class="Fighter")
         self.equipped['weapon'] = items.rusty_axe()
         self.equipped['shield'] = items.rusty_shield()
         self.skills.append(skills.cleave())
@@ -1170,7 +1199,7 @@ class Fighter(Player):
 
 class Mage(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5, char_class="Mage")
+        super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=5, RES=3, SPD=3, SKL=2, LUCK=1, cash=10, char_class="Mage")
         self.inventory.append(items.small_blue_potion(3))
         self.spells.append(magic.fire())
         self.spells.append(magic.ice())
@@ -1189,7 +1218,7 @@ class Mage(Player):
 
 class Rogue(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
+        super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=20, cMP=20, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
         self.spells.append(magic.poison())
         self.skills.append(skills.sneak_attack())
         self.mHPgrowth = .3
@@ -1206,7 +1235,7 @@ class Rogue(Player):
 
 class Cleric(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=20, cMP=20, STR=2, DEF=1, MAG=2, RES=3, SPD=1, SKL=2, LUCK=2, cash=10, char_class="Cleric")
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=20, cMP=20, STR=3, DEF=2, MAG=3, RES=3, SPD=1, SKL=1, LUCK=2, cash=10, char_class="Cleric")
         self.inventory.append(items.small_red_potion(3))
         self.spells.append(magic.smite())
         self.spells.append(magic.turn())
@@ -1224,7 +1253,7 @@ class Cleric(Player):
 
 class Paladin(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=3, DEF=3, MAG=1, RES=2, SPD=1, SKL=3, LUCK=2, cash=5, char_class="Paladin")
+        super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=20, cMP=20, STR=3, DEF=4, MAG=1, RES=2, SPD=1, SKL=2, LUCK=2, cash=5, char_class="Paladin")
         self.spells.append(magic.smite())
         self.skills.append(skills.heavy_swing())
         self.skills.append(skills.retribution())
@@ -1242,7 +1271,7 @@ class Paladin(Player):
 
 class Ranger(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=4, SKL=4, LUCK=1, cash=15, char_class="Ranger")
+        super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=5, SKL=4, LUCK=1, cash=15, char_class="Ranger")
         self.spells.append(magic.wind())
         self.skills.append(skills.precision_strike())
         self.mHPgrowth = .4
