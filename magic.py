@@ -1,15 +1,29 @@
-# Damage damage_types
-# Fire
-# Cold
-# Lightning
-# Water
-# Earth
-# Wind
-# Holy
-# Demonic
-# Necrotic
-# Poison
-# Turn Undead (labeled as Turn in-code)
+from utilities import *
+
+'''
+Damage damage_types
+    Fire
+    Cold
+    Lightning
+    Water
+    Earth
+    Wind
+    Holy
+    Demonic
+    Necrotic
+    Poison
+    Turn Undead (labeled as Turn in-code)
+
+Status Effects
+    Poison
+    Paralysis
+    Blind
+    Silence
+    Sleep
+    Confusion
+    Charm
+    Crippled
+'''
 
 class Spell:
     def __init__(self, name, description, cost, damage, damage_type):
@@ -22,59 +36,112 @@ class Spell:
     def __str__(self):
         return '{}\n====================\n{}\nMP: {}\nDamage: {}\nType: {}'.format(self.name, self.description, self.cost, self.damage, self.damage_type)
     
+    def __repr__(self):
+        return self.name
+    
+    def effect(self, player, enemy):
+        raise NotImplementedError()
+    
+    def cast_spell(self, player, enemy):
+        if player.cMP >= self.cost:
+            player.cMP -= self.cost
+            self.effect(player, enemy)
+    
 # Basic Spells
 
 class fire(Spell):
     def __init__(self):
-        super().__init__(name="Fire", cost=5, damage=5, damage_type="Fire", 
-                         description="Your Fire spell. Deals Fire damage to a single target.")
+        super().__init__(name="Fire", cost=2, damage=5, damage_type="Fire", 
+                         description="Shoots a steam of flames. Deals Fire damage to a single target.")
+        
+    def effect(self, player, enemy):
+        if calculate_hit(player, enemy):
+            cCRIT = chk_CRIT(player)
+            stat_bonus = (player.MAG * 2)
+            base_dmg = (self.damage)
+            text_speed("You cast {}!\n".format(self.name), .03)
+            pdamage = generate_magic_damage(player, self, enemy)
+            time.sleep(.2)
+            if cCRIT == True:
+                pdamage *= 2
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.2)
+            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            time.sleep(.2)
+            enemy.hp -= (pdamage - enemy.RES)
+        else:
+            text_speed("You cast {}!\n".format(self.name), .03)
+            time.sleep(.2)
+            text_speed("You missed!\n", .03)
+            time.sleep(.2)
         
 class ice(Spell):
     def __init__(self):
-        super().__init__(name="Ice", cost=5, damage=5, damage_type="Cold", 
-                         description="Your Ice spell. Deals Cold damage to a single target.")
+        super().__init__(name="Ice", cost=2, damage=5, damage_type="Cold", 
+                         description="Sends out shards of ice. Deals Cold damage to a single target.")
+        
+        def effect(self, player, enemy):
+            if calculate_hit(player, enemy):
+                cCRIT = chk_CRIT(player)
+                stat_bonus = (player.MAG * 2)
+                base_dmg = (self.damage)
+                text_speed("You cast {}!\n".format(self.name), .03)
+                pdamage = generate_magic_damage(player, self, enemy)
+                time.sleep(.2)
+                if cCRIT == True:
+                    pdamage *= 2
+                    text_speed("Critical hit!\n", .01)
+                    time.sleep(.2)
+                text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+                time.sleep(.2)
+                enemy.hp -= (pdamage - enemy.RES)
+            else:
+                text_speed("You cast {}!\n".format(self.name), .03)
+                time.sleep(.2)
+                text_speed("You missed!\n", .03)
+                time.sleep(.2)
         
 class shock(Spell):
     def __init__(self):
-        super().__init__(name="Shock", cost=5, damage=5, damage_type="Lightning", 
-                         description="Your Shock spell. Deals Lightning damage to a single target.")
+        super().__init__(name="Shock", cost=2, damage=5, damage_type="Lightning", 
+                         description="Spouts electricity from your fingertips. Deals Lightning damage \nto a single target.")
         
 class water(Spell):
     def __init__(self):
-        super().__init__(name="Water", cost=5, damage=5, damage_type="Water", 
-                         description="Your Water spell. Deals Water damage to a single target.")
+        super().__init__(name="Water", cost=2, damage=5, damage_type="Water", 
+                         description="Fire a stream of pressurized water. Deals Water damage to a single target.")
         
 class quake(Spell):
     def __init__(self):
-        super().__init__(name="Quake", cost=5, damage=5, damage_type="Earth", 
-                         description="Your Quake spell. Deals Earth damage to a single target.")
+        super().__init__(name="Quake", cost=2, damage=5, damage_type="Earth", 
+                         description="Makes the ground tremble. Deals Earth damage to a single target.")
         
 class wind(Spell):
     def __init__(self):
-        super().__init__(name="Wind", cost=5, damage=5, damage_type="Wind", 
-                         description="Your Wind spell. Deals Wind damage to a single target.")
+        super().__init__(name="Wind", cost=2, damage=5, damage_type="Wind", 
+                         description="Moves the air around you like blades. Deals Wind damage to a single target.")
         
 class smite(Spell):
     def __init__(self):
-        super().__init__(name="Smite", cost=5, damage=5, damage_type="Holy", 
-                         description="Your Smite spell. Deals Holy damage to a single target.")
+        super().__init__(name="Smite", cost=2, damage=5, damage_type="Holy", 
+                         description="Calls forth heavenly judgement in a column of light. Deals \nHoly damage to a single target.")
         
 class curse(Spell):
     def __init__(self):
-        super().__init__(name="Curse", cost=5, damage=5, damage_type="Demonic", 
-                         description="Your Curse spell. Deals Demonic damage to a single target.")
+        super().__init__(name="Curse", cost=2, damage=5, damage_type="Demonic", 
+                         description="Sends demonic energy from the shadows to curse your enemies. \nDeals Demonic damage to a single target.")
         
 class wither(Spell):
     def __init__(self):
-        super().__init__(name="Wither", cost=5, damage=5, damage_type="Necrotic", 
-                         description="Your Wither spell. Deals Necrotic damage to a single target.")
+        super().__init__(name="Wither", cost=6, damage=5, damage_type="Necrotic", 
+                         description="Shoots a purple bolt of nectrotic energy that atrophies your enemies. \nDeals Necrotic damage to a single target. Has a chance to Cripple the target.")
         
 class poison(Spell):
     def __init__(self):
-        super().__init__(name="Poison", cost=5, damage=5, damage_type="Poison", 
-                         description="Your Poison spell. Deals Poison damage to a single target.")
+        super().__init__(name="Poison", cost=2, damage=3, damage_type="Poison", 
+                         description="Shoots a thin, green bolt. Deals Poison damage to a single target. \nHas a chance to Poison the target.")
         
 class turn(Spell):
     def __init__(self):
-        super().__init__(name="Turn Undead", cost=5, damage=5, damage_type="Turn", 
-                         description="Your Turn Undead spell. Deals damage to a single target. \nDeals bonus damage to undead creatures.")
+        super().__init__(name="Turn Undead", cost=2, damage=5, damage_type="Turn", 
+                         description="Your hands glow and burn away the undead. Deals damage to a single target. \nDeals bonus damage to undead creatures.")

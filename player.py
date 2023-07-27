@@ -1024,7 +1024,7 @@ class Player():
         for i in n:
             print(f'{i}: {spell[i].name} Cost: {spell[i].cost}MP')
 
-    def cast_spell(self):
+    def cast_spell(self, enemy):
         self.list_spells()
         text_speed("Which spell do you want to cast? ", .05)
         choice = input()
@@ -1032,29 +1032,14 @@ class Player():
             choice = int(choice)
             if choice < len(self.chk_spells()):
                 if self.cMP >= self.chk_spells()[choice].cost:
-                    self.cMP -= self.chk_spells()[choice].cost
                     return self.chk_spells()[choice]
                 else:
                     text_speed("You don't have enough MP!\n", .05)
                     time.sleep(.5)
+                    self.combat(enemy)
 
     def pmagatk(self, enemy, spell):
-        text_speed("You cast {}!\n".format(spell.name), .05)
-        time.sleep(.2)
-        if calculate_hit(self, enemy):
-            pdamage = self.generate_damage(self.MAG, spell, enemy)
-            if chk_CRIT(self) == True:
-                pdamage *= 2
-                text_speed("Critical hit!\n", .01)
-                time.sleep(.2)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .05)
-            enemy.hp -= (pdamage - enemy.RES)
-            time.sleep(.2)
-        else:
-            text_speed("You cast {}!\n".format(spell.name), .05)
-            time.sleep(.2)
-            text_speed("You missed!\n", .05)
-            time.sleep(.2)
+        spell.cast_spell(self, enemy)
 
     def chk_skills(self):
         skill = []
@@ -1069,7 +1054,7 @@ class Player():
         for i in n:
             print(f'{i}: {skill[i].name} Cost: {skill[i].cost}MP')
 
-    def use_skill(self):
+    def use_skill(self, enemy):
         self.list_skills()
         text_speed("Which skill do you want to use? ", .05)
         choice = input()
@@ -1081,6 +1066,7 @@ class Player():
                 else:
                     text_speed("You don't have enough MP!\n", .05)
                     time.sleep(.2)
+                    self.combat(enemy)
             
     def pskillatk(self, enemy, skill):
         skill.use_ability(self, enemy)
@@ -1114,7 +1100,7 @@ class Player():
                 time.sleep(.2)
                 self.combat(enemy)
             chkSPD = self.chk_SPD(enemy)
-            spell = self.cast_spell()
+            spell = self.cast_spell(enemy)
             if chkSPD == True:
                 self.pmagatk(enemy, spell)
                 if enemy.is_alive() == True:
@@ -1129,7 +1115,7 @@ class Player():
                 time.sleep(.2)
                 self.combat(enemy)
             chkSPD = self.chk_SPD(enemy)
-            skill = self.use_skill()
+            skill = self.use_skill(enemy)
             if chkSPD == True:
                 self.pskillatk(enemy, skill)
                 if enemy.is_alive() == True:
@@ -1170,8 +1156,8 @@ class Fighter(Player):
         super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=1, MAG=0, RES=0, SPD=1, SKL=3, LUCK=1, cash=5, char_class="Fighter")
         self.equipped['weapon'] = items.rusty_axe()
         self.equipped['shield'] = items.rusty_shield()
-        self.spells.append(magic.quake())
         self.skills.append(skills.cleave())
+        self.skills.append(skills.heavy_swing())
         self.mHPgrowth = .7
         self.mMPgrowth = .3
         self.STRgrowth = .7
@@ -1240,7 +1226,8 @@ class Paladin(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=3, DEF=3, MAG=1, RES=2, SPD=1, SKL=3, LUCK=2, cash=5, char_class="Paladin")
         self.spells.append(magic.smite())
-        self.skills.append(skills.cleave())
+        self.skills.append(skills.heavy_swing())
+        self.skills.append(skills.retribution())
         self.mHPgrowth = .5
         self.mMPgrowth = .4
         self.STRgrowth = .6

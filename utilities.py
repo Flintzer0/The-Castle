@@ -46,3 +46,11 @@ def generate_damage(player, stat, attack, enemy):
         return random.randrange(stat, stat + (attack * 2))
     else:
         return random.randrange(stat, stat + attack)
+    
+def generate_magic_damage(player, spell, enemy):
+    eweak = chk_weakness(enemy)
+    if spell.damage_type == eweak:
+        text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+        return random.randrange(player.MAG, player.MAG + (spell.damage * 2))
+    else:
+        return random.randrange(player.MAG, player.MAG + spell.damage)

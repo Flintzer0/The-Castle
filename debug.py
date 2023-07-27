@@ -18,6 +18,7 @@ def play():
     # player.equipped['weapon'] = items.cold_iron_sword()
     # player.equipped['accessory_1'] = items.water_ring()
     player = Fighter()
+    player.spells.append(magic.fire())
     game_loop(player)
 
 def game_loop(player):
