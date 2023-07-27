@@ -38,7 +38,7 @@ class cleave(Skill):
             stat_bonus = (player.STR * 2)
             base_dmg = (self.damage + weapon.damage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = player.generate_damage(stat_bonus, base_dmg, enemy)
+            pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2

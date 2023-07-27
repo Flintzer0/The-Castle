@@ -38,3 +38,11 @@ def skill_hit(skill, attacker, defender):
         return random.randint(1,100) <= Hit_rate
     Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO)
     return random.randint(1,100) <= Hit_rate
+
+def generate_damage(player, stat, attack, enemy):
+    eweak = chk_weakness(enemy)
+    if player.equipped['weapon'].damage_type == eweak:
+        text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+        return random.randrange(stat, stat + (attack * 2))
+    else:
+        return random.randrange(stat, stat + attack)
