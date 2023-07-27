@@ -1,6 +1,18 @@
 import random
 
 class Enemy:
+    
+    status = {
+        'poison': False,
+        'paralysis': False,
+        'blind': False,
+        'silence': False,
+        'sleep': False,
+        'confusion': False,
+        'charm': False,
+        'crippled': False,
+        }
+    
     def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, description):
         self.name = name
         self.hp = hp

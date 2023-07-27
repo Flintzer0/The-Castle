@@ -886,7 +886,7 @@ class Player():
                 sys.exit()
 
     def roll_paralyze(self):
-        if self.status['paralyze'] == True:
+        if self.status['paralysis'] == True:
             text_speed("You are paralyzed!\n", .03)
             time.sleep(.2)
             roll = random.randint(1, 10)
@@ -1000,7 +1000,7 @@ class Player():
                 text_speed("The {} dealt {} damage to you.\n".format(enemy.name, edamage), .03)
                 time.sleep(.2)
                 if self.is_alive() == True:
-                    if enemy.roll_status(self):
+                    if enemy.roll_status():
                         if enemy.statusatk in self.status:
                             text_speed("The {} inflicts {} on you!\n".format(enemy.name, enemy.statusatk), .03)
                             time.sleep(.2)
@@ -1168,8 +1168,8 @@ class Player():
 class Fighter(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=10, cMP=10, STR=3, DEF=1, MAG=0, RES=0, SPD=1, SKL=3, LUCK=1, cash=5, char_class="Fighter")
-        self.inventory.append(items.rusty_axe())
-        self.inventory.append(items.rusty_shield())
+        self.equipped['weapon'] = items.rusty_axe()
+        self.equipped['shield'] = items.rusty_shield()
         self.spells.append(magic.quake())
         self.skills.append(skills.cleave())
         self.mHPgrowth = .7
@@ -1181,14 +1181,10 @@ class Fighter(Player):
         self.SPDgrowth = .3
         self.SKLgrowth = .5
         self.LUCKgrowth = .3
-        self.equipped['weapon'] = items.rusty_axe()
-        self.equipped['shield'] = items.rusty_shield()
 
 class Mage(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=25, cMP=25, STR=1, DEF=0, MAG=3, RES=2, SPD=2, SKL=2, LUCK=1, cash=5, char_class="Mage")
-        self.inventory.append(items.wooden_staff())
-        self.inventory.append(items.cloth_armor())
         self.inventory.append(items.small_blue_potion(3))
         self.spells.append(magic.fire())
         self.spells.append(magic.ice())
@@ -1208,8 +1204,6 @@ class Mage(Player):
 class Rogue(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
-        self.inventory.append(items.rusty_dagger())
-        self.inventory.append(items.luck_1_ring())
         self.spells.append(magic.poison())
         self.skills.append(skills.sneak_attack())
         self.mHPgrowth = .3
@@ -1227,8 +1221,6 @@ class Rogue(Player):
 class Cleric(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=20, cMP=20, STR=2, DEF=1, MAG=2, RES=3, SPD=1, SKL=2, LUCK=2, cash=10, char_class="Cleric")
-        self.inventory.append(items.rusty_hammer())
-        self.inventory.append(items.cloth_armor())
         self.inventory.append(items.small_red_potion(3))
         self.spells.append(magic.smite())
         self.spells.append(magic.turn())
@@ -1247,8 +1239,6 @@ class Cleric(Player):
 class Paladin(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=20, cHP=20, mMP=15, cMP=15, STR=3, DEF=3, MAG=1, RES=2, SPD=1, SKL=3, LUCK=2, cash=5, char_class="Paladin")
-        self.inventory.append(items.rusty_sword())
-        self.inventory.append(items.rusty_armor())
         self.spells.append(magic.smite())
         self.skills.append(skills.cleave())
         self.mHPgrowth = .5
@@ -1266,8 +1256,6 @@ class Paladin(Player):
 class Ranger(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=4, SKL=4, LUCK=1, cash=15, char_class="Ranger")
-        self.inventory.append(items.wooden_bow())
-        self.inventory.append(items.speed_1_ring())
         self.spells.append(magic.wind())
         self.skills.append(skills.precision_strike())
         self.mHPgrowth = .4

@@ -33,11 +33,12 @@ class cleave(Skill):
         
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            best_weapon = player.chk_Weapon()
             cCRIT = chk_CRIT(player)
-            base_dmg = ((player.STR * 2) + self.damage)
-            text_speed("You use {} with your {}!\n".format(self.name, best_weapon.name), .03)
-            pdamage = player.generate_damage(base_dmg, best_weapon, enemy)
+            weapon = player.equipped['weapon']
+            stat_bonus = (player.STR * 2)
+            base_dmg = (self.damage + weapon.damage)
+            text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
+            pdamage = player.generate_damage(stat_bonus, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
@@ -47,7 +48,7 @@ class cleave(Skill):
             time.sleep(.2)
             enemy.hp -= (pdamage - enemy.DEF)
         else:
-            text_speed("You use {} with your {}!\n".format(self.name, best_weapon.name), .03)
+            text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
             time.sleep(.2)
