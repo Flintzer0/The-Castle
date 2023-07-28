@@ -18,10 +18,8 @@ def play():
     # player.skills.append(skills.precision_strike())
     # player.equipped['weapon'] = items.cold_iron_sword()
     # player.equipped['accessory_1'] = items.water_ring()
-    player = Rogue()
+    player = Cleric()
     player.name = "Debug"
-    player.skills.append(skills.steal())
-    player.spells.append(magic.fire())
     game_loop(player)
 
 def game_loop(player):

@@ -185,13 +185,24 @@ class wooden_bow(Weapon):
                          description="A simple wooden bow. It's not very sturdy, but it's better than nothing.",
                          value=10,
                          damage=2)
+
+# Weapons with Magic Damage
+class Spellcaster(Weapon):
+    def __init__(self, name, description, value, damage, mdamage):
+        self.mdamage = mdamage
+        super().__init__(name, description, value, damage)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nDamage: {}\nDamage Type: {}".format(self.name, self.description, self.value, self.damage, self.mdamage)
+
 # Staff Items
-class wooden_staff(Magic_Weapon):
+class wooden_staff(Spellcaster):
     def __init__(self):
         super().__init__(name="Wooden Staff",
                          description="A simple wooden staff. It's not very sturdy, but it's better than nothing.",
                          value=10,
-                         damage=1)
+                         damage=1,
+                         mdamage=3)
 # Wand Items
 # Tome Items
 # Rod Items

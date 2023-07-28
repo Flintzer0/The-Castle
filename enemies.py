@@ -1,4 +1,5 @@
-import random
+import random, time
+from utilities import text_speed
 
 class Enemy:
 
@@ -50,6 +51,21 @@ class Enemy:
         import items
         part = self.part
         return random.randint(1,100) <= 100 * part.drop_rate
+    
+    def apply_poison(self):
+        if self.status['poison'] == True:
+            damage = random.randint(1, 5)
+            self.hp -= damage
+            text_speed("The {} takes {} damage from poison!\n".format(self.name, damage), .03)
+            time.sleep(.2)
+
+class Undead(Enemy):
+    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description): 
+        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+
+class Boss(Enemy):
+    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 # Tier 1 Enemies
 
@@ -66,7 +82,6 @@ class giant_spider(Enemy):
         super().__init__(name="Giant Spider", hp=10, mhp=10, damage=2, statusatk=None, status_chance=0, weak=None, DEF=0, RES=1, SPD=3, SKL=2, LUCK=1, EXP=13, gold=10, part=items.spider_leg(1),
                          description="A large spider with dripping fangs and a hairy body. They are quicker than most basic monsters. \nBeing all buggy, its defense isn't superb, but it has a bit of magic resistance.\n")
  
-
 class goblin(Enemy):
     import items
     steal_list = {
@@ -80,7 +95,7 @@ class goblin(Enemy):
         super().__init__(name="Goblin", hp=5, mhp=5, damage=1, statusatk=None, status_chance=0, weak="Cold", DEF=1, RES=0, SPD=2, SKL=1, LUCK=0, EXP=10, gold=16, part=items.goblin_ear(1),
                          description="A small, green humanoid with a large nose and pointed ears, wielding a wooden club. \nThey aren't very special, but they have a bit of defense.\n")
 
-class skeleton(Enemy):
+class skeleton(Undead):
     import items
     steal_list = {
         '1': items.gold(100),
@@ -90,7 +105,21 @@ class skeleton(Enemy):
 
     def __init__(self):
         import items
-        super().__init__(name="Skeleton", hp=7, mhp=7, damage=3, statusatk=None, status_chance=0, weak="Turn Undead", DEF=2, RES=-1, SPD=1, SKL=0, LUCK=0, EXP=17, gold=13, part=items.femur_bone(1),
+        super().__init__(name="Skeleton", 
+                         hp=7, 
+                         mhp=7, 
+                         damage=3, 
+                         statusatk=None, 
+                         status_chance=0, 
+                         weak="", 
+                         DEF=2, 
+                         RES=-1, 
+                         SPD=1, 
+                         SKL=0, 
+                         LUCK=0, 
+                         EXP=17, 
+                         gold=13, 
+                         part=items.femur_bone(1),
                          description="A walking skeleton. \nThey are slow, but they have some defense and deal a little more \ndamage.\n")
         
 class large_rat(Enemy):
@@ -119,7 +148,7 @@ class demon_bat(Enemy):
         super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, statusatk=None, status_chance=0, weak="Holy", DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9, part=items.bat_wing(1),
                          description="A bat with red eyes and a demonic aura. \nThey are quick and have a bit of magic resistance, but physically weak.\n")
         
-class zombie(Enemy):
+class zombie(Undead):
     import items
     steal_list = {
         '1': items.gold(100),
@@ -129,12 +158,11 @@ class zombie(Enemy):
 
     def __init__(self):
         import items
-        super().__init__(name="Zombie", hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak="Turn Undead", DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
+        super().__init__(name="Zombie", hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak="", DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
                          description="A walking corpse. They are slow, but they have some defense and deal a little more \ndamage.\n")
-        
-# Bosses
 
-class giant_centipede(Enemy):
+# Bosses   
+class giant_centipede(Boss):
     # Basement Floor Boss
     import items
 

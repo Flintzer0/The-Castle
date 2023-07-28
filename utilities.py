@@ -1,4 +1,4 @@
-import sys, time, random
+import sys, time, random, items
 
 # This module contains functions that are used in multiple files.
 
@@ -43,14 +43,23 @@ def generate_damage(player, stat, attack, enemy):
     eweak = chk_weakness(enemy)
     if player.equipped['weapon'].damage_type == eweak:
         text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
-        return random.randrange(stat, stat + (attack * 2))
+        return random.randrange(stat + attack, stat + (attack * 2))
     else:
         return random.randrange(stat, stat + attack)
     
 def generate_magic_damage(player, spell, enemy):
     eweak = chk_weakness(enemy)
-    if spell.damage_type == eweak:
-        text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
-        return random.randrange(player.MAG, player.MAG + (spell.damage * 2))
+    spellcaster = player.equipped['weapon']
+    if isinstance(spellcaster, items.Spellcaster):
+        base = spellcaster.mdamage + player.MAG
+        if spell.damage_type == eweak:
+            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+            return random.randrange(base + spell.damage, base + (spell.damage * 2))
+        else:
+            return random.randrange(base, base + spell.damage)
     else:
-        return random.randrange(player.MAG, player.MAG + spell.damage)
+        if spell.damage_type == eweak:
+            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+            return random.randrange(player.MAG + spell.damage, player.MAG + (spell.damage * 2))
+        else:
+            return random.randrange(player.MAG, player.MAG + spell.damage)

@@ -967,9 +967,9 @@ class Player():
             elif self.roll_confusion() == False:
                 if calculate_hit(self, enemy):
                     cCRIT = chk_CRIT(self)
-                    pdamage = self.generate_damage(self.STR, weapon, enemy)
                     text_speed("You use {}!\n".format(weapon.name), .03)
                     time.sleep(.2)
+                    pdamage = self.generate_damage(self.STR, weapon, enemy)
                     if cCRIT == True:
                         pdamage *= 2
                         text_speed("Critical hit!\n", .01)
@@ -1032,9 +1032,11 @@ class Player():
                             self.status[enemy.statusatk] = True
                     text_speed("You have {} HP remaining.\n".format(self.cHP), .03)
                     time.sleep(.2)
+                    enemy.apply_poison()
             else:
                 text_speed("The {} missed!\n".format(enemy.name), .03)
                 time.sleep(.2)
+                enemy.apply_poison()
     
     def chk_spells(self):
         spell = []
@@ -1221,6 +1223,7 @@ class Rogue(Player):
         super().__init__(self, LVL=1, mHP=10, cHP=10, mMP=20, cMP=20, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
         self.spells.append(magic.poison())
         self.skills.append(skills.sneak_attack())
+        self.skills.append(skills.steal())
         self.mHPgrowth = .3
         self.mMPgrowth = .4
         self.STRgrowth = .4
@@ -1274,6 +1277,7 @@ class Ranger(Player):
         super().__init__(self, LVL=1, mHP=15, cHP=15, mMP=15, cMP=15, STR=2, DEF=1, MAG=1, RES=1, SPD=5, SKL=4, LUCK=1, cash=15, char_class="Ranger")
         self.spells.append(magic.wind())
         self.skills.append(skills.precision_strike())
+        self.skills.append(skills.double_strike())
         self.mHPgrowth = .4
         self.mMPgrowth = .4
         self.STRgrowth = .6
