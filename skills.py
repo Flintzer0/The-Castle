@@ -225,12 +225,10 @@ class steal(Skill):
     def steal(self, player, enemy):
         steal = random.randint(1,100) <= 50 + (player.SPD * 2)
         if steal == True:
-            text_speed("You stole an item from the {}!\n".format(enemy.name), .03)
-            time.sleep(.2)
             item_choice = random.randint(1,100)
             if item_choice <= 50:
                 gold = enemy.steal_list['1']
-                amount = random.randint(1, gold.amt)
+                amount = random.randint(1, 20)
                 player.cash += amount
                 enemy.steal_list['1'].amt -= amount
                 text_speed("You stole {} gold!\n".format(amount), .03)
