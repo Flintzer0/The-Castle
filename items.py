@@ -142,6 +142,15 @@ class sparktongue(Magic_Weapon):
                          damage=12,
                          damage_type="Lightning")
 
+class obsidian_blade(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Necrotic"
+        super().__init__(name="Obsidian Blade",
+                         description="A blade of pure obsidian, once owned by the Underking.\nIt's pitch black and seems to absorb light. \nAll damage dealt by this weapon is Necrotic damage.",
+                         value=2500,
+                         damage=25,
+                         damage_type="Necrotic")
+
 # Polearm Items
 class wooden_spear(Weapon):
     def __init__(self):

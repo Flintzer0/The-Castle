@@ -1108,6 +1108,7 @@ class Player():
             return random.randrange(stat, stat + adamage)
 
     def combat(self, enemy):
+        # Something odd is happening with damage calculations. It seems that regular, magic, and skill attacks aren't combining in decreasing the enemy's HP.
         text_speed("What will you do?\n", .03)
         time.sleep(.2)
         choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n")
@@ -1141,16 +1142,21 @@ class Player():
                 text_speed("You can't use skills while crippled!\n", .03)
                 time.sleep(.2)
                 self.combat(enemy)
-            chkSPD = self.chk_SPD(enemy)
-            skill = self.use_skill(enemy)
-            if chkSPD == True:
-                self.pskillatk(enemy, skill)
-                if enemy.is_alive() == True:
-                    self.efight(enemy)
+            elif len(self.skills) == 0:
+                text_speed("You don't have any skills!\n", .03)
+                time.sleep(.2)
+                self.combat(enemy)
             else:
-                self.efight(enemy)
-                if self.is_alive() == True:
+                chkSPD = self.chk_SPD(enemy)
+                skill = self.use_skill(enemy)
+                if chkSPD == True:
                     self.pskillatk(enemy, skill)
+                    if enemy.is_alive() == True:
+                        self.efight(enemy)
+                else:
+                    self.efight(enemy)
+                    if self.is_alive() == True:
+                        self.pskillatk(enemy, skill)
 
     def fight(self, enemy):
         # for item in self.inventory:

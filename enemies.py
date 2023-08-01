@@ -59,6 +59,7 @@ class Enemy:
             text_speed("The {} takes {} damage from poison!\n".format(self.name, damage), .03)
             time.sleep(.2)
 
+# Enemy Types
 class Undead(Enemy):
     def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Undead"
@@ -95,11 +96,10 @@ class Shifter(Enemy):
         super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Boss(Enemy):
-    def __init__(self, name, hp, mhp, damage,type, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 # Tier 1 Enemies
-
 class giant_spider(Bug):
     import items
     steal_list = {
@@ -206,12 +206,33 @@ class zombie(Undead):
         super().__init__(name="Zombie", hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak="", DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
                          description="A walking corpse.\nThey are slow, but they have some defense and deal a little more damage.\nIt is important to strike them down quickly to avoid being afflicted\nwith DISEASE.\n")
 
+# Tier 2 Enemies
+
+
+# Tier 3 Enemies
+
+
+# Tier 4 Enemies
+
+
 # Bosses
 # BF2 Boss
+class underking(Boss, Undead):
+    import items
+
+    steal_list = {
+        '1': items.gold(100),
+        '2': items.elixir(10),
+        '3': items.diamond(10)
+    }
+
+    def __init__(self):
+        import items
+        super().__init__(name="Underking", hp=200, mhp=200, damage=50, statusatk="Wither", status_chance=70, weak="Holy", DEF=15, RES=20, SPD=18, SKL=35, LUCK=10, EXP=100, gold=3000, part=items.obsidian_blade(),
+                         description="The powerful Underking, once the ruler of all below the surface.\nHe is a powerful foe, with high damage, defense, and resistance, and is\ncapable of inflicting WITHER. Only engage when you are ready.\n")
 
 # BF1 Boss
 class giant_centipede(Boss, Bug):
-    # Basement Floor Boss
     import items
 
     potential_weapons = {items.rusty_sword(), items.rusty_sword(), items.rusty_axe(), items.rusty_axe, items.wooden_spear(), items.wooden_spear, items.iron_spear()}
@@ -224,6 +245,15 @@ class giant_centipede(Boss, Bug):
 
     def __init__(self):
         import items
-        super().__init__(name="Centipede", hp=20, mhp=20, damage=5, type="", statusatk="Poison", status_chance=50, weak="Fire", DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30, part=items.centipede_carapace(1),
+        super().__init__(name="Centipede", hp=20, mhp=20, damage=5, statusatk="Poison", status_chance=50, weak="Fire", DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30, part=items.centipede_carapace(1),
                          description="A giant centipede, with acid dripping off its mandibles. There also \nappears to be several old weapons stuck in its hard shell. Being a \ncentipede, it is quite dangerous, with high damage, some defense both \nphysically and magically, quick, and capable of making skillful \nstrikes. Only engage when you are ready.\n")
         
+# F1 Boss
+
+# F2 Boss
+
+# F3 Boss
+
+# F4 Boss
+
+# F5 Boss
