@@ -44,13 +44,18 @@ class cleave(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
 
 class sneak_attack(Skill):
@@ -71,13 +76,18 @@ class sneak_attack(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
         
 class precision_strike(Skill):
@@ -97,9 +107,12 @@ class precision_strike(Skill):
             pdamage *= 2
             text_speed("Critical hit!\n", .01)
             time.sleep(.2)
-        text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-        time.sleep(.2)
-        enemy.hp -= (pdamage - enemy.DEF)
+        if (pdamage - enemy.DEF) < 0:
+            damage = 1
+        else:
+            damage = (pdamage - enemy.DEF)
+        text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+        enemy.hp -= damage
         
 class double_strike(Skill):
     def __init__(self):
@@ -118,9 +131,12 @@ class double_strike(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
             self.second_hit(player, enemy)
 
     def second_hit(self, player, enemy):
@@ -138,9 +154,12 @@ class double_strike(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
         
 class guard_breaker(Skill):
     def __init__(self):
@@ -167,6 +186,8 @@ class guard_breaker(Skill):
             time.sleep(.2)
             text_speed("You missed!\n", .03)
             time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+            time.sleep(.2)
         
 class heavy_swing(Skill):
     def __init__(self):
@@ -186,13 +207,18 @@ class heavy_swing(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
         
 class steal(Skill):
@@ -212,14 +238,19 @@ class steal(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
             self.steal(player, enemy)
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
 
     def steal(self, player, enemy):
@@ -265,14 +296,19 @@ class poison_point(Skill):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.DEF)
+            if (pdamage - enemy.DEF) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.DEF)
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.hp -= damage
             self.poison(player, enemy)
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
 
     def poison(self, player, enemy):

@@ -99,6 +99,12 @@ class Boss(Enemy):
     def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
+class dummy(Enemy):
+    def __init__(self):
+        import items
+        super().__init__(name="Dummy", hp=1000000, mhp=1000000, damage=0, statusatk=None, status_chance=0, weak=None, DEF=0, RES=0, SPD=0, SKL=0, LUCK=0, EXP=0, gold=0, part=items.wood_plank(1),
+                         description="A wooden dummy. It doesn't do anything.\n")
+
 # Tier 1 Enemies
 class giant_spider(Bug):
     import items
@@ -156,7 +162,7 @@ class skeleton(Undead):
                          damage=3, 
                          statusatk=None, 
                          status_chance=0, 
-                         weak="", 
+                         weak=None, 
                          DEF=2, 
                          RES=-1, 
                          SPD=1, 
@@ -203,7 +209,7 @@ class zombie(Undead):
 
     def __init__(self):
         import items
-        super().__init__(name="Zombie", hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak="", DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
+        super().__init__(name="Zombie", hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak=None, DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
                          description="A walking corpse.\nThey are slow, but they have some defense and deal a little more damage.\nIt is important to strike them down quickly to avoid being afflicted\nwith DISEASE.\n")
 
 # Tier 2 Enemies

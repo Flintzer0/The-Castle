@@ -961,7 +961,7 @@ class Player():
         elif self.roll_paralyze() == False:
             if self.roll_confusion() == True:
                 text_speed("You trip over your own feet!\n", .03)
-                time.sleep(.3)
+                time.sleep(.2)
                 self.cHP -= 1
                 self.apply_poison()
             elif self.roll_confusion() == False:
@@ -974,15 +974,20 @@ class Player():
                         pdamage *= 2
                         text_speed("Critical hit!\n", .01)
                         time.sleep(.3)
-                    text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
-                    enemy.hp -= (pdamage - enemy.DEF)
-                    time.sleep(.3)
+                    if (pdamage - enemy.DEF) < 0:
+                        damage = 1
+                    else:
+                        damage = (pdamage - enemy.DEF)
+                    text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+                    enemy.hp -= damage
+                    time.sleep(.2)
                     self.apply_poison()
                 else:
                     text_speed("You use {}!\n".format(weapon.name), .03)
                     time.sleep(.2)
                     text_speed("You missed!\n", .03)
-                    time.sleep(.3)
+                    time.sleep(.2)
+                    text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
                     self.apply_poison()
 
     def chk_edamage(self, enemy):
@@ -1053,7 +1058,7 @@ class Player():
 
     def cast_spell(self, enemy):
         self.list_spells()
-        text_speed("Which spell do you want to cast? ", .05)
+        text_speed("Which spell do you want to cast? ", .03)
         choice = input()
         if choice.isdigit():
             choice = int(choice)
@@ -1061,8 +1066,8 @@ class Player():
                 if self.cMP >= self.chk_spells()[choice].cost:
                     return self.chk_spells()[choice]
                 else:
-                    text_speed("You don't have enough MP!\n", .05)
-                    time.sleep(.5)
+                    text_speed("You don't have enough MP!\n", .03)
+                    time.sleep(.2)
                     self.combat(enemy)
 
     def pmagatk(self, enemy, spell):
@@ -1083,7 +1088,7 @@ class Player():
 
     def use_skill(self, enemy):
         self.list_skills()
-        text_speed("Which skill do you want to use? ", .05)
+        text_speed("Which skill do you want to use? ", .03)
         choice = input()
         if choice.isdigit():
             choice = int(choice)
@@ -1091,7 +1096,7 @@ class Player():
                 if self.cMP >= self.chk_skills()[choice].cost:
                     return self.chk_skills()[choice]
                 else:
-                    text_speed("You don't have enough MP!\n", .05)
+                    text_speed("You don't have enough MP!\n", .03)
                     time.sleep(.2)
                     self.combat(enemy)
             
@@ -1102,7 +1107,7 @@ class Player():
         adamage = attack.damage
         eweak = chk_weakness(enemy)
         if attack.damage_type == eweak:
-            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
             return random.randrange(stat, stat + (adamage * 2))
         else:
             return random.randrange(stat, stat + adamage)
@@ -1167,12 +1172,12 @@ class Player():
             self.EXP += exp
             self.cash += enemy.gold
             text_speed("You killed the {}!\n".format(enemy.name), .03)
-            time.sleep(.5)
+            time.sleep(.2)
             text_speed("You gained {} EXP!\n".format(exp), .03)
-            time.sleep(.5)
+            time.sleep(.2)
             self.level_up()
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
-            time.sleep(.5)
+            time.sleep(.2)
             if enemy.drop_part():
                 self.materials[enemy.part.name] += 1
                 text_speed("You obtained a {}!\n".format(enemy.part.name), .03)
@@ -1295,3 +1300,40 @@ class Ranger(Player):
         self.LUCKgrowth = .4
         self.equipped['weapon'] = items.wooden_bow()
         self.equipped['accessory_1'] = items.speed_1_ring()
+
+class Debug(Player):
+    def __init__(self):
+        super().__init__(self, LVL=1, mHP=1000, cHP=1000, mMP=1000, cMP=1000, STR=1000, DEF=1000, MAG=1000, RES=1000, SPD=1000, SKL=1000, LUCK=1000, cash=10000, char_class="Debug")
+        self.inventory.append(items.elixir(99))
+        # self.skills.append(skills.cleave())
+        # self.skills.append(skills.heavy_swing())
+        # self.skills.append(skills.sneak_attack())
+        # self.skills.append(skills.steal())
+        # self.skills.append(skills.precision_strike())
+        # self.skills.append(skills.double_strike())
+        # self.skills.append(skills.poison_point())
+        # self.skills.append(skills.guard_breaker())
+        self.spells.append(magic.fire())
+        self.spells.append(magic.ice())
+        self.spells.append(magic.shock())
+        self.spells.append(magic.wind())
+        self.spells.append(magic.quake())
+        self.spells.append(magic.water())
+        self.spells.append(magic.smite())
+        self.spells.append(magic.turn())
+        self.spells.append(magic.poison())
+        self.spells.append(magic.curse())
+        self.spells.append(magic.wither())
+        self.equipped['weapon'] = items.obsidian_blade()
+        self.equipped['shield'] = items.iron_curtain()
+        self.equipped['armor'] = items.plate()
+        self.equipped['accessory_1'] = items.water_ring()
+        self.mHPgrowth = 1
+        self.mMPgrowth = 1
+        self.STRgrowth = 1
+        self.DEFgrowth = 1
+        self.MAGgrowth = 1
+        self.RESgrowth = 1
+        self.SPDgrowth = 1
+        self.SKLgrowth = 1
+        self.LUCKgrowth = 1

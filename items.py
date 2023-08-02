@@ -262,6 +262,20 @@ class chainmail(Armor):
                          value=15,
                          armor=3)
 
+class iron_armor(Armor):
+    def __init__(self):
+        super().__init__(name="Iron Armor",
+                         description="A simple iron armor. Provides minimal protection.",
+                         value=20,
+                         armor=4)
+        
+class plate(Armor):
+    def __init__(self):
+        super().__init__(name="Plate Armor",
+                         description="Sturdy plate armor. Provides great protection",
+                         value=25,
+                         armor=10)
+
 # Shield Items
 class Shield(Item):
     def __init__(self, name, description, value, armor):
@@ -284,6 +298,23 @@ class rusty_shield(Shield):
                          description="A bent and rusty shield. Provides minimal protection.",
                          value=3,
                          armor=1)
+
+# Magic Shields
+class Spellshield(Shield):
+    def __init__(self, name, description, value, armor, resistance):
+        super().__init__(name, description, value, armor)
+        self.resistance = resistance
+
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nArmor: {}\nMagic Damage: {}".format(self.name, self.description, self.value, self.armor, self.resistance)
+
+class iron_curtain(Spellshield):
+    def __init__(self):
+        super().__init__(name="Iron Curtain",
+                         description="The shield of a powerful warrior. It glints in the light. \nIt provides high protection against physical attacks, and resistance to Cold damage.",
+                         value=200,
+                         armor=10,
+                         resistance="Cold")
 
 # These items are all equipment used for increasing stats.
 # Accessory Items

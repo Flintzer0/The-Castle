@@ -67,13 +67,19 @@ class fire(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
         
 class ice(Spell):
@@ -93,9 +99,13 @@ class ice(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -119,9 +129,13 @@ class shock(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -145,9 +159,13 @@ class water(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -171,9 +189,13 @@ class quake(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -197,9 +219,13 @@ class wind(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -223,9 +249,13 @@ class smite(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -249,9 +279,13 @@ class curse(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -279,13 +313,19 @@ class wither(Spell):
                 enemy.status['crippled'] = True
                 text_speed("The {} is crippled!\n".format(enemy.name), .03)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+            time.sleep(.2)
         
 class poison(Spell):
     def __init__(self):
@@ -304,9 +344,13 @@ class poison(Spell):
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
+            if (pdamage - enemy.RES) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.RES)
+            text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= (pdamage - enemy.RES)
+            enemy.hp -= damage
             if random.randint(1,100) <= 95:
                 enemy.status['poison'] = True
                 text_speed("The {} is poisoned!\n".format(enemy.name), .03)
@@ -333,14 +377,32 @@ class turn(Spell):
             if isinstance(enemy, enemies.Undead):
                 pdamage *= 2
                 text_speed("The {} burns from the holy energy!\n".format(enemy.name), .03)
-            if cCRIT == True:
-                pdamage *= 2
-                text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            text_speed("You dealt {} {} damage to the {}.\n".format(pdamage, self.damage_type, enemy.name), .03)
-            time.sleep(.2)
-            enemy.hp -= pdamage
+                if cCRIT == True:
+                    pdamage *= 2
+                    text_speed("Critical hit!\n", .01)
+                    time.sleep(.2)
+                if (pdamage - enemy.RES) < 0:
+                    damage = 1
+                else:
+                    damage = (pdamage - enemy.RES)
+                text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
+                time.sleep(.2)
+                enemy.hp -= damage
+            elif isinstance(enemy, enemies.Undead) == False: 
+                if cCRIT == True:
+                    pdamage *= 2
+                    text_speed("Critical hit!\n", .01)
+                    time.sleep(.2)
+                if (pdamage - enemy.RES) < 0:
+                    damage = 1
+                else:
+                    damage = (pdamage - enemy.RES)
+                text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
+                time.sleep(.2)
+                enemy.hp -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
+            time.sleep(.2)
