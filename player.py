@@ -584,8 +584,8 @@ class Player():
                 self.status['water_breathing'] = False
             else:
                 pass
+            text_speed("You unequipped the {}!\n".format(self.equipped['accessory_1'].name), .05)
             self.equipped['accessory_1'] = items.empty()
-            text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
 
@@ -610,8 +610,8 @@ class Player():
                 self.status['water_breathing'] = False
             else:
                 pass
+            text_speed("You unequipped the {}!\n".format(self.equipped['accessory 2'].name), .05)
             self.equipped['accessory_2'] = items.empty()
-            text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
 
@@ -636,8 +636,8 @@ class Player():
                 self.status['water_breathing'] = False
             else:
                 pass
+            text_speed("You unequipped the {}!\n".format(self.equipped['accessory 3'].name), .05)
             self.equipped['accessory_3'] = items.empty()
-            text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
 
@@ -662,8 +662,8 @@ class Player():
                 self.status['water_breathing'] = False
             else:
                 pass
+            text_speed("You unequipped the {}!\n".format(self.equipped['accessory 4'].name), .05)
             self.equipped['accessory_4'] = items.empty()
-            text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
     
