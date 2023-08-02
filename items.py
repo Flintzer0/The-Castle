@@ -329,6 +329,9 @@ class empty(Accessory):
         super().__init__(name="Empty",
                          description="This slot is open.",
                          value=0)
+        
+    def __str__(self):
+        return "\n=====\n{}\n".format(self.description)
 
 class Ring(Accessory):
     def __init__(self, name, description, value, stat, statval, spcl):

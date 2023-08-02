@@ -141,7 +141,7 @@ class Player():
             pass
 
     def menu(self):
-        print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equip   7. Unequip  8. Exit\n")
+        print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equipment  7. Exit\n")
         text_speed("What would you like to do?\n", .05)
         choice = input()
         if choice == "1":
@@ -155,7 +155,7 @@ class Player():
         elif choice == "5":
             self.print_skills()
         elif choice == "6":
-            self.equip()
+            self.equips()
         elif choice == "7":
             self.unequip()
         elif choice == "8":
@@ -174,40 +174,80 @@ class Player():
         for skill in self.skills:
             print(skill, '\n')
 
-    def equip(self):
-        print("Weapon: {}  Shield: {}  Armor: {}\n".format(self.equipped['weapon'].name, self.equipped['shield'].name, self.equipped['armor'].name))
+    def equips(self):
+        print("1. View Equipped  2. Equip  3. Unequip  4. Exit")
+        text_speed("What would you like to do?\n", .05)
+        choice = input()
+        if choice == "1":
+            self.view_equipped()
+        elif choice == "2":
+            self.equip()
+        elif choice == "3":
+            self.unequip()
+        elif choice == "4":
+            pass
+
+    def view_equipped(self):
+        print("\nWeapon: {}  Shield: {}  Armor: {}".format(self.equipped['weapon'].name, self.equipped['shield'].name, self.equipped['armor'].name))
         print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}\n".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
-        text_speed("What would you like to equip?\n", .05)
-        text_speed("1. Weapon\n", .05)
-        text_speed("2. Armor\n", .05)
-        text_speed("3. Accessory\n", .05)
-        text_speed("4. Exit\n", .05)
+        text_speed("What would you like to do?\n", .05)
+        print("1. View Weapon  2. View Shield  3. View Armor  4. View Accessories  5. Exit")
+        choice = input()
+        if choice == "1":
+            print(self.equipped['weapon'].__str__())
+        elif choice == "2":
+            print(self.equipped['shield'].__str__())
+        elif choice == "3":
+            print(self.equipped['armor'].__str__())
+        elif choice == "4":
+            self.view_accessories()
+        elif choice == "5":
+            pass
+
+    def view_accessories(self):
+        print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
+        text_speed("What would you like to do?\n", .05)
+        print("1. View Accessory 1  2. View Accessory 2  3. View Accessory 3  4. View Accessory 4  5. Exit")
+        choice = input()
+        if choice == "1":
+            print(self.equipped['accessory_1'].__str__())
+        elif choice == "2":
+            print(self.equipped['accessory_2'].__str__())
+        elif choice == "3":
+            print(self.equipped['accessory_3'].__str__())
+        elif choice == "4":
+            print(self.equipped['accessory_4'].__str__())
+        elif choice == "5":
+            pass
+
+    def equip(self):
+        text_speed("What would you like to equip?", .05)
+        print("1. Weapon\n2. Shield\n3. Armor\n4. Accessories\n5. Exit\n")
         choice = input()
         if choice == "1":
             self.equip_weapon()
         elif choice == "2":
-            self.equip_armor()
+            self.equip_shield()
         elif choice == "3":
-            self.equip_accessory_slots()
+            self.equip_armor()
         elif choice == "4":
+            self.equip_accessory_slots()
+        elif choice == "5":
             pass
 
     def unequip(self):
-        print("Weapon: {}  Shield: {}  Armor: {}\n".format(self.equipped['weapon'].name, self.equipped['shield'].name, self.equipped['armor'].name))
-        print("Accessory 1: {}  Accessory 2: {}  Accessory 3: {}  Accessory 4: {}\n".format(self.equipped['accessory_1'].name, self.equipped['accessory_2'].name, self.equipped['accessory_3'].name, self.equipped['accessory_4'].name))
         text_speed("What would you like to unequip?\n", .05)
-        text_speed("1. Weapon\n", .05)
-        text_speed("2. Armor\n", .05)
-        text_speed("3. Accessory\n", .05)
-        text_speed("4. Exit\n", .05)
+        print("1. Weapon\n2. Shield\n3. Armor\n4. Accessories\n5. Exit\n")
         choice = input()
         if choice == "1":
             self.unequip_weapon()
         elif choice == "2":
-            self.unequip_armor()
+            self.unequip_shield()
         elif choice == "3":
-            self.unequip_accessory_slots()
+            self.unequip_armor()
         elif choice == "4":
+            self.unequip_accessory_slots()
+        elif choice == "5":
             pass
 
     def list_weapons(self):
