@@ -141,7 +141,7 @@ class Player():
             pass
 
     def menu(self):
-        print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equip  7. Exit\n")
+        print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equip   7. Unequip  8. Exit\n")
         text_speed("What would you like to do?\n", .05)
         choice = input()
         if choice == "1":
@@ -157,6 +157,8 @@ class Player():
         elif choice == "6":
             self.equip()
         elif choice == "7":
+            self.unequip()
+        elif choice == "8":
             pass
 
     def print_inventory(self):
@@ -372,7 +374,7 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
-                    if self.equipped['accessory_1'] != items.empty():
+                    if self.equipped['accessory_1'].name != "Empty":
                         self.unequip_accessory_1()
                     self.equipped['accessory_1'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
@@ -392,6 +394,8 @@ class Player():
                         self.LUCK += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
+                    else:
+                        pass
                     self.inventory.remove(accessories[accessory])
                 elif accessory == len(accessories):
                     pass
@@ -415,7 +419,7 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
-                    if self.equipped['accessory_2'] != items.empty():
+                    if self.equipped['accessory_2'].name != "Empty":
                         self.unequip_accessory_2()
                     self.equipped['accessory_2'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
@@ -435,6 +439,8 @@ class Player():
                         self.LUCK += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
+                    else:
+                        pass
                     self.inventory.remove(accessories[accessory])
                 elif accessory == len(accessories):
                     pass
@@ -458,7 +464,7 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
-                    if self.equipped['accessory_3'] != items.empty():
+                    if self.equipped['accessory_3'].name != "Empty":
                         self.unequip_accessory_3()
                     self.equipped['accessory_3'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
@@ -478,6 +484,8 @@ class Player():
                         self.LUCK += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
+                    else:
+                        pass
                     self.inventory.remove(accessories[accessory])
                 elif accessory == len(accessories):
                     pass
@@ -501,7 +509,7 @@ class Player():
             if accessory.isdigit():
                 accessory = int(accessory)
                 if accessory < len(accessories):
-                    if self.equipped['accessory_4'] != items.empty():
+                    if self.equipped['accessory_4'].name != "Empty":
                         self.unequip_accessory_4()
                     self.equipped['accessory_4'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
@@ -521,6 +529,8 @@ class Player():
                         self.LUCK += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
+                    else:
+                        pass
                     self.inventory.remove(accessories[accessory])
                 elif accessory == len(accessories):
                     pass
@@ -554,7 +564,7 @@ class Player():
             pass
 
     def unequip_accessory_1(self):
-        if self.equipped['accessory_1'] != items.empty():
+        if self.equipped['accessory_1'].name != "Empty":
             self.inventory.append(self.equipped['accessory_1'])
             if self.equipped['accessory_1'].stat == "STR":
                 self.STR -= self.equipped['accessory_1'].statval
@@ -572,79 +582,87 @@ class Player():
                 self.LUCK -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
-            self.equipped['accessory_1'] = None
+            else:
+                pass
+            self.equipped['accessory_1'] = items.empty()
             text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
 
     def unequip_accessory_2(self):
-        if self.equipped['accessory_2'] != None:
+        if self.equipped['accessory_2'].name != "Empty":
             self.inventory.append(self.equipped['accessory_2'])
-            if self.equipped['accessory_1'].stat == "STR":
-                self.STR -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "DEF":
-                self.DEF -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "MAG":
-                self.MAG -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "RES":
-                self.RES -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "SPD":
-                self.SPD -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "SKL":
+            if self.equipped['accessory_2'].stat == "STR":
+                self.STR -= self.equipped['accessory_2'].statval
+            elif self.equipped['accessory_2'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_2'].statval
+            elif self.equipped['accessory_2'].stat == "MAG":
+                self.MAG -= self.equipped['accessory_2'].statval
+            elif self.equipped['accessory_2'].stat == "RES":
+                self.RES -= self.equipped['accessory_2'].statval
+            elif self.equipped['accessory_2'].stat == "SPD":
+                self.SPD -= self.equipped['accessory_2'].statval
+            elif self.equipped['accessory_2'].stat == "SKL":
                 self.SKL -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "LUCK":
-                self.LUCK -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].spcl == "water_breathing":
+            elif self.equipped['accessory_2'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_2'].statval
+            elif self.equipped['accessory_2'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
-            self.equipped['accessory_2'] = None
+            else:
+                pass
+            self.equipped['accessory_2'] = items.empty()
             text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
 
     def unequip_accessory_3(self):
-        if self.equipped['accessory_3'] != None:
+        if self.equipped['accessory_3'].name != "Empty":
             self.inventory.append(self.equipped['accessory_3'])
-            if self.equipped['accessory_1'].stat == "STR":
-                self.STR -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "DEF":
-                self.DEF -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "MAG":
+            if self.equipped['accessory_3'].stat == "STR":
+                self.STR -= self.equipped['accessory_3'].statval
+            elif self.equipped['accessory_3'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_3'].statval
+            elif self.equipped['accessory_3'].stat == "MAG":
                 self.MAG -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "RES":
-                self.RES -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "SPD":
+            elif self.equipped['accessory_3'].stat == "RES":
+                self.RES -= self.equipped['accessory_3'].statval
+            elif self.equipped['accessory_3'].stat == "SPD":
                 self.SPD -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "SKL":
-                self.SKL -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "LUCK":
-                self.LUCK -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].spcl == "water_breathing":
+            elif self.equipped['accessory_3'].stat == "SKL":
+                self.SKL -= self.equipped['accessory_3'].statval
+            elif self.equipped['accessory_2'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_3'].statval
+            elif self.equipped['accessory_3'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
-            self.equipped['accessory_3'] = None
+            else:
+                pass
+            self.equipped['accessory_3'] = items.empty()
             text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
 
     def unequip_accessory_4(self):
-        if self.equipped['accessory_4'] != None:
+        if self.equipped['accessory_4'].name != "Empty":
             self.inventory.append(self.equipped['accessory_4'])
-            if self.equipped['accessory_1'].stat == "STR":
-                self.STR -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "DEF":
-                self.DEF -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "MAG":
-                self.MAG -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "RES":
-                self.RES -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "SPD":
-                self.SPD -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "SKL":
-                self.SKL -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].stat == "LUCK":
-                self.LUCK -= self.equipped['accessory_1'].statval
-            elif self.equipped['accessory_1'].spcl == "water_breathing":
+            if self.equipped['accessory_4'].stat == "STR":
+                self.STR -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].stat == "DEF":
+                self.DEF -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].stat == "MAG":
+                self.MAG -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].stat == "RES":
+                self.RES -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].stat == "SPD":
+                self.SPD -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].stat == "SKL":
+                self.SKL -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].stat == "LUCK":
+                self.LUCK -= self.equipped['accessory_4'].statval
+            elif self.equipped['accessory_4'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
-            self.equipped['accessory_4'] = None
+            else:
+                pass
+            self.equipped['accessory_4'] = items.empty()
             text_speed("You unequipped your accessory!\n", .05)
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
@@ -1305,14 +1323,21 @@ class Debug(Player):
     def __init__(self):
         super().__init__(self, LVL=1, mHP=1000, cHP=1000, mMP=1000, cMP=1000, STR=1000, DEF=1000, MAG=1000, RES=1000, SPD=1000, SKL=1000, LUCK=1000, cash=10000, char_class="Debug")
         self.inventory.append(items.elixir(99))
-        # self.skills.append(skills.cleave())
-        # self.skills.append(skills.heavy_swing())
-        # self.skills.append(skills.sneak_attack())
-        # self.skills.append(skills.steal())
-        # self.skills.append(skills.precision_strike())
-        # self.skills.append(skills.double_strike())
-        # self.skills.append(skills.poison_point())
-        # self.skills.append(skills.guard_breaker())
+        self.inventory.append(items.strength_1_ring())
+        self.inventory.append(items.defense_1_ring())
+        self.inventory.append(items.magic_1_ring())
+        self.inventory.append(items.resistance_1_ring())
+        self.inventory.append(items.speed_1_ring())
+        self.inventory.append(items.skill_1_ring())
+        self.inventory.append(items.luck_1_ring())
+        self.skills.append(skills.cleave())
+        self.skills.append(skills.heavy_swing())
+        self.skills.append(skills.sneak_attack())
+        self.skills.append(skills.steal())
+        self.skills.append(skills.precision_strike())
+        self.skills.append(skills.double_strike())
+        self.skills.append(skills.poison_point())
+        self.skills.append(skills.guard_breaker())
         self.spells.append(magic.fire())
         self.spells.append(magic.ice())
         self.spells.append(magic.shock())

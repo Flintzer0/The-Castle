@@ -18,7 +18,7 @@ def play():
     # player.skills.append(skills.precision_strike())
     # player.equipped['weapon'] = items.cold_iron_sword()
     # player.equipped['accessory_1'] = items.water_ring()
-    player = Cleric()
+    player = Debug()
     player.name = "Debug"
     game_loop(player)
 
