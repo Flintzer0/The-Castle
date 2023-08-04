@@ -765,7 +765,7 @@ class Player():
         import tiles
         self.location_x += dx
         self.location_y += dy
-        # print(world.tile_exists(self.location_x, self.location_y).intro_text())
+        print(world.tile_exists(self.location_x, self.location_y).intro_text())
         location = world.tile_exists(self.location_x, self.location_y)
         if isinstance(location, tiles.stairs):
             location.end_demo(self)
@@ -1672,3 +1672,11 @@ class Debug(Player):
         self.SPDgrowth = 1
         self.SKLgrowth = 1
         self.LUCKgrowth = 1
+
+    def move(self, dx, dy):
+        import tiles
+        self.location_x += dx
+        self.location_y += dy
+        location = world.tile_exists(self.location_x, self.location_y)
+        if isinstance(location, tiles.stairs):
+            location.end_demo(self)
