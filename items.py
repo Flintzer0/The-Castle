@@ -1,3 +1,4 @@
+from scroll_spells import *
 '''
 Damage Types:
     Fire
@@ -36,6 +37,13 @@ class gold(Item):
                          description="A valuable coin used for purchasing.".format(str(self.amt)),
                          value=self.amt)
 
+# This is simply a placeholder item for when an item is sold out.
+class sold_out(Item):
+    def __init__(self):
+        super().__init__(name="Sold Out!",
+                         description="This item is sold out.",
+                         value=0)
+        
 # These are all items used for damaging enemies.
 class Weapon(Item):
     def __init__(self, name, description, value, damage):
@@ -449,49 +457,297 @@ class iron_key(Key):
 
 # Potion Items
 class Potion(Item):
-    def __init__(self, name, description, value, heal, mheal):
-        self.heal = heal
-        self.mheal = mheal
+    def __init__(self, name, description, value, stat, potency):
+        self.stat = stat
+        self.potency = potency
         super().__init__(name, description, value)
     
     def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
+        return "{}\n=====\n{}\nValue: {}\nStat: {}\nPotency: {}".format(self.name, self.description, self.value)
+
+# Can be used in and out of combat.
+class Anytime(Potion):
+    def __init__(self, name, description, value, stat, potency):
+        super().__init__(name, description, value, stat, potency)
+
+# Permanent Stat Boosts
+class PermBoost(Anytime):
+    def __init__(self, name, description, value, stat, potency):
+        super().__init__(name, description, value, stat, potency)
     
-class small_red_potion(Potion):
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nStat: {}\nPotency: {}".format(self.name, self.description, self.value, self.stat, self.potency)
+    
+    def boost(self, target):
+        if self.stat == "STR":
+            target.STR += self.potency
+        elif self.stat == "DEF":
+            target.DEF += self.potency
+        elif self.stat == "MAG":
+            target.MAG += self.potency
+        elif self.stat == "RES":
+            target.RES += self.potency
+        elif self.stat == "SPD":
+            target.SPD += self.potency
+        elif self.stat == "SKL":
+            target.SKL += self.potency
+        elif self.stat == "LUCK":
+            target.LUCK += self.potency
+        text_speed("You permanently boosted {} by {}!\n".format(self.stat, str(self.potency)), .03)
+        time.sleep(.2)
+
+class STR_1_boost(PermBoost):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="+1 Strength Boost",
+                         description="A potion that permanently boosts strength by 1. ({})".format(str(self.qty)),
+                         value=10,
+                         stat="STR",
+                         potency=1)
+        
+class DEF_1_boost(PermBoost):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="+1 Defense Boost",
+                         description="A potion that permanently boosts defense by 1. ({})".format(str(self.qty)),
+                         value=10,
+                         stat="DEF",
+                         potency=1)
+
+# Recovery Potions
+class Recovery(Anytime):
+    def __init__(self, name, description, value, stat, potency):
+        super().__init__(name, description, value, stat, potency)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nStat: {}\nPotency: {}".format(self.name, self.description, self.value, self.stat, self.potency)
+    
+    def heal(self, target):
+        if self.stat == "HP":
+            if target.cHP == target.mHP:
+                text_speed("You are already at full HP!\n", .03)
+                time.sleep(.2)
+                target.use_potion()
+            elif target.cHP + self.potency > target.mHP:
+                target.cHP = target.mHP
+                text_speed("You fully restored your HP!\n", .03)
+                time.sleep(.2)
+            else:
+                target.cHP += self.potency
+                text_speed("{} healed {} HP!\n".format(self.name, str(self.potency)), .03)
+                time.sleep(.2)
+        elif self.stat == "MP":
+            if target.cMP == target.mMP:
+                text_speed("You are already at full MP!\n", .03)
+                time.sleep(.2)
+                target.use_potion()
+            if target.cMP + self.potency > target.mMP:
+                target.cMP = target.mMP
+                text_speed("You fully restored your MP!\n", .03)
+                time.sleep(.2)
+            else:
+                target.cMP += self.potency
+                text_speed("{} recovered {} MP!\n".format(self.name, str(self.potency)), .03)
+                time.sleep(.2)
+        elif self.stat == "HP/MP":
+            if target.cHP == target.mHP and target.cMP == target.mMP:
+                text_speed("You are already at full HP and MP!\n", .03)
+                time.sleep(.2)
+                target.use_potion()
+            if target.cHP + self.potency > target.mHP:
+                target.cHP = target.mHP
+                text_speed("You fully restored your HP!\n", .03)
+                time.sleep(.2)
+            else:
+                target.cHP += self.potency
+                text_speed("You healed {} HP!\n".format(str(self.potency)), .03)
+                time.sleep(.2)
+            if target.cMP + self.potency > target.mMP:
+                target.cMP = target.mMP
+                text_speed("You fully restored your MP!\n", .03)
+                time.sleep(.2)
+            else:
+                target.cMP += self.potency
+                text_speed("You recovered {} MP!\n".format(str(self.potency)), .03)
+                time.sleep(.2)
+
+
+class small_red_potion(Recovery):
     def __init__(self, qty):
         self.qty = qty
         super().__init__(name="Small Red Potion",
                          description="A small red potion. Heals 5 HP. ({})".format(str(self.qty)),
                          value=5,
-                         heal=5,
-                         mheal=0)
+                         stat="HP",
+                         potency=5)
 
-class large_red_potion(Potion):
+class large_red_potion(Recovery):
     def __init__(self, qty):
         self.qty = qty
         super().__init__(name="Large Red Potion",
                          description="A large red potion. Heals 10 HP. ({})".format(str(self.qty)),
                          value=10,
-                         heal=10,
-                         mheal=0)
+                         stat="HP",
+                         potency=10)
 
-class small_blue_potion(Potion):
+class small_blue_potion(Recovery):
     def __init__(self, qty):
         self.qty = qty
         super().__init__(name="Small Blue Potion",
                          description="A small blue potion. Recovers 5 MP. ({})".format(str(self.qty)),
                          value=5,
-                         heal=0,
-                         mheal=5)
+                         stat="MP",
+                         potency=5)
         
-class elixir(Potion):
+class elixir(Recovery):
     def __init__(self, qty):
         self.qty = qty
         super().__init__(name="Elixir",
                          description="A magical elixir. Fully restores HP and MP. ({})".format(str(self.qty)),
                          value=15,
-                         heal=999,
-                         mheal=999)
+                         stat="HP/MP",
+                         potency=99999)
+        
+    def heal(self, target):
+        if target.cHP == target.mHP and target.cMP == target.mMP:
+            text_speed("You are already at full HP and MP!\n", .03)
+            time.sleep(.2)
+            target.use_potion()
+        else:
+            target.cHP = target.mHP
+            target.cMP = target.mMP
+            text_speed("You fully restored your HP and MP!\n".format(self.name), .03)
+            time.sleep(.2)
+
+# Boost Potions
+class BoostPotion(Potion):
+    def __init__(self, name, description, value, stat, potency, duration):
+        self.duration = duration
+        super().__init__(name, description, value, stat, potency)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nStat: {}\nPotency: {}".format(self.name, self.description, self.value, self.stat, self.potency)
+    
+    def boost(self, target):
+        target.tempboosts[self.stat]['flag'] = True
+        target.tempboosts[self.stat]['value'] = self.potency
+        target.tempboosts[self.stat]['duration'] = self.duration
+        target.starting_turn = target.turns
+        text_speed("You boosted {} by {}!\n".format(self.stat, str(self.potency)), .03)
+        time.sleep(.2)
+
+class minor_strength_boost(BoostPotion):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Minor Potion of Boost Strength",
+                         description="A potion that temporarily boosts strength by 1. ({})".format(str(self.qty)),
+                         value=10,
+                         stat="STR",
+                         potency=1,
+                         duration=10)
+
+# Scroll Items
+class Scroll(Item):
+    def __init__(self, name, description, value, spell):
+        self.spell = spell
+        super().__init__(name, description, value)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nSpell: {}".format(self.name, self.description, self.value, self.spell)
+    
+class scroll_of_fireball(Scroll):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Scroll of Fireball",
+                         description="A scroll with a fireball spell inscribed on it. Casts Fireball. ({})".format(str(self.qty)),
+                         value=10,
+                         spell=fireball())
+
+# Throw Items
+class Thrown(Item):
+    def __init__(self, name, description, value, damage):
+        self.damage = damage
+        super().__init__(name, description, value)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nDamage: {}".format(self.name, self.description, self.value, self.damage)
+    
+    def throw(self, user, target):
+        if user.status['blind'] != True:
+            total = (self.damage + user.STR) - target.DEF
+            target.hp -= total
+            text_speed("You threw the {}!\n".format(self.name), .03)
+            time.sleep(.2)
+            text_speed("The {} dealt {} damage to the {}!\n".format(self.name, total, target.name), .03)
+            time.sleep(.2)
+
+class rock(Thrown):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Rock",
+                         description="A simple rock. Deals damage to a single target. ({})".format(str(self.qty)),
+                         value=1,
+                         damage=1)
+        
+class throwing_knife(Thrown):
+    def __init__(self, qty):
+        self.qty = qty
+        super().__init__(name="Throwing Knife",
+                         description="A simple throwing knife. Deals damage to a single target. ({})".format(str(self.qty)),
+                         value=5,
+                         damage=5)
+
+# Boost Items
+class StatBoost(Item):
+    def __init__(self, name, description, value, stat, potency, duration):
+        self.stat = stat
+        self.potency = potency
+        self.duration = duration
+        super().__init__(name, description, value)
+    
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nStat: {}\nPotency: {}\nDuration: {}".format(self.name, self.description, self.value, self.stat, self.potency, self.duration)
+    
+    def boost(self, target):
+        target.tempboosts[self.stat]['flag'] = True
+        target.tempboosts[self.stat]['value'] = self.potency
+        target.tempboosts[self.stat]['duration'] = self.duration
+        target.starting_turn = target.turns
+        text_speed("You boosted {} by {}!\n".format(self.stat, str(self.potency)), .03)
+        time.sleep(.2)
+
+class StatusBoost(Item):
+    def __init__(self, name, description, value, status, duration):
+        self.status = status
+        self.duration = duration
+        super().__init__(name, description, value)
+
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nStatus: {}\nDuration: {}".format(self.name, self.description, self.value, self.status, self.duration)
+    
+    def boost(self, target):
+        target.tempstatus[self.status]['flag'] = True
+        target.tempstatus[self.status]['duration'] = self.duration
+        text_speed("You are now {}!\n".format(self.status), .03)
+        time.sleep(.2)
+
+class ResistanceBoost(Item):
+    def __init__(self, name, description, value, resistance, potency, duration):
+        self.resistance = resistance
+        self.potency = potency
+        self.duration = duration
+        super().__init__(name, description, value)
+
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nResistance: {}\nPotency: {}\nDuration: {}".format(self.name, self.description, self.value, self.resistance, self.potency, self.duration)
+    
+    def boost(self, target):
+        target.tempresistances[self.resistance]['flag'] = True
+        target.tempresistances[self.resistance]['value'] = self.potency
+        target.tempresistances[self.resistance]['duration'] = self.duration
+        target.starting_turn = target.turns
+        text_speed("You are now have {} + {}!\n".format(self.resistance, self.potency), .03)
+        time.sleep(.2)
 
 # These items are all materials used for item upgrades.
 class Material(Item):

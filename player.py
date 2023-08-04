@@ -26,7 +26,25 @@ class Player():
         'confusion': False,
         'charm': False,
         'crippled': False,
-        'water_breathing': False
+        'water_breathing': False,
+        'regen': {'flag': False, 'duration': 0, 'potency': 0},
+        'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0}
+
         }
     materials = {
         items.wood_plank(0).name: 0,
@@ -53,6 +71,37 @@ class Player():
         items.rotting_flesh(0).name: 0,
         items.centipede_carapace(0).name: 0
     }
+    tempboosts = {
+        'STR': {'flag': False, 'duration': 0, 'value': 0},
+        'DEF': {'flag': False, 'duration': 0, 'value': 0},
+        'MAG': {'flag': False, 'duration': 0, 'value': 0},
+        'RES': {'flag': False, 'duration': 0, 'value': 0},
+        'SPD': {'flag': False, 'duration': 0, 'value': 0},
+        'SKL': {'flag': False, 'duration': 0, 'value': 0},
+        'LUCK': {'flag': False, 'duration': 0, 'value': 0},
+        'AVO': {'flag': False, 'duration': 0, 'value': 0},
+        'invisible': {'flag': False, 'duration': 0},
+        'regen': {'flag': False, 'duration': 0, 'potency': 0},
+        'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0},
+        'mana_rage': {'flag': False, 'duration': 0}
+        }
+    starting_turns = 0
+    turns = 1
 
     def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, LVL, cash, char_class):
         self.mHP = mHP
@@ -62,7 +111,7 @@ class Player():
         self.cMP = cMP
         self.LVL = LVL
         self.EXP = 0
-        self.STR = STR
+        self.STR = STR + self.tempboosts['STR']['value']
         self.DEF = DEF
         self.MAG = MAG
         self.RES = RES
@@ -729,73 +778,97 @@ class Player():
             return False
 
     def move_north(self):
+        start = world.tile_exists(self.location_x, self.location_y)
         room = world.tile_exists(self.location_x, (self.location_y-1))
         if room.flooded == True and self.status['water_breathing'] == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
             if room.unlocked == True:
+                start.leave_tile()
                 self.move(dx=0, dy=-1)
             else:
                 print(room.locked_text())
                 self.move(dx=0, dy=0)
     
     def move_south(self):
+        start = world.tile_exists(self.location_x, self.location_y)
         room = world.tile_exists(self.location_x, (self.location_y+1))
         if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
             if room.unlocked == True:
+                start.leave_tile()
                 self.move(dx=0, dy=1)
             else:
                 print(room.locked_text())
                 self.move(dx=0, dy=0)
     
     def move_east(self):
+        start = world.tile_exists(self.location_x, self.location_y)
         room = world.tile_exists((self.location_x+1), self.location_y)
         if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
             if room.unlocked == True:
+                start.leave_tile()
                 self.move(dx=1, dy=0)
             else:
                 print(room.locked_text())
                 self.move(dx=0, dy=0)
     
     def move_west(self):
+        start = world.tile_exists(self.location_x, self.location_y)
         room = world.tile_exists((self.location_x-1), self.location_y)
         if room.flooded == True and self.chk_spcl("Water Breathing") == False:
             text_speed("The water is too deep to cross!\n", .05)
             self.move(dx=0, dy=0)
         else:
             if room.unlocked == True:
+                start.leave_tile()
                 self.move(dx=-1, dy=0)
             else:
                 print(room.locked_text())
                 self.move(dx=0, dy=0)
 
     def buy(self, shopkeep):
-        shopkeep.display_shop(self)
-        item = input("Which item would you like to buy? ")
-        if item.isdigit():
-            item = int(item)
-            if item < len(shopkeep.inventory):
-                purchase = shopkeep.inventory[item]
-                if self.cash >= purchase.value:
-                    self.inventory.append(purchase)
-                    self.cash -= purchase.value
-                    text_speed("You bought the {}!\n".format(purchase.name), .05)
-                    time.sleep(.5)
-                    shopkeep.inventory.remove(purchase)
-                    text_speed("You now have {} gold!\n".format(self.cash), .05)
-                    time.sleep(.5)
+        shopkeep.shop_text()
+        while True:
+            shopkeep.display_shop()
+            item = input("Which item would you like to buy? ")
+            if item.isdigit():
+                item = (int(item) - 1)
+                if item < len(shopkeep.inventory):
+                    purchase = shopkeep.inventory[item]
+                    if isinstance(purchase, items.sold_out):
+                        text_speed("This item is sold out!\n", .05)
+                        time.sleep(.5)
+                    elif self.cash >= purchase.value:
+                        self.inventory.append(purchase)
+                        self.cash -= purchase.value
+                        text_speed("You bought the {}!\n".format(purchase.name), .05)
+                        time.sleep(.5)
+                        if isinstance(purchase, items.Potion):
+                            purchase.qty -= 1
+                            if purchase.qty == 0:
+                                shopkeep.inventory[item] = items.sold_out()
+                        else:
+                            shopkeep.inventory[item] = items.sold_out()
+                        text_speed("You now have {} gold!\n".format(self.cash), .05)
+                        time.sleep(.5)
+                    else:
+                        text_speed("You don't have enough gold!\n", .05)
+                        time.sleep(.5)
+                elif item == (len(shopkeep.inventory)):
+                    shopkeep.leave_shop()
+                    break
                 else:
-                    text_speed("You don't have enough gold!\n", .05)
-                    time.sleep(.5)
+                    print("Invalid choice.")
+                    time.sleep(.2)
             else:
-                print("Invalid choice.")
+                text_speed("Invalid choice.", .05)
                 time.sleep(.2)
 
     def chk_compendium(self, enemy):
@@ -883,15 +956,18 @@ class Player():
             for i in self.inventory:
                 if isinstance(i, item):
                     items.append(i)
-                    return items
-        return False
+            return items
+        else:
+            return False
 
     def list_inventory(self, item):
         if self.check_inventory(item) is not False:
             items = self.check_inventory(item)
             n = range(int(len(items)))
+            e = (int(len(items)))
             for i in n:
-                print(f'{i}: {items[i].name} x{items[i].qty}\n{i}: Exit')
+                print(f'{i}: {items[i].name} x{items[i].qty}')
+            print(f'{e}: Exit')
         return False
 
     def unlock(self, room):
@@ -916,27 +992,23 @@ class Player():
             print("You don't have a key!")
 
     def use_potion(self):
-        if self.cHP != self.mHP:
+        if self.starting_turns == 0:
             if self.check_inventory(items.Potion) is not False:
-                self.list_inventory(items.Potion)
+                self.list_inventory(items.Anytime)
                 potion = input("Which potion do you want to use? ")
                 if potion.isdigit():
                     potion = int(potion)
-                    if potion < len(self.check_inventory(items.Potion)):
-                        p = self.check_inventory(items.Potion)
-                        if self.cHP + p[potion].heal > self.mHP:
-                            self.cHP = self.mHP
-                        if self.cHP + p[potion].heal <= self.mHP:
-                            self.cHP += p[potion].heal
-                        text_speed("You drink the {}!\n".format(p[potion].name), .05)
-                        time.sleep(.5)
-                        text_speed("You heal {} HP!\n".format(p[potion].heal), .05)
-                        time.sleep(.5)
-                        text_speed("Your HP is now {}.".format(self.cHP), .05)
-                        time.sleep(.5)
+                    if potion < len(self.check_inventory(items.Anytime)):
+                        p = self.check_inventory(items.Anytime)
+                        if isinstance(p[potion], items.Recovery):
+                            p[potion].heal(self)
+                        elif isinstance(p[potion], items.PermBoost):
+                            p[potion].boost(self)
                         p[potion].qty -= 1
                         if p[potion].qty == 0:
                             self.inventory.remove(p[potion])
+                    elif potion == len(self.check_inventory(items.Anytime)):
+                        pass
                     else:
                         print("Invalid choice.")
                         time.sleep(.2)
@@ -944,9 +1016,38 @@ class Player():
                     print("Invalid choice.")
                     time.sleep(.2)
             else:
-                text_speed("You don't have any potions!", .05)
-        else:
-            text_speed("You are already at full health!", .05)
+                print("You don't have any potions!")
+                time.sleep(.2)
+        elif self.starting_turns > 0:
+            self.list_inventory(items.Potion)
+            potion = input("Which potion do you want to use? ")
+            if potion.isdigit():
+                potion = int(potion)
+                if potion < len(self.check_inventory(items.Potion)):
+                    p = self.check_inventory(items.Potion)
+                    if isinstance(p[potion], items.Recovery):
+                        p[potion].heal(self)
+                    elif isinstance(p[potion], items.PermBoost):
+                        p[potion].boost(self)
+                    elif isinstance(p[potion], items.BoostPotion):
+                        if self.tempboosts[p[potion].stat] != False:
+                            text_speed("You already have a temporary boost to {}!\n".format(p[potion].stat), .05)
+                            time.sleep(.2)
+                        else:
+                            self.starting_turns = self.turns
+                            p[potion].boost(self)
+                    p[potion].qty -= 1
+                    if p[potion].qty == 0:
+                        self.inventory.remove(p[potion])
+                elif potion == len(self.check_inventory(items.Potion)):
+                    pass
+                else:
+                    print("Invalid choice.")
+                    time.sleep(.2)
+            else:
+                print("Invalid choice.")
+                time.sleep(.2)
+            time.sleep(.2)
 
     def save_and_exit(self):
         pickle.dump(self, open( "saved_self.p", "wb" ))
@@ -970,12 +1071,19 @@ class Player():
 
     def roll_paralyze(self):
         if self.status['paralysis'] == True:
-            text_speed("You are paralyzed!\n", .03)
-            time.sleep(.2)
-            roll = random.randint(1, 10)
-            if roll == 1 or 2 or 3:
-                return True
+            print(self.turns)
+            if self.turns < self.starting_turns + 3:
+                text_speed("You are paralyzed!\n", .03)
+                time.sleep(.2)
+                roll = random.randint(1, 10)
+                if roll == 1 or roll == 2 or roll == 3:
+                    return True
+                elif roll == 3 or roll == 4 or roll == 5 or roll == 6 or roll == 7 or roll == 8 or roll == 9 or roll == 10:
+                    return False
             else:
+                self.status['paralysis'] = False
+                text_speed("You are no longer paralyzed!\n", .03)
+                time.sleep(.2)
                 return False
         else:
             return False
@@ -985,8 +1093,13 @@ class Player():
             text_speed("You are confused!\n", .03)
             time.sleep(.2)
             roll = random.randint(1, 10)
-            if roll == 1 or 2:
+            if roll == 1 or roll == 2:
                 return True
+            elif roll == 10:
+                self.status['confusion'] = False
+                text_speed("You are no longer confused!\n", .03)
+                time.sleep(.2)
+                return False
             else:
                 return False
         else:
@@ -1012,22 +1125,26 @@ class Player():
         text_speed("You attack!\n", .03)
         time.sleep(.3)
         weapon = self.equipped['weapon']
-        if self.roll_paralyze() == True:
+        paralyzed = self.roll_paralyze()
+        if paralyzed == True:
             text_speed("You are paralyzed and cannot move!\n", .03)
             time.sleep(.3)
             self.apply_poison()
-        elif self.roll_paralyze() == False:
-            if self.roll_confusion() == True:
+        elif paralyzed == False:
+            confusion = self.roll_confusion()
+            if confusion == True:
                 text_speed("You trip over your own feet!\n", .03)
+                time.sleep(.2)
+                text_speed("You take 1 damage!\n", .03)
                 time.sleep(.2)
                 self.cHP -= 1
                 self.apply_poison()
-            elif self.roll_confusion() == False:
+            elif confusion == False:
                 if calculate_hit(self, enemy):
                     cCRIT = chk_CRIT(self)
                     text_speed("You use {}!\n".format(weapon.name), .03)
                     time.sleep(.2)
-                    pdamage = self.generate_damage(self.STR, weapon, enemy)
+                    pdamage = generate_damage(self, self.STR, weapon.damage, enemy)
                     if cCRIT == True:
                         pdamage *= 2
                         text_speed("Critical hit!\n", .01)
@@ -1129,7 +1246,20 @@ class Player():
                     self.combat(enemy)
 
     def pmagatk(self, enemy, spell):
-        spell.cast_spell(self, enemy)
+        paralyzed = self.roll_paralyze()
+        confusion = self.roll_confusion()
+        if paralyzed == True:
+            text_speed("You are paralyzed and cannot move!\n", .03)
+            time.sleep(.3)
+            self.apply_poison()
+        elif paralyzed == False:
+            if confusion == True:
+                text_speed("You lose your concentration and are damaged by your mana!\n", .03)
+                time.sleep(.2)
+                self.cHP -= 1
+                self.apply_poison()
+            elif confusion == False:
+                spell.cast_spell(self, enemy)
 
     def chk_skills(self):
         skill = []
@@ -1159,22 +1289,124 @@ class Player():
                     self.combat(enemy)
             
     def pskillatk(self, enemy, skill):
-        skill.use_ability(self, enemy)
+        paralyzed = self.roll_paralyze()
+        confusion = self.roll_confusion()
+        if paralyzed == True:
+            text_speed("You are paralyzed and cannot move!\n", .03)
+            time.sleep(.3)
+            self.apply_poison()
+        elif paralyzed == False:
+            if confusion == True:
+                text_speed("You trip over your own feet!\n", .03)
+                time.sleep(.2)
+                self.cHP -= 1
+                self.apply_poison()
+            elif confusion == False:
+                skill.use_ability(self, enemy)
 
-    def generate_damage(self, stat, attack, enemy):
-        adamage = attack.damage
-        eweak = chk_weakness(enemy)
-        if attack.damage_type == eweak:
-            text_speed("You hit the {}'s weakness!\n".format(enemy.name), .03)
-            return random.randrange(stat, stat + (adamage * 2))
+    def use_item(self, enemy):
+        print("1. Potion\n2. Scrolls\n3. Thrown Items\n4. Boost Items\n5. Back")
+        choice = input("What would you like to use? ")
+        if choice == "1":
+            if self.check_inventory(items.Potion) is not False:
+                self.use_potion()
+            else:
+                text_speed("You don't have any potions!\n", .03)
+                time.sleep(.2)
+                self.use_item(enemy)
+        elif choice == "2":
+            if self.check_inventory(items.Scroll) is not False:
+                self.use_scroll(enemy)
+            else:
+                text_speed("You don't have any scrolls!\n", .03)
+                time.sleep(.2)
+                self.use_item(enemy)
+        elif choice == "3":
+            if self.check_inventory(items.Thrown) is not False:
+                self.use_thrown(enemy)
+            else:
+                text_speed("You don't have any thrown items!\n", .03)
+                time.sleep(.2)
+                self.use_item(enemy)
+        elif choice == "4":
+            self.use_boost()
+        elif choice == "5":
+            self.combat(enemy)
+
+    def use_scroll(self, enemy):
+        if self.check_inventory(items.Scroll) is not False:
+            self.list_inventory(items.Scroll)
+            scroll = input("Which scroll do you want to use? ")
+            if scroll.isdigit():
+                scroll = int(scroll)
+                if scroll < len(self.check_inventory(items.Scroll)):
+                    s = self.check_inventory(items.Scroll)
+                    s[scroll].spell.cast(enemy)
+                    s[scroll].qty -= 1
+                    if s[scroll].qty == 0:
+                        self.inventory.remove(s[scroll])
+                elif scroll == len(self.check_inventory(items.Scroll)):
+                    pass
+                else:
+                    print("Invalid choice.")
+                    time.sleep(.2)
+            else:
+                print("Invalid choice.")
+                time.sleep(.2)
+
+    def use_thrown(self, enemy):
+        self.list_inventory(items.Thrown)
+        thrown = input("Which thrown item do you want to use? ")
+        if thrown.isdigit():
+            thrown = int(thrown)
+            if thrown < len(self.check_inventory(items.Thrown)):
+                t = self.check_inventory(items.Thrown)
+                t[thrown].throw(self, enemy)
+                t[thrown].qty -= 1
+                if t[thrown].qty == 0:
+                    self.inventory.remove(t[thrown])
+            elif thrown == len(self.check_inventory(items.Thrown)):
+                pass
+            else:
+                print("Invalid choice.")
+                time.sleep(.2)
         else:
-            return random.randrange(stat, stat + adamage)
+            print("Invalid choice.")
+            time.sleep(.2)
+
+    def chk_flags(self):
+        for f in self.tempboosts:
+            if self.tempboosts[f]['flag'] != False:
+                if self.tempboosts[f]['duration'] > 0:
+                    if self.tempboosts[f] == "STR":
+                        self.STR = self.STR + self.tempboosts[f]['value']
+                    elif self.tempboosts[f] == "DEF":
+                        self.DEF = self.DEF + self.tempboosts[f]['value']
+                    elif self.tempboosts[f] == "MAG":
+                        self.MAG = self.MAG + self.tempboosts[f]['value']
+                    elif self.tempboosts[f] == "RES":
+                        self.RES = self.RES + self.tempboosts[f]['value']
+                    elif self.tempboosts[f] == "SPD":
+                        self.SPD = self.SPD + self.tempboosts[f]['value']
+                    elif self.tempboosts[f] == "SKL":
+                        self.SKL = self.SKL + self.tempboosts[f]['value']
+                    elif self.tempboosts[f] == "LUCK":
+                        self.LUCK = self.LUCK + self.tempboosts[f]['value']
+                    self.tempboosts[f]['duration'] -= 1
+                else:
+                    self.tempboosts[f]['flag'] = False
+                    self.tempboosts[f]['duration'] = 0
+                    self.tempboosts[f]['value'] = 0
+                    text_speed("Your temporary boost to {} has worn off!\n".format(f), .03)
+                    time.sleep(.2)
+            else:
+                pass
 
     def combat(self, enemy):
         # Something odd is happening with damage calculations. It seems that regular, magic, and skill attacks aren't combining in decreasing the enemy's HP.
         text_speed("What will you do?\n", .03)
         time.sleep(.2)
-        choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n")
+        choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n4. Use Item\n5. Stats\n")
         if choice == "1":
             chkSPD = self.chk_SPD(enemy)
             if chkSPD == True:
@@ -1190,16 +1422,21 @@ class Player():
                 text_speed("You can't cast spells while silenced!\n", .03)
                 time.sleep(.2)
                 self.combat(enemy)
-            chkSPD = self.chk_SPD(enemy)
-            spell = self.cast_spell(enemy)
-            if chkSPD == True:
-                self.pmagatk(enemy, spell)
-                if enemy.is_alive() == True:
-                    self.efight(enemy)
+            elif len(self.spells) == 0:
+                text_speed("You don't know any spells!\n", .03)
+                time.sleep(.2)
+                self.combat(enemy)
             else:
-                self.efight(enemy)
-                if self.is_alive() == True:
+                chkSPD = self.chk_SPD(enemy)
+                spell = self.cast_spell(enemy)
+                if chkSPD == True:
                     self.pmagatk(enemy, spell)
+                    if enemy.is_alive() == True:
+                        self.efight(enemy)
+                else:
+                    self.efight(enemy)
+                    if self.is_alive() == True:
+                        self.pmagatk(enemy, spell)
         elif choice == "3":
             if self.status['crippled'] == True:
                 text_speed("You can't use skills while crippled!\n", .03)
@@ -1220,13 +1457,41 @@ class Player():
                     self.efight(enemy)
                     if self.is_alive() == True:
                         self.pskillatk(enemy, skill)
+        elif choice == "4":
+            self.use_item(enemy)
+            self.efight(enemy)
+        elif choice == "5":
+            print(self.__str__())
+            for s in self.status:
+                if self.status[s] == True:
+                    print(s)
+            print("1. Back")
+            choice = input("What would you like to do? ")
+            if choice == "1":
+                self.combat(enemy)
+            else:
+                text_speed("Invalid choice.\n", .03)
+                time.sleep(.2)
+                self.combat(enemy)
 
     def fight(self, enemy):
-        # for item in self.inventory:
-        #     self.add_statval(item)
-        self.combat(enemy)
+        self.starting_turns = 1
+        while self.is_alive() and enemy.is_alive():
+            self.chk_flags()
+            self.combat(enemy)
+            self.turns += 1
         if not enemy.is_alive():
-            exp = round(enemy.EXP * (((10-self.LVL)+1)/10))
+            self.starting_turns = 0
+            self.turns = 1
+            if enemy.tier == "Boss":
+                exp = enemy.EXP
+            else:
+                diff = self.LVL - enemy.tier
+                if diff >= 0:
+                    exp = round(enemy.EXP * (((100-diff))/100))
+                elif diff < 0:
+                    diff = enemy.tier * 10
+                    exp = round(enemy.EXP * (((100+diff))/100))
             self.EXP += exp
             self.cash += enemy.gold
             text_speed("You killed the {}!\n".format(enemy.name), .03)
@@ -1244,6 +1509,7 @@ class Player():
                 self.add_monster(enemy)
             # self.monster_part_drop(enemy)
         elif not self.is_alive():
+            self.turns = 0
             text_speed("You died.\n", .05)
             time.sleep(1)
             text_speed("Game over.\n", .05)
@@ -1361,8 +1627,12 @@ class Ranger(Player):
 
 class Debug(Player):
     def __init__(self):
-        super().__init__(self, LVL=1, mHP=1000, cHP=1000, mMP=1000, cMP=1000, STR=1000, DEF=1000, MAG=1000, RES=1000, SPD=1000, SKL=1000, LUCK=1000, cash=10000, char_class="Debug")
+        super().__init__(self, LVL=1, mHP=1000, cHP=1000, mMP=1000, cMP=1000, STR=2, DEF=1000, MAG=1000, RES=1000, SPD=1000, SKL=1000, LUCK=1000, cash=10000, char_class="Debug")
         self.inventory.append(items.elixir(99))
+        self.inventory.append(items.STR_1_boost(99))
+        self.inventory.append(items.DEF_1_boost(99))
+        self.inventory.append(items.minor_strength_boost(99))
+        self.inventory.append(items.throwing_knife(99))
         self.inventory.append(items.strength_1_ring())
         self.inventory.append(items.defense_1_ring())
         self.inventory.append(items.magic_1_ring())

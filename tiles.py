@@ -93,6 +93,10 @@ class map_tile:
         text_speed("You find nothing of interest.\n", .05)
         time.sleep(1)
 
+    def leave_tile(self):
+        # Text that displays when the player leaves certain rooms. By default, it will display nothing.
+        pass
+
 # Main Tile Subclasses
 
 class locked_room(map_tile):
@@ -129,6 +133,9 @@ class shop_room(map_tile):
         moves.append(actions.menu())
         moves.append(actions.SaveAndExit())
         return moves
+    
+    def leave_tile(self):
+        self.shopkeep.leave_tile()
     
 # Empty Tile Subclasses
 

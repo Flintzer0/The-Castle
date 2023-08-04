@@ -67,8 +67,8 @@ class sneak_attack(Skill):
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player)
             weapon = player.equipped['weapon']
-            stat_bonus = (player.SKL * 2)
-            base_dmg = (self.damage + weapon.damage)
+            stat_bonus = (self.damage + player.SKL)
+            base_dmg = (self.damage + weapon.damage + player.STR)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
             time.sleep(.2)
@@ -98,8 +98,8 @@ class precision_strike(Skill):
     def ability(self, player, enemy):
         cCRIT = chk_CRIT(player)
         weapon = player.equipped['weapon']
-        stat_bonus = (player.SKL * 2)
-        base_dmg = (self.damage + weapon.damage)
+        stat_bonus = (self.damage + player.SKL)
+        base_dmg = (self.damage + weapon.damage + player.STR)
         text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
         pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
         time.sleep(.2)
@@ -123,9 +123,10 @@ class double_strike(Skill):
         if skill_hit(self, player, enemy):
             CRIT = chk_CRIT(player)
             weapon = player.equipped['weapon']
-            base_dmg = (self.damage + weapon.damage)
+            base_stat = (self.damage + player.SPD)
+            base_dmg = (self.damage + weapon.damage + player.STR)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, player.SPD, base_dmg, enemy)
+            pdamage = generate_damage(player, base_stat, base_dmg, enemy)
             time.sleep(.2)
             if CRIT == True:
                 pdamage *= 2
@@ -146,9 +147,10 @@ class double_strike(Skill):
             time.sleep(.2)
             CRIT = chk_CRIT(player)
             weapon = player.equipped['weapon']
-            base_dmg = (self.damage + weapon.damage)
+            base_stat = (self.damage + player.SPD)
+            base_dmg = (self.damage + weapon.damage + player.STR)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, player.SPD, base_dmg, enemy)
+            pdamage = generate_damage(player, base_stat, base_dmg, enemy)
             time.sleep(.2)
             if CRIT == True:
                 pdamage *= 2
@@ -198,8 +200,8 @@ class heavy_swing(Skill):
         weapon = player.equipped['weapon']
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player)
-            stat_bonus = (player.STR * 2)
-            base_dmg = (self.damage + weapon.damage)
+            stat_bonus = (self.damage + player.STR)
+            base_dmg = (self.damage + weapon.damage + player.STR)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
             time.sleep(.2)

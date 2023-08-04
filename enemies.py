@@ -16,8 +16,9 @@ class Enemy:
         'crippled': False,
         }
     
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.name = name
+        self.tier = tier
         self.hp = hp
         self.mhp = mhp
         self.damage = damage
@@ -61,49 +62,49 @@ class Enemy:
 
 # Enemy Types
 class Undead(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Undead"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Beast(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Beast"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Bug(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Bug"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Humanoid(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Humanoid"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Demon(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Demon"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Dragon(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Dragon"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Shifter(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.ID = "Shifter"
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class Boss(Enemy):
-    def __init__(self, name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
-        super().__init__(name, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
+    def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
+        super().__init__(name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description)
 
 class dummy(Enemy):
     def __init__(self):
-        import items
-        super().__init__(name="Dummy", hp=1000000, mhp=1000000, damage=0, statusatk=None, status_chance=0, weak=None, DEF=0, RES=0, SPD=0, SKL=0, LUCK=0, EXP=0, gold=0, part=items.wood_plank(1),
+        super().__init__(name="Dummy", tier=0, hp=1000000, mhp=1000000, damage=0, statusatk=None, status_chance=0, weak=None, DEF=0, RES=0, SPD=0, SKL=0, LUCK=0, EXP=0, gold=0, part=None,
                          description="A wooden dummy. It doesn't do anything.\n")
+        ID = "Dummy"
 
 # Tier 1 Enemies
 class giant_spider(Bug):
@@ -116,7 +117,7 @@ class giant_spider(Bug):
 
     def __init__(self):
         import items
-        super().__init__(name="Giant Spider", hp=10, mhp=10, damage=2, statusatk=None, status_chance=0, weak=None, DEF=0, RES=1, SPD=3, SKL=2, LUCK=1, EXP=13, gold=10, part=items.spider_leg(1),
+        super().__init__(name="Giant Spider", tier=1, hp=10, mhp=10, damage=2, statusatk=None, status_chance=0, weak=None, DEF=0, RES=1, SPD=3, SKL=2, LUCK=1, EXP=13, gold=10, part=items.spider_leg(1),
                          description="A large spider with dripping fangs and a hairy body.\nThey are quicker than most basic monsters. Being all buggy, its defense\nisn't superb, but it has a bit of magic resistance.\n")
  
 class goblin(Humanoid):
@@ -130,6 +131,7 @@ class goblin(Humanoid):
     def __init__(self):
         import items
         super().__init__(name="Goblin",
+                         tier=1,
                          hp=5,
                          mhp=5,
                          damage=1,
@@ -157,6 +159,7 @@ class skeleton(Undead):
     def __init__(self):
         import items
         super().__init__(name="Skeleton",
+                         tier=1,
                          hp=7, 
                          mhp=7, 
                          damage=3, 
@@ -183,7 +186,7 @@ class large_rat(Beast):
 
     def __init__(self):
         import items
-        super().__init__(name="Large Rat", hp=15, mhp=10, damage=3, statusatk="Disease", status_chance=30, weak="Fire", DEF=1, RES=1, SPD=1, SKL=0, LUCK=0, EXP=15, gold=15, part=items.rat_tail(1),
+        super().__init__(name="Large Rat", tier=1, hp=15, mhp=10, damage=3, statusatk="Disease", status_chance=30, weak="Fire", DEF=1, RES=1, SPD=1, SKL=0, LUCK=0, EXP=15, gold=15, part=items.rat_tail(1),
                          description="An incredibly large rat.\nThey aren't hard tp hurt, but their thick hide and hard teeth give them\ndecent health and damage.\n")
 
 class demon_bat(Demon):
@@ -196,7 +199,7 @@ class demon_bat(Demon):
 
     def __init__(self):
         import items
-        super().__init__(name="Demon Bat", hp=4, mhp=4, damage=2, statusatk=None, status_chance=0, weak="Holy", DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9, part=items.bat_wing(1),
+        super().__init__(name="Demon Bat", tier=1, hp=4, mhp=4, damage=2, statusatk=None, status_chance=0, weak="Holy", DEF=0, RES=3, SPD=4, SKL=3, LUCK=1, EXP=12, gold=9, part=items.bat_wing(1),
                          description="A bat with red eyes and a demonic aura. \nThey are quick and have a bit of magic resistance, but physically weak.\n")
         
 class zombie(Undead):
@@ -209,7 +212,7 @@ class zombie(Undead):
 
     def __init__(self):
         import items
-        super().__init__(name="Zombie", hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak=None, DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
+        super().__init__(name="Zombie", tier=1, hp=15, mhp=15, damage=3, statusatk="Disease", status_chance=45, weak=None, DEF=2, RES=2, SPD=1, SKL=0, LUCK=0, EXP=20, gold=20, part=items.rotting_flesh(1),
                          description="A walking corpse.\nThey are slow, but they have some defense and deal a little more damage.\nIt is important to strike them down quickly to avoid being afflicted\nwith DISEASE.\n")
 
 # Tier 2 Enemies
@@ -251,7 +254,7 @@ class giant_centipede(Boss, Bug):
 
     def __init__(self):
         import items
-        super().__init__(name="Centipede", hp=20, mhp=20, damage=5, statusatk="Poison", status_chance=50, weak="Fire", DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30, part=items.centipede_carapace(1),
+        super().__init__(name="Centipede", tier="Boss", hp=20, mhp=20, damage=5, statusatk="Poison", status_chance=50, weak="Fire", DEF=3, RES=2, SPD=5, SKL=4, LUCK=2, EXP=50, gold=30, part=items.centipede_carapace(1),
                          description="A giant centipede, with acid dripping off its mandibles. There also \nappears to be several old weapons stuck in its hard shell. Being a \ncentipede, it is quite dangerous, with high damage, some defense both \nphysically and magically, quick, and capable of making skillful \nstrikes. Only engage when you are ready.\n")
         
 # F1 Boss
