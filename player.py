@@ -3,103 +3,6 @@ from utilities import *
 import pickle, sys, time, random
 
 class Player():
-    spcl = []
-    inventory = []
-    compendium = []
-    spells = []
-    skills = []
-    equipped = {
-        'weapon': items.Fists(),
-        'armor': items.unarmored(),
-        'shield': items.open_hand(),
-        'accessory_1': items.empty(),
-        'accessory_2': items.empty(),
-        'accessory_3': items.empty(),
-        'accessory_4': items.empty(),
-    }
-    status = {
-        'poison': False,
-        'paralysis': False,
-        'blind': False,
-        'silence': False,
-        'sleep': False,
-        'confusion': False,
-        'charm': False,
-        'crippled': False,
-        'water_breathing': False,
-        'regen': {'flag': False, 'duration': 0, 'potency': 0},
-        'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0}
-
-        }
-    materials = {
-        items.wood_plank(0).name: 0,
-        items.wood_crossguard(0).name: 0,
-        items.stone(0).name: 0,
-        items.iron_ore(0).name: 0,
-        items.amethyst(0).name: 0,
-        items.garnet(0).name: 0,
-        items.opal(0).name: 0,
-        items.ruby(0).name: 0,
-        items.sapphire(0).name: 0,
-        items.emerald(0).name: 0,
-        items.topaz(0).name: 0,
-        items.diamond(0).name: 0,
-        items.spider_silk(0).name: 0,
-        items.spider_leg(0).name: 0,
-        items.goblin_fingernail(0).name: 0,
-        items.goblin_ear(0).name: 0,
-        items.bone(0).name: 0,
-        items.femur_bone(0).name: 0,
-        items.rat_fur(0).name: 0,
-        items.rat_tail(0).name: 0,
-        items.bat_wing(0).name: 0,
-        items.rotting_flesh(0).name: 0,
-        items.centipede_carapace(0).name: 0
-    }
-    tempboosts = {
-        'STR': {'flag': False, 'duration': 0, 'value': 0},
-        'DEF': {'flag': False, 'duration': 0, 'value': 0},
-        'MAG': {'flag': False, 'duration': 0, 'value': 0},
-        'RES': {'flag': False, 'duration': 0, 'value': 0},
-        'SPD': {'flag': False, 'duration': 0, 'value': 0},
-        'SKL': {'flag': False, 'duration': 0, 'value': 0},
-        'LUCK': {'flag': False, 'duration': 0, 'value': 0},
-        'AVO': {'flag': False, 'duration': 0, 'value': 0},
-        'invisible': {'flag': False, 'duration': 0},
-        'regen': {'flag': False, 'duration': 0, 'potency': 0},
-        'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0},
-        'mana_rage': {'flag': False, 'duration': 0}
-        }
     starting_turns = 0
     turns = 1
 
@@ -111,7 +14,7 @@ class Player():
         self.cMP = cMP
         self.LVL = LVL
         self.EXP = 0
-        self.STR = STR + self.tempboosts['STR']['value']
+        self.STR = STR
         self.DEF = DEF
         self.MAG = MAG
         self.RES = RES
@@ -132,6 +35,103 @@ class Player():
         self.SPDgrowth = .4
         self.SKLgrowth = .4
         self.LUCKgrowth = .3
+        self.spcl = []
+        self.inventory = []
+        self.compendium = []
+        self.spells = []
+        self.skills = []
+        self.equipped = {
+            'weapon': items.Fists(),
+            'armor': items.unarmored(),
+            'shield': items.open_hand(),
+            'accessory_1': items.empty(),
+            'accessory_2': items.empty(),
+            'accessory_3': items.empty(),
+            'accessory_4': items.empty(),
+        }
+        self.status = {
+            'poison': False,
+            'paralysis': False,
+            'blind': False,
+            'silence': False,
+            'sleep': False,
+            'confusion': False,
+            'charm': False,
+            'crippled': False,
+            'water_breathing': False,
+            'regen': {'flag': False, 'duration': 0, 'potency': 0},
+            'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0}
+            }
+        self.materials = {
+            items.wood_plank(0).name: 0,
+            items.wood_crossguard(0).name: 0,
+            items.stone(0).name: 0,
+            items.iron_ore(0).name: 0,
+            items.amethyst(0).name: 0,
+            items.garnet(0).name: 0,
+            items.opal(0).name: 0,
+            items.ruby(0).name: 0,
+            items.sapphire(0).name: 0,
+            items.emerald(0).name: 0,
+            items.topaz(0).name: 0,
+            items.diamond(0).name: 0,
+            items.spider_silk(0).name: 0,
+            items.spider_leg(0).name: 0,
+            items.goblin_fingernail(0).name: 0,
+            items.goblin_ear(0).name: 0,
+            items.bone(0).name: 0,
+            items.femur_bone(0).name: 0,
+            items.rat_fur(0).name: 0,
+            items.rat_tail(0).name: 0,
+            items.bat_wing(0).name: 0,
+            items.rotting_flesh(0).name: 0,
+            items.centipede_carapace(0).name: 0
+        }
+        self.tempboosts = {
+            'STR': {'flag': False, 'duration': 0, 'value': 0},
+            'DEF': {'flag': False, 'duration': 0, 'value': 0},
+            'MAG': {'flag': False, 'duration': 0, 'value': 0},
+            'RES': {'flag': False, 'duration': 0, 'value': 0},
+            'SPD': {'flag': False, 'duration': 0, 'value': 0},
+            'SKL': {'flag': False, 'duration': 0, 'value': 0},
+            'LUCK': {'flag': False, 'duration': 0, 'value': 0},
+            'AVO': {'flag': False, 'duration': 0, 'value': 0},
+            'invisible': {'flag': False, 'duration': 0},
+            'regen': {'flag': False, 'duration': 0, 'potency': 0},
+            'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'mana_rage': {'flag': False, 'duration': 0}
+            }
+        self.save_data = {}
     
     def __str__(self):
         return "{}    Class: {}\n======================\nLevel: {}    EXP: {}\nHP: {}/{} MP: {}/{}\nSTR: {}    DEF: {}\nMAG: {}    RES: {}\nSPD: {}    SKL: {}\nLUCK: {}\n".format(self.name, self.char_class, self.LVL, self.EXP, self.cHP, self.mHP, self.cMP, self.mMP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
@@ -1049,13 +1049,6 @@ class Player():
                 time.sleep(.2)
             time.sleep(.2)
 
-    def save_and_exit(self):
-        pickle.dump(self, open( "saved_self.p", "wb" ))
-        pickle.dump(world._world, open( "saved_world.p", "wb" ))
-        print("Game saved!")
-        time.sleep(.5)
-        exit()
-    
     def apply_poison(self):
         if self.status['poison'] == True:
             damage = random.randint(1, 5)

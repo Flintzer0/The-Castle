@@ -74,7 +74,7 @@ class map_tile:
         moves.append(actions.potion())
         moves.append(actions.search())
         moves.append(actions.menu())
-        moves.append(actions.SaveAndExit())
+        # moves.append(actions.SaveAndExit())
         return moves
     
     # Funtions from here down are all overwritten by the subclasses.

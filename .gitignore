@@ -1,7 +1,11 @@
 *.json
 *.code-workspace
 *.xlsx
+.venv
 .venv/pyvenv.cfg
 .venv/*
-__pycache__/*
+__pycache__
 test_chamber.py
+saved_games
+.vscode
+```
