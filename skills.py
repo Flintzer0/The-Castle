@@ -33,7 +33,7 @@ class cleave(Skill):
         
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             stat_bonus = (player.STR * 2)
             base_dmg = (self.damage + weapon.damage)
@@ -65,7 +65,7 @@ class sneak_attack(Skill):
         
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             stat_bonus = (self.damage + player.SKL)
             base_dmg = (self.damage + weapon.damage + player.STR)
@@ -96,7 +96,7 @@ class precision_strike(Skill):
                          description="Your Precision Strike skill. Deals damage to a single target. \nThis attack always hits. Deals extra damage based on your SKL.")
         
     def ability(self, player, enemy):
-        cCRIT = chk_CRIT(player)
+        cCRIT = chk_CRIT(player, enemy)
         weapon = player.equipped['weapon']
         stat_bonus = (self.damage + player.SKL)
         base_dmg = (self.damage + weapon.damage + player.STR)
@@ -121,7 +121,7 @@ class double_strike(Skill):
 
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            CRIT = chk_CRIT(player)
+            CRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             base_stat = (self.damage + player.SPD)
             base_dmg = (self.damage + weapon.damage + player.STR)
@@ -145,7 +145,7 @@ class double_strike(Skill):
         if second_hit == True:
             text_speed("You hit the {} again!\n".format(enemy.name), .03)
             time.sleep(.2)
-            CRIT = chk_CRIT(player)
+            CRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             base_stat = (self.damage + player.SPD)
             base_dmg = (self.damage + weapon.damage + player.STR)
@@ -170,7 +170,7 @@ class guard_breaker(Skill):
         
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             base_dmg = (self.damage + weapon.damage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
@@ -199,7 +199,7 @@ class heavy_swing(Skill):
     def ability(self, player, enemy):
         weapon = player.equipped['weapon']
         if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (self.damage + player.STR)
             base_dmg = (self.damage + weapon.damage + player.STR)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
@@ -230,7 +230,7 @@ class steal(Skill):
         
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             base_dmg = (self.damage + weapon.damage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
@@ -287,7 +287,7 @@ class poison_point(Skill):
         
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             stat_bonus = (player.SKL * 2)
             base_dmg = (self.damage + weapon.damage)

@@ -8,4 +8,5 @@ __pycache__
 test_chamber.py
 saved_games
 .vscode
+calculation_tests.py
 ```

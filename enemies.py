@@ -33,7 +33,6 @@ class Enemy:
         self.EXP = EXP
         self.gold = gold
         self.part = part
-        self.AVO = (self.SPD + self.SKL) + ((self.SPD + self.SKL) * (self.LUCK / random.randint(1, 100)))
         self.description = description
     
     def __repr__(self):
@@ -42,6 +41,9 @@ class Enemy:
     def __str__(self):
         return "{}     Type: {}\n========================================\n{}========================================\nHP: {}     Weakness: {}\nDMG: {}     DEF: {}\nRES: {}     SPD: {}\nSKL: {}     LUCK: {}\n".format(self.name, self.ID, self.description, self.mhp, self.weak, self.damage, self.DEF, self.RES, self.SPD, self.SKL, self.LUCK)
  
+    def AVO(self):
+        return ((self.SPD + self.SKL) * (random.randint(self.LUCK, 100) / 100))
+
     def is_alive(self):
         return self.hp > 0
     
@@ -104,7 +106,12 @@ class dummy(Enemy):
     def __init__(self):
         super().__init__(name="Dummy", tier=0, hp=1000000, mhp=1000000, damage=0, statusatk=None, status_chance=0, weak=None, DEF=0, RES=0, SPD=0, SKL=0, LUCK=0, EXP=0, gold=0, part=None,
                          description="A wooden dummy. It doesn't do anything.\n")
-        ID = "Dummy"
+        self.id = "Dummy"
+
+class testing_boss(Demon, Boss):
+    def __init__(self):
+        super().__init__(name="Mega Demon", tier=50, hp=1000, mhp=1000, damage=150, statusatk=None, status_chance=0, weak=None, DEF=80, RES=80, SPD=80, SKL=50, LUCK=40, EXP=0, gold=0, part=None,
+                         description="The Mega Demon, a powerful foe for any adventurer to face.")
 
 # Tier 1 Enemies
 class giant_spider(Bug):

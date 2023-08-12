@@ -57,7 +57,7 @@ class fire(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -89,7 +89,7 @@ class ice(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -119,7 +119,7 @@ class shock(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -149,7 +149,7 @@ class water(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -179,7 +179,7 @@ class quake(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -209,7 +209,7 @@ class wind(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -239,7 +239,7 @@ class smite(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -269,7 +269,7 @@ class curse(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -299,7 +299,7 @@ class wither(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = ((player.MAG * 2) + 5)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -334,7 +334,7 @@ class poison(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = (player.MAG * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
@@ -368,7 +368,7 @@ class turn(Spell):
         
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
-            cCRIT = chk_CRIT(player)
+            cCRIT = chk_CRIT(player, enemy)
             stat_bonus = ((player.MAG * 2) + 5)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)

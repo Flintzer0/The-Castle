@@ -91,6 +91,15 @@ class iron_dagger(Weapon):
                          value=10,
                          damage=5)
 
+class dragon_fangs(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Fire"
+        super().__init__(name="Dragon Fangs",
+                         description="Ornate twin daggers whose blades are made from dragon's teeth. \nThey emanate a harsh heat. \nAll damage dealt by this weapon is Fire damage.",
+                         value=2500,
+                         damage=60,
+                         damage_type="Fire")
+
 # Sword Items
 class rusty_sword(Weapon):
     def __init__(self):
@@ -158,6 +167,15 @@ class obsidian_blade(Magic_Weapon):
                          value=2500,
                          damage=25,
                          damage_type="Necrotic")
+        
+class blade_of_starlight(Magic_Weapon):
+    def __init__(self):
+        self.damage_type = "Holy"
+        super().__init__(name="Blade of Starlight",
+                         description="The sacred Starlight Blade of legend. \nIt appears as though the blade is encrusted with distant stars. \nAll damage dealt by this weapon is Holy damage.",
+                         value=2500,
+                         damage=60,
+                         damage_type="Holy")
 
 # Polearm Items
 class wooden_spear(Weapon):
@@ -181,6 +199,15 @@ class rusty_axe(Weapon):
                          description="An axe covered in rust.",
                          value=3,
                          damage=4)
+
+class blood_letter(Magic_Weapon):
+    def __init__(self):
+        super().__init__(name="Blood Letter",
+                         description="A wicked axe with a serrated blade. \nIt seems to always have blood on its edge. \nAll damage dealt by this weapon is Necrotic damage.",
+                         value=2500,
+                         damage=60,
+                         damage_type="Necrotic")
+
 # Hammer Items
 class rusty_hammer(Weapon):
     def __init__(self):
@@ -188,6 +215,15 @@ class rusty_hammer(Weapon):
                          description="A hammer covered in rust.",
                          value=3,
                          damage=3)
+
+class mountain_cracker(Magic_Weapon):
+    def __init__(self):
+        super().__init__(name="Mountain Cracker",
+                         description="A massive hammer, said to be capable of crushing mountains. \nIt's a bit heavy, but it's worth it. \nAll damage dealt by this weapon is Earth damage.",
+                         value=2500,
+                         damage=60,
+                         damage_type="Earth")
+
 # Mace Items
 class rusty_mace(Weapon):
     def __init__(self):
@@ -202,6 +238,14 @@ class wooden_bow(Weapon):
                          description="A simple wooden bow. It's not very sturdy, but it's better than nothing.",
                          value=10,
                          damage=2)
+
+class the_northern_star(Magic_Weapon):
+    def __init__(self):
+        super().__init__(name="The Northern Star",
+                         description="A large bow that can shoot passed one's own sight. \nEvery arrow fired from this bow shines with a cold light. \nAll damage dealt by this weapon is Cold damage.",
+                         value=2500,
+                         damage=60,
+                         damage_type="Cold")
 
 # Weapons with Magic Damage
 class Spellcaster(Weapon):
@@ -220,6 +264,15 @@ class wooden_staff(Spellcaster):
                          value=10,
                          damage=1,
                          mdamage=3)
+
+class the_evertree(Spellcaster):
+    def __init__(self):
+        super().__init__(name="The Evertree",
+                         description="A staff made of twisting wood. \nWhen motionless, it almost appears to be rooting itself into the ground. \nGreatly improves the damage of spells.",
+                         value=2500,
+                         damage=20,
+                         mdamage=60)
+
 # Wand Items
 # Tome Items
 # Rod Items
@@ -234,7 +287,19 @@ class Armor(Item):
 
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\nArmor: {}".format(self.name, self.description, self.value, self.armor)
+
+class Magic_Armor(Armor):
+    def __init__(self, name, description, value, armor, marmor, resistance, resamt, property, propercent):
+        self.marmor = marmor
+        self.resistance = resistance
+        self.resamt = resamt
+        self.property = property
+        self.propercent = propercent
+        super().__init__(name, description, value, armor)
     
+    def __str__(self):
+        return "{}\n=====\n{}\nValue: {}\nArmor: {}\nMagic Armor: {}\nResistance: {}\nProperty: {}".format(self.name, self.description, self.value, self.armor, self.marmor, self.resistance, self.property)
+
 class unarmored(Armor):
     def __init__(self):
         super().__init__(name="Unarmored",
@@ -262,13 +327,61 @@ class leather_armor(Armor):
                          description="A simple leather armor. Provides minimal protection.",
                          value=10,
                          armor=2)
-        
+
+class starweave(Magic_Armor):
+    def __init__(self):
+        super().__init__(name="Starweave",
+                         description="Cloth armor woven from the the remains of a meteor. \nIt is light and comfortable, and shines with a faint light. \nAll Demonic damage is reduced by 50%.\nApplies a permanent 40% Mana Rage buff while worn.",
+                         value=2500,
+                         armor=10,
+                         marmor=30,
+                         resistance="demonic_resist",
+                         resamt=0.5,
+                         property="mana_rage",
+                         propercent=0.4)
+
+class shadecloak(Magic_Armor):
+    def __init__(self):
+        super().__init__(name="Shadecloak",
+                         description="Cloth armor said to be woven with the fibers of the moon's shadow. \nWhile is seems harmless to the wearer, any attakers seem to wither upon contact. \nAll Holy damage is reduced by 50%.",
+                         value=2500,
+                         armor=20,
+                         marmor=20,
+                         resistance="holy",
+                         resamt=0.5,
+                         property="necrosis",
+                         propercent=0.3)
+
+class cowl_of_the_hunt(Magic_Armor):
+    def __init__(self):
+        super().__init__(name="Cowl of the Hunt",
+                         description="A hood made of the fur of a great wolf. \nIt feels as though your senses are sharper while you wear this. \nGain a resistance of 50% to POISON.",
+                         value=2500,
+                         armor=25,
+                         marmor=15,
+                         resistance="poison_resist",
+                         resamt=0.5,
+                         property="heightened_senses",
+                         propercent=15)
+
 class chainmail(Armor):
     def __init__(self):
         super().__init__(name="Chainmail",
                          description="A simple chainmail. Provides minimal protection.",
                          value=15,
                          armor=3)
+
+class healer_ringmail(Magic_Armor):
+    def __init__(self):
+        super().__init__(name="Ringmail of the Healer",
+                         description="Intricately linked ringmail colored red and white. \nIt is said that it was blessed by the gods themselves. \nWearers benefit from a resistance to Necrotic damage of 50%.",
+                         value=2500,
+                         armor=15,
+                         marmor=25,
+                         resistance="necrotic_resist",
+                         resamt=0.5,
+                         property="regen",
+                         propercent=0.2)
 
 class iron_armor(Armor):
     def __init__(self):
@@ -284,6 +397,30 @@ class plate(Armor):
                          value=25,
                          armor=10)
 
+class sunplate(Magic_Armor):
+    def __init__(self):
+        super().__init__(name="Sunplate",
+                         description="A suit of platemail embossed with symbols of the sun. \nWhen worn, it shines so brightly that it is hard to look at. \nAll Necrotic damage dealt is reduced by 50%.",
+                         value=2500,
+                         armor=25,
+                         marmor=15,
+                         resistance="necrotic_resist",
+                         resamt=0.5,
+                         property="blind",
+                         propercent=0.3)
+
+class bloodplate(Magic_Armor):
+    def __init__(self):
+        super().__init__(name="Bloodplate",
+                         description="Bloodred platemail with a sinister aura. \nIts energy tries to sap away the strength of any who inted to harm it. \nAll Holy damage dealt is reduced by 50%.",
+                         value=2500,
+                         armor=20,
+                         marmor=20,
+                         resistance="holy_resist",
+                         resamt=0.5,
+                         property="cripple",
+                         propercent=0.3)
+
 # Shield Items
 class Shield(Item):
     def __init__(self, name, description, value, armor):
@@ -292,7 +429,7 @@ class Shield(Item):
 
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\nArmor: {}".format(self.name, self.description, self.value, self.armor)
-    
+
 class open_hand(Shield):
     def __init__(self):
         super().__init__(name="Open Hand",
@@ -309,12 +446,16 @@ class rusty_shield(Shield):
 
 # Magic Shields
 class Spellshield(Shield):
-    def __init__(self, name, description, value, armor, resistance):
-        super().__init__(name, description, value, armor)
+    def __init__(self, name, description, value, armor, marmor, property, propercent, resistance, resamt):
+        self.marmor = marmor
+        self.property = property
+        self.propercent = propercent
         self.resistance = resistance
+        self.resamt = resamt
+        super().__init__(name, description, value, armor)
 
     def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\nArmor: {}\nMagic Damage: {}".format(self.name, self.description, self.value, self.armor, self.resistance)
+        return "{}\n=====\n{}\nValue: {}\nArmor: {}\nMagic Armor: {}".format(self.name, self.description, self.value, self.armor, self.marmor)
 
 class iron_curtain(Spellshield):
     def __init__(self):
@@ -322,7 +463,59 @@ class iron_curtain(Spellshield):
                          description="The shield of a powerful warrior. It glints in the light. \nIt provides high protection against physical attacks, and resistance to Cold damage.",
                          value=200,
                          armor=10,
-                         resistance="Cold")
+                         marmor=5,
+                         property=False,
+                         propercent=0,
+                         resistance="cold_resist",
+                         resamt=0.2)
+
+class brokentower(Spellshield):
+    def __init__(self):
+        super().__init__(name="Shield of the Broken Tower",
+                         description="Made from a reflective, white metal, this shield is embossed with the \nstandard of a long forgotten order of knights. \nIt provides high protection against physical attacks, and resistance to Demonic damage by 50%.",
+                         value=200,
+                         armor=30,
+                         marmor=10,
+                         property="silence",
+                         propercent=0.5,
+                         resistance="demonic_resist",
+                         resamt=0.5)
+        
+class moonbrace(Spellshield):
+    def __init__(self):
+        super().__init__(name="Moonbrace",
+                         description="A shield made of a strange, silvery metal. It glows with a soft light. \nIt grants the wielder temporary invisibility, and reduces Necrotic damage by 50%.",
+                         value=200,
+                         armor=15,
+                         marmor=25,
+                         property="invisible",
+                         propercent=10,
+                         resistance="necrotic_resist",
+                         resamt=0.2)
+        
+class fallenshield(Spellshield):
+    def __init__(self):
+        super().__init__(name="Shield of the Fallen",
+                         description="A chipped and cracked shield with the Healer's Mark on its face.\nDespite its obvious wear, it is still strudy and reliable. \nIt grants the wielder Health Regen, and reduces Demonic damage by 50%.",
+                         value=200,
+                         armor=20,
+                         marmor=20,
+                         property="regen",
+                         propercent="0.25",
+                         resistance="demonic_resist",
+                         resamt=0.5)
+        
+class hexbreaker(Spellshield):
+    def __init__(self):
+        super().__init__(name="Hexbreaker",
+                         description="An intricate shield. \nIt grants the wielder resistance to all status effects by 25%, and reduces Magic damage by 20%.",
+                         value=200,
+                         armor=10,
+                         marmor=30,
+                         property="hexbreak",
+                         propercent=.25,
+                         resistance="magical_resist",
+                         resamt=0.2)
 
 # These items are all equipment used for increasing stats.
 # Accessory Items
@@ -356,6 +549,7 @@ class strength_1_ring(Ring):
                          stat="STR",
                          statval=1,
                          spcl="")
+
 # Defense Rings
 class defense_1_ring(Ring):
     def __init__(self):
@@ -420,6 +614,67 @@ class water_ring(Ring):
                          stat="",
                          statval=0,
                          spcl=self.spcl)
+
+class might_ring(Ring):
+    def __init__(self):
+        self.spcl = "Might"
+        super().__init__(name="Ring of Might",
+                         description="This ring grants the wearer +5 STR and DEF. \nSpecial: {}".format(self.spcl),
+                         value=10,
+                         stat=["STR", "DEF"],
+                         statval=5,
+                         spcl=self.spcl)
+        
+class wisdom_ring(Ring):
+    def __init__(self):
+        self.spcl = "Wisdom"
+        super().__init__(name="Ring of Wisdom",
+                         description="This ring grants the wearer +5 MAG and RES. \nSpecial: {}".format(self.spcl),
+                         value=10,
+                         stat=["MAG", "RES"],
+                         statval=5,
+                         spcl=self.spcl)
+        
+class reflex_ring(Ring):
+    def __init__(self):
+        self.spcl = "Reflex"
+        super().__init__(name="Ring of Quick Reflexes",
+                         description="This ring grants the wearer +5 SPD and SKL. \nSpecial: {}".format(self.spcl),
+                         value=10,
+                         stat=["SPD", "SKL"],
+                         statval=5,
+                         spcl=self.spcl)
+
+class leprechaun_ring(Ring):
+    def __init__(self):
+        self.spcl = "Fortune"
+        super().__init__(name="Leprechaun Ring",
+                         description="This ring grants the wearer +5 LUCK, and grants the Fortune buff. \nSpecial: {}".format(self.spcl),
+                         value=10,
+                         stat="LUCK",
+                         statval=5,
+                         spcl=self.spcl)
+
+class warding_ring(Ring):
+    def __init__(self):
+        self.spcl = "magic_resist"
+        super().__init__(name="Ring of Warding",
+                         description="This ring grants the wearer +5 RES, and resistance to magical attacks. \nSpecial: {}".format(self.spcl),
+                         value=10,
+                         stat="RES",
+                         statval=5,
+                         spcl=self.spcl)
+
+class armor_ring(Ring):
+    def __init__(self):
+        self.spcl = "physical_resist"
+        super().__init__(name="Ring of Armor",
+                         description="This ring grants the wearer +5 DEF and RES, and resistance to physical attacks. \nSpecial: {}".format(self.spcl),
+                         value=10,
+                         stat=["DEF", "RES"],
+                         statval=5,
+                         spcl=self.spcl)
+
 # Necklace Items
 # Bracelet Items
 # Earring Items

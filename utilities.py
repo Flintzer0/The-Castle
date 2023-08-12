@@ -14,8 +14,9 @@ def text_speed(text, speed):
 # Combat Utilities
 
 # This functions is used in combat to determine if the attack is a critical hit.
-def chk_CRIT(object):
-    return random.randint(1,100) <= ((object.SKL*2) + object.LUCK)
+def chk_CRIT(object, target):
+    crit = (object.SKL + object.LUCK) - target.LUCK
+    return random.randint(1,100) <= crit
 
 def chk_weakness(target):
     weakness = None
@@ -27,20 +28,20 @@ def chk_weakness(target):
     
 def calculate_hit(attacker, defender):
     if attacker.status['blind'] == True:
-        Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO) - 20
+        Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO()) - 20
         return random.randint(1,100) <= Hit_rate
-    Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO)
+    Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO())
     return random.randint(1,100) <= Hit_rate
 
 def skill_hit(skill, attacker, defender):
     if attacker.status['blind'] == True:
-        Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO) - 20
+        Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO()) - 20
         return random.randint(1,100) <= Hit_rate
-    Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO)
+    Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO())
     return random.randint(1,100) <= Hit_rate
 
 def scroll_hit(scroll, defender):
-    Hit_rate = scroll.accuracy - defender.AVO
+    Hit_rate = scroll.accuracy - defender.AVO()
     return random.randint(1,100) <= Hit_rate
 
 def generate_damage(player, stat, attack, enemy):

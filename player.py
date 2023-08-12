@@ -22,7 +22,6 @@ class Player():
         self.SKL = SKL
         self.LUCK = LUCK
         self.cash = cash
-        self.AVO = (self.SPD + self.SKL) + ((self.SPD + self.SKL) * (self.LUCK / random.randint(1, 100)))
         self.char_class = char_class
         self.location_x, self.location_y = world.starting_position
         self.victory = False
@@ -57,25 +56,33 @@ class Player():
             'sleep': False,
             'confusion': False,
             'charm': False,
-            'crippled': False,
+            'crippled': False
+        }
+        self.buffs = {
             'water_breathing': False,
-            'regen': {'flag': False, 'duration': 0, 'potency': 0},
-            'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'water_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'earth_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'wind_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'holy_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'demonic_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'poison_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'paralysis_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'blind_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'silence_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'sleep_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'confusion_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'charm_resist': {'flag': False, 'duration': 0, 'potency': 0},
-            'crippled_resist': {'flag': False, 'duration': 0, 'potency': 0}
+            'regen': {'flag': False, 'potency': 0},
+            'heightened_senses': {'flag': False, 'potency': 0},
+            'hexbreak': {'flag': False, 'potency': 0},
+            'physical_resist': {'flag': False, 'potency': 0},
+            'magical_resist': {'flag': False, 'potency': 0},
+            'fire_resist': {'flag': False, 'potency': 0},
+            'cold_resist': {'flag': False, 'potency': 0},
+            'lightning_resist': {'flag': False, 'potency': 0},
+            'water_resist': {'flag': False, 'potency': 0},
+            'earth_resist': {'flag': False, 'potency': 0},
+            'wind_resist': {'flag': False, 'potency': 0},
+            'holy_resist': {'flag': False, 'potency': 0},
+            'demonic_resist': {'flag': False, 'potency': 0},
+            'poison_resist': {'flag': False, 'potency': 0},
+            'paralysis_resist': {'flag': False, 'potency': 0},
+            'blind_resist': {'flag': False, 'potency': 0},
+            'silence_resist': {'flag': False, 'potency': 0},
+            'sleep_resist': {'flag': False, 'potency': 0},
+            'confusion_resist': {'flag': False, 'potency': 0},
+            'charm_resist': {'flag': False, 'potency': 0},
+            'crippled_resist': {'flag': False, 'potency': 0},
+            'mana_rage': {'flag': False, 'potency': 0},
+            'fortune': {'flag': False},
             }
         self.materials = {
             items.wood_plank(0).name: 0,
@@ -112,7 +119,11 @@ class Player():
             'LUCK': {'flag': False, 'duration': 0, 'value': 0},
             'AVO': {'flag': False, 'duration': 0, 'value': 0},
             'invisible': {'flag': False, 'duration': 0},
+            'heightened_senses': {'flag': False, 'duration': 0},
             'regen': {'flag': False, 'duration': 0, 'potency': 0},
+            'hexbreak': {'flag': False, 'duration': 0, 'potency': 0},
+            'physical_resist': {'flag': False, 'duration': 0, 'potency': 0},
+            'magical_resist': {'flag': False, 'duration': 0, 'potency': 0},
             'fire_resist': {'flag': False, 'duration': 0, 'potency': 0},
             'cold_resist': {'flag': False, 'duration': 0, 'potency': 0},
             'lightning_resist': {'flag': False, 'duration': 0, 'potency': 0},
@@ -133,8 +144,11 @@ class Player():
             }
         self.save_data = {}
     
+    def AVO(self):
+        return round((self.SPD + self.SKL) * (random.randint(self.LUCK, 100) / 100))
+    
     def __str__(self):
-        return "{}    Class: {}\n======================\nLevel: {}    EXP: {}\nHP: {}/{} MP: {}/{}\nSTR: {}    DEF: {}\nMAG: {}    RES: {}\nSPD: {}    SKL: {}\nLUCK: {}\n".format(self.name, self.char_class, self.LVL, self.EXP, self.cHP, self.mHP, self.cMP, self.mMP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
+        return "\n{}    Class: {}\n======================\nLevel: {}    EXP: {}\nHP: {}/{} MP: {}/{}\nSTR: {}    DEF: {}\nMAG: {}    RES: {}\nSPD: {}    SKL: {}\nLUCK: {}\n".format(self.name, self.char_class, self.LVL, self.EXP, self.cHP, self.mHP, self.cMP, self.mMP, self.STR, self.DEF, self.MAG, self.RES, self.SPD, self.SKL, self.LUCK)
     
     def __repr__(self):
         return self.name
@@ -142,52 +156,97 @@ class Player():
     def is_alive(self):
         return self.cHP > 0
     
-    def chk_stat_roll(self, growth, stat):
-        if random.randint(1,100) <= (100 * (growth + (stat * .1))):
-            return 1
+    def do_action(self, action, **kwargs):
+        action_method = getattr(self, action.method.__name__)
+        if action_method:
+            action_method(**kwargs)
+    
+    def growth_rate(self, growth, stat):
+        return (100 * growth)
+
+    def chk_stat_roll(self, growth):
+        if random.randint(1,100) <= growth:
+            return True
         else:
-            return 0
+            return False
         
     def view_character(self):
-        print("\n" + self.__str__())
+        return self.__str__()
 
     def level_up(self):
-        if self.EXP >= 100:
-            self.LVL += 1
-            self.EXP -= 100
-            self.mHP += 5 + self.chk_stat_roll(self.mHPgrowth, self.mHP)
-            self.cHP = self.mHP
-            self.mMP += 2 + self.chk_stat_roll(self.mMPgrowth, self.mMP)
-            self.cMP = self.mMP
-            self.STR += self.chk_stat_roll(self.STRgrowth, self.STR)
-            self.DEF += self.chk_stat_roll(self.DEFgrowth, self.DEF)
-            self.MAG += self.chk_stat_roll(self.MAGgrowth, self.MAG)
-            self.RES += self.chk_stat_roll(self.RESgrowth, self.RES)
-            self.SPD += self.chk_stat_roll(self.SPDgrowth, self.SPD)
-            self.SKL += self.chk_stat_roll(self.SKLgrowth, self.SKL)
-            self.LUCK += self.chk_stat_roll(self.LUCKgrowth, self.LUCK)
-            print("You leveled up!\n")
-            time.sleep(1)
-            print("You are now level {}!\n".format(self.LVL))
-            time.sleep(1)
-            print("Your max HP is now {}!\n".format(self.mHP))
-            time.sleep(1)
-            print("Your STR is now {}!\n".format(self.STR))
-            time.sleep(1)
-            print("Your DEF is now {}!\n".format(self.DEF))
-            time.sleep(1)
-            print("Your MAG is now {}!\n".format(self.MAG))
-            time.sleep(1)
-            print("Your RES is now {}!\n".format(self.RES))
-            time.sleep(1)
-            print("Your SPD is now {}!\n".format(self.SPD))
-            time.sleep(1)
-            print("Your SKL is now {}!\n".format(self.SKL))
-            time.sleep(1)
-            print("Your LUCK is now {}!\n".format(self.LUCK))
-            time.sleep(1)
+        self.LVL += 1
+        print("You are now level {}!".format(self.LVL))
+        time.sleep(.5)
+        self.EXP -= 100
+        if self.chk_stat_roll(self.mHPgrowth, self.mHP):
+            if isinstance(self, Mage):
+                self.mHP += 3 + (random.randint(1, 3))
+            else:
+                self.mHP += 5 + (random.randint(1, 5))
         else:
-            pass
+            self.mHP += 5
+        print("Your max HP is now {}!".format(self.mHP))
+        time.sleep(.5)
+        self.cHP = self.mHP
+        if self.chk_stat_roll(self.mMPgrowth, self.mMP):
+            if isinstance(self, Mage):
+                self.mMP += 5 + (random.randint(1, 5))
+            else:
+                self.mMP += 2 + (random.randint(1, 3))
+        else:
+            self.mMP += 2
+        print("Your max MP is now {}!".format(self.mMP))
+        time.sleep(.5)
+        self.cMP = self.mMP
+        if self.chk_stat_roll(self.STRgrowth, self.STR):
+            if self.STRgrowth >= .5:
+                self.STR += random.randint(1, 3)
+            else:
+                self.STR += 1
+            print("Your STR is now {}!".format(self.STR))
+            time.sleep(.5)
+        if self.chk_stat_roll(self.DEFgrowth, self.DEF):
+            if self.DEFgrowth >= .5:
+                self.DEF += random.randint(1, 3)
+            else:
+                self.DEF += 1
+            print("Your DEF is now {}!".format(self.DEF))
+            time.sleep(.5)
+        if self.chk_stat_roll(self.MAGgrowth, self.MAG):
+            if self.MAGgrowth >= .5:
+                self.MAG += random.randint(1, 5)
+            else:
+                self.MAG += 1
+            print("Your MAG is now {}!".format(self.MAG))
+            time.sleep(.5)
+        if self.chk_stat_roll(self.RESgrowth, self.RES):
+            if self.RESgrowth >= .5:
+                self.RES += random.randint(1, 3)
+            else:
+                self.RES += 1
+            print("Your RES is now {}!".format(self.RES))
+            time.sleep(.5)
+        if self.chk_stat_roll(self.SPDgrowth, self.SPD):
+            if self.SPDgrowth >= .5:
+                self.SPD += random.randint(1, 3)
+            else:
+                self.SPD += 1
+            print("Your SPD is now {}!".format(self.SPD))
+            time.sleep(.5)
+        if self.chk_stat_roll(self.SKLgrowth, self.SKL):
+            if self.SKLgrowth >= .5:
+                self.SKL += random.randint(1, 3)
+            else:
+                self.SKL += 1
+            print("Your SKL is now {}!".format(self.SKL))
+            time.sleep(.5)
+        if self.chk_stat_roll(self.LUCKgrowth, self.LUCK):
+            if self.LUCKgrowth >= .5:
+                self.LUCK += random.randint(1, 3)
+            else:
+                self.LUCK += 1
+            print("Your LUCK is now {}!".format(self.LUCK))
+            time.sleep(.5)
 
     def menu(self):
         print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equipment  7. Exit\n")
@@ -378,6 +437,13 @@ class Player():
                     self.equipped['armor'] = armor[armor]
                     self.inventory.remove(armor[armor])
                     text_speed("You equipped the {}!\n".format(armor[armor].name), .05)
+                    if isinstance(armor[armor], items.Magic_Armor):
+                        if armor[armor].property in self.buffs:
+                            self.buffs[armor[armor].property]['flag'] = True
+                            self.buffs[armor[armor].property]['potency'] = armor[armor].propercent
+                        if armor[armor].resistance in self.buffs:
+                            self.buffs[armor[armor].resistance]['flag'] = True
+                            self.buffs[armor[armor].resistance]['potency'] = armor[armor].resamt
                 elif armor == len(armor):
                     pass
                 else:
@@ -413,6 +479,13 @@ class Player():
                     self.equipped['shield'] = shields[shield]
                     self.inventory.remove(shields[shield])
                     text_speed("You equipped the {}!\n".format(shields[shield].name), .05)
+                    if isinstance(shields[shield], items.Spellshield):
+                        if shields[shield].property in self.buffs:
+                            self.buffs[shield[shield].property]['flag'] = True
+                            self.buffs[shield[shield].property]['potency'] = shields[shield].propercent
+                        if shields[shield].resistance:
+                            self.buffs[shields[shield].resistance]['flag'] = True
+                            self.buffs[shields[shield].resistance]['potency'] = shields[shield].resamt
                 elif shield == len(shields):
                     pass
                 else:
@@ -427,6 +500,13 @@ class Player():
     def unequip_shield(self):
         if self.equipped['shield'] != items.open_hand():
             self.inventory.append(self.equipped['shield'])
+            if isinstance(self.equipped['shield'], items.Spellshield):
+                if self.equipped['shield'].property in self.buffs:
+                    self.buffs[self.equipped['shield'].property]['flag'] = False
+                    self.buffs[self.equipped['shield'].property]['potency'] = 0
+                if self.equipped['shield'].resistance:
+                    self.buffs[self.equipped['shield'].resistance]['flag'] = False
+                    self.buffs[self.equipped['shield'].resistance]['potency'] = 0
             self.equipped['shield'] = items.open_hand()
             text_speed("You unequipped your shield!\n", .05)
         else:
@@ -469,20 +549,35 @@ class Player():
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
                         self.STR += accessories[accessory].statval
-                    elif accessories[accessory].stat == "DEF":
+                    if accessories[accessory].stat == "DEF":
                         self.DEF += accessories[accessory].statval
-                    elif accessories[accessory].stat == "MAG":
+                    if accessories[accessory].stat == "MAG":
                         self.MAG += accessories[accessory].statval
-                    elif accessories[accessory].stat == "RES":
+                    if accessories[accessory].stat == "RES":
                         self.RES += accessories[accessory].statval
-                    elif accessories[accessory].stat == "SPD":
+                    if accessories[accessory].stat == "SPD":
                         self.SPD += accessories[accessory].statval
-                    elif accessories[accessory].stat == "SKL":
+                    if accessories[accessory].stat == "SKL":
                         self.SKL += accessories[accessory].statval
-                    elif accessories[accessory].stat == "LUCK":
+                    if accessories[accessory].stat == "LUCK":
                         self.LUCK += accessories[accessory].statval
-                    elif accessories[accessory].spcl == "water_breathing":
+                    if accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
+                    if accessories[accessory].spcl == "Might":
+                        self.STR += accessories[accessory].statval
+                        self.DEF += accessories[accessory].statval
+                    if accessories[accessory].spcl == "Wisdom":
+                        self.MAG += accessories[accessory].statval
+                        self.RES += accessories[accessory].statval
+                    if accessories[accessory].spcl == "Reflex":
+                        self.SPD += accessories[accessory].statval
+                        self.SKL += accessories[accessory].statval
+                    if accessories[accessory].spcl == "magic_resist":
+                        self.buffs['magic_resist']['flag'] = True
+                        self.buffs['magic_resist']['potency'] = (accessories[accessory].statval / 10)
+                    if accessories[accessory].spcl == "physical_resist":
+                        self.buffs['physical_resist']['flag'] = True
+                        self.buffs['physical_resist']['potency'] = (accessories[accessory].statval / 10)
                     else:
                         pass
                     self.inventory.remove(accessories[accessory])
@@ -755,17 +850,12 @@ class Player():
             self.equipped['accessory_4'] = items.empty()
         else:
             text_speed("You don't have an accessory equipped!\n", .05)
-    
-    def do_action(self, action, **kwargs):
-        action_method = getattr(self, action.method.__name__)
-        if action_method:
-            action_method(**kwargs)
 
     def move(self, dx, dy):
         import tiles
         self.location_x += dx
         self.location_y += dy
-        print(world.tile_exists(self.location_x, self.location_y).intro_text())
+        return world.tile_exists(self.location_x, self.location_y).intro_text()
         location = world.tile_exists(self.location_x, self.location_y)
         if isinstance(location, tiles.stairs):
             location.end_demo(self)
@@ -788,7 +878,7 @@ class Player():
                 start.leave_tile()
                 self.move(dx=0, dy=-1)
             else:
-                print(room.locked_text())
+                return room.locked_text()
                 self.move(dx=0, dy=0)
     
     def move_south(self):
@@ -802,7 +892,7 @@ class Player():
                 start.leave_tile()
                 self.move(dx=0, dy=1)
             else:
-                print(room.locked_text())
+                return room.locked_text()
                 self.move(dx=0, dy=0)
     
     def move_east(self):
@@ -816,7 +906,7 @@ class Player():
                 start.leave_tile()
                 self.move(dx=1, dy=0)
             else:
-                print(room.locked_text())
+                return room.locked_text()
                 self.move(dx=0, dy=0)
     
     def move_west(self):
@@ -830,7 +920,7 @@ class Player():
                 start.leave_tile()
                 self.move(dx=-1, dy=0)
             else:
-                print(room.locked_text())
+                return room.locked_text()
                 self.move(dx=0, dy=0)
 
     def buy(self, shopkeep):
@@ -916,7 +1006,7 @@ class Player():
         room = world.tile_exists(self.location_x, self.location_y)
         item = room.item
         if item is not None:
-            print(room.search_text())
+            room.search_text()
             if isinstance(item, items.gold):
                 self.cash += item.amt
                 text_speed("You found {} {}!\n".format(item.amt, item.name), .05)
@@ -1109,7 +1199,8 @@ class Player():
         return best_weapon
 
     def chk_armor(self):
-        return self.equipped['armor'].armor + self.equipped['shield'].armor
+        armor = self.equipped['armor'].armor + self.equipped['shield'].armor
+        return armor / 100
 
     def chk_SPD(self, enemy):
         return self.SPD >= enemy.SPD
@@ -1134,7 +1225,7 @@ class Player():
                 self.apply_poison()
             elif confusion == False:
                 if calculate_hit(self, enemy):
-                    cCRIT = chk_CRIT(self)
+                    cCRIT = chk_CRIT(self, enemy)
                     text_speed("You use {}!\n".format(weapon.name), .03)
                     time.sleep(.2)
                     pdamage = generate_damage(self, self.STR, weapon.damage, enemy)
@@ -1161,32 +1252,31 @@ class Player():
     def chk_edamage(self, enemy):
         edamage = None
         armor = self.chk_armor()
-        pdef = (self.DEF + armor)
-        cCRIT = chk_CRIT(enemy)
+        cCRIT = chk_CRIT(enemy, self)
         if cCRIT == True:
             text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .01)
             time.sleep(.2)
-            edamage = (enemy.damage * 2)
-            if edamage < pdef:
+            edamage = round((enemy.damage * 2) - (enemy.damage * armor))
+            if edamage < self.DEF:
                 edamage = 1
                 return edamage
-            elif edamage == pdef:
+            elif edamage == self.DEF:
                 edamage = 1
                 return edamage
             else:
-                edamage = edamage - pdef
+                edamage = edamage - self.DEF
                 return edamage
         else:
-            edamage = (enemy.damage - pdef)
-            if enemy.damage < pdef:
+            edamage = round((enemy.damage) - (enemy.damage * armor))
+            if edamage < self.DEF:
                 edamage = 1
                 return edamage
             
-            elif enemy.damage == pdef:
+            elif edamage == self.DEF:
                 edamage = 1
                 return edamage
             else:
-                edamage = (enemy.damage - pdef)
+                edamage = (enemy.damage - self.DEF)
                 return edamage
 
     def efight(self, enemy):
@@ -1368,6 +1458,18 @@ class Player():
             time.sleep(.2)
 
     def chk_flags(self):
+        for i in self.equipped:
+            if i == 'weapon':
+                pass
+            else:
+                for e in self.equipped:
+                    if e.property in self.buffs:
+                        self.buffs[e.property]['flag'] = True
+                        self.buffs[e.property]['potency'] = e.propercent
+        for e in self.equipped and e not in self.equipped['weapon']:
+            if e.property and e.property in self.buffs:
+                self.buffs[e.property]['flag'] = True
+                self.buffs[e.property]['potency'] = e.propercent
         for f in self.tempboosts:
             if self.tempboosts[f]['flag'] != False:
                 if self.tempboosts[f]['duration'] > 0:
@@ -1472,6 +1574,8 @@ class Player():
         while self.is_alive() and enemy.is_alive():
             self.chk_flags()
             self.combat(enemy)
+            if self.buffs['regen']['flag'] == True:
+                self.cHP += self.mHP * self.buffs['regen']['potency']
             self.turns += 1
         if not enemy.is_alive():
             self.starting_turns = 0
@@ -1491,7 +1595,19 @@ class Player():
             time.sleep(.2)
             text_speed("You gained {} EXP!\n".format(exp), .03)
             time.sleep(.2)
-            self.level_up()
+            loop = 1
+            while self.EXP >= 100:
+                if loop == 1:
+                    text_speed("You leveled up!\n", .03)
+                    time.sleep(.2)
+                    self.level_up()
+                    loop += 1
+                else:
+                    text_speed("You leveled up again!\n", .03)
+                    time.sleep(.2)
+                    self.level_up()
+                    loop += 1
+            loop = 1
             text_speed("You gained {} gold!\n".format(enemy.gold), .03)
             time.sleep(.2)
             if enemy.drop_part():
@@ -1521,8 +1637,8 @@ class Fighter(Player):
         self.mMPgrowth = .3
         self.STRgrowth = .7
         self.DEFgrowth = .4
-        self.MAGgrowth = .2
-        self.RESgrowth = .1
+        self.MAGgrowth = .1
+        self.RESgrowth = .2
         self.SPDgrowth = .3
         self.SKLgrowth = .5
         self.LUCKgrowth = .3
@@ -1556,11 +1672,11 @@ class Rogue(Player):
         self.mMPgrowth = .4
         self.STRgrowth = .4
         self.DEFgrowth = .2
-        self.MAGgrowth = .2
-        self.RESgrowth = .1
-        self.SPDgrowth = .7
+        self.MAGgrowth = .3
+        self.RESgrowth = .2
+        self.SPDgrowth = .6
         self.SKLgrowth = .7
-        self.LUCKgrowth = .5
+        self.LUCKgrowth = .4
         self.equipped['weapon'] = items.rusty_dagger()
         self.equipped['accessory_1'] = items.luck_1_ring()
 
