@@ -20,8 +20,8 @@ class Skill:
         raise NotImplementedError()
     
     def use_ability(self, player, enemy):
-        if player.cMP >= self.cost:
-            player.cMP -= self.cost
+        if player.stats['cMP'] >= self.cost:
+            player.stats['cMP'] -= self.cost
             self.ability(player, enemy)
     
 # Basic Skills
@@ -35,27 +35,26 @@ class cleave(Skill):
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
-            stat_bonus = (player.STR * 2)
-            base_dmg = (self.damage + weapon.damage)
+            bstat = ((player.stats['STR'] + player.statbonus['STR']['value']))
+            bdamage = ((player.stats['STR'] + player.statbonus['STR']['value']) * 2)
+            base_dmg = (self.damage + weapon.damage + bdamage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
-            time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
 
 class sneak_attack(Skill):
@@ -67,27 +66,26 @@ class sneak_attack(Skill):
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
-            stat_bonus = (self.damage + player.SKL)
-            base_dmg = (self.damage + weapon.damage + player.STR)
+            bstat = ((player.stats['STR'] + player.statbonus['STR']['value']))
+            bdamage = ((player.stats['SKL'] + player.statbonus['SKL']['value']) * 2)
+            base_dmg = (self.damage + weapon.damage + bdamage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
-            time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
         
 class precision_strike(Skill):
@@ -98,21 +96,22 @@ class precision_strike(Skill):
     def ability(self, player, enemy):
         cCRIT = chk_CRIT(player, enemy)
         weapon = player.equipped['weapon']
-        stat_bonus = (self.damage + player.SKL)
-        base_dmg = (self.damage + weapon.damage + player.STR)
+        bstat  = (self.damage + (player.stats['STR'] + player.statbonus['STR']['value']))
+        bdamage = ((player.stats['SKL'] + player.statbonus['SKL']['value']) * 2)
+        base_dmg = (self.damage + weapon.damage + bdamage)
         text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-        pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
+        pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
         time.sleep(.2)
         if cCRIT == True:
             pdamage *= 2
             text_speed("Critical hit!\n", .01)
             time.sleep(.2)
-        if (pdamage - enemy.DEF) < 0:
+        if (pdamage - enemy.stats['DEF']) < 0:
             damage = 1
         else:
-            damage = (pdamage - enemy.DEF)
+            damage = (pdamage - enemy.stats['DEF'])
         text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-        enemy.hp -= damage
+        enemy.stats['HP'] -= damage
         
 class double_strike(Skill):
     def __init__(self):
@@ -121,47 +120,49 @@ class double_strike(Skill):
 
     def ability(self, player, enemy):
         if skill_hit(self, player, enemy):
-            CRIT = chk_CRIT(player, enemy)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
-            base_stat = (self.damage + player.SPD)
-            base_dmg = (self.damage + weapon.damage + player.STR)
+            bstat = ((player.stats['STR'] + player.statbonus['STR']['value']))
+            base_dmg = (self.damage + weapon.damage + ((player.stats['SPD'] + player.statbonus['SPD']['value']) * 2))
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, base_stat, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
-            if CRIT == True:
+            if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
             self.second_hit(player, enemy)
 
     def second_hit(self, player, enemy):
-        second_hit = random.randint(1,100) <= 50 + (player.SPD * 2)
+        astat = (player.stats['SPD'] + player.statbonus['SPD']['value'])
+        second_hit = random.randint(1,100) <= 50 + astat
         if second_hit == True:
             text_speed("You hit the {} again!\n".format(enemy.name), .03)
             time.sleep(.2)
-            CRIT = chk_CRIT(player, enemy)
+            cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
-            base_stat = (self.damage + player.SPD)
-            base_dmg = (self.damage + weapon.damage + player.STR)
+            bstat = (player.stats['STR'] + player.statbonus['STR']['value'])
+            bdamage = ((player.stats['SPD'] + player.statbonus['SPD']['value']))
+            base_dmg = (self.damage + weapon.damage + bdamage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, base_stat, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
-            if CRIT == True:
+            if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         
 class guard_breaker(Skill):
     def __init__(self):
@@ -172,9 +173,10 @@ class guard_breaker(Skill):
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
+            bstat = (player.stats['STR'] + player.statbonus['STR']['value'])
             base_dmg = (self.damage + weapon.damage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, player.STR, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
@@ -182,13 +184,11 @@ class guard_breaker(Skill):
                 time.sleep(.2)
             text_speed("You dealt {} damage to the {}.\n".format(pdamage, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= pdamage
+            enemy.stats['HP'] -= pdamage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
-            time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
         
 class heavy_swing(Skill):
@@ -200,27 +200,26 @@ class heavy_swing(Skill):
         weapon = player.equipped['weapon']
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (self.damage + player.STR)
-            base_dmg = (self.damage + weapon.damage + player.STR)
+            bstat = ((player.stats['STR'] + player.statbonus['STR']['value']) * 2)
+            base_dmg = (self.damage + weapon.damage + bstat)
+            print(base_dmg)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
-            time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
             time.sleep(.2)
         
 class steal(Skill):
@@ -232,31 +231,31 @@ class steal(Skill):
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
-            base_dmg = (self.damage + weapon.damage)
+            bstat = (player.stats['STR'] + player.statbonus['STR']['value'])
+            bdamage = (player.stats['SPD'] + player.statbonus['SPD']['value'])
+            base_dmg = (self.damage + weapon.damage + bdamage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, player.SPD, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
             self.steal(player, enemy)
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
             time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
-            time.sleep(.2)
 
     def steal(self, player, enemy):
-        steal = random.randint(1,100) <= 50 + (player.SPD * 2)
+        steal = random.randint(1,100) <= 50 + ((player.stats['SPD'] + player.statbonus['SPD']['value']))
         if steal == True:
             item_choice = random.randint(1,100)
             if item_choice <= 50:
@@ -289,32 +288,31 @@ class poison_point(Skill):
         if skill_hit(self, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
-            stat_bonus = (player.SKL * 2)
-            base_dmg = (self.damage + weapon.damage)
+            bstat = (player.stats['STR'] + player.statbonus['STR']['value'])
+            bdamage = ((player.stats['SKL'] + player.stats['SKL']['value']) * 2)
+            base_dmg = (self.damage + weapon.damage + bdamage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
-            pdamage = generate_damage(player, stat_bonus, base_dmg, enemy)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.DEF) < 0:
+            if (pdamage - enemy.stats['DEF']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.DEF)
+                damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
             self.poison(player, enemy)
         else:
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
             time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
-            time.sleep(.2)
 
     def poison(self, player, enemy):
-        poison = random.randint(1,100) <= 60 + (player.SKL * 2)
+        poison = random.randint(1,100) <= 60 + ((player.stats['SKL'] + player.statbonus['SKL']['value']))
         if poison == True:
             text_speed("You poisoned the {}!\n".format(enemy.name), .03)
             time.sleep(.2)
@@ -326,9 +324,61 @@ class poison_point(Skill):
 class wind_shot(Skill):
     def __init__(self):
         super().__init__(name="Wind Shot", cost=4, damage=3, damage_type="Wind", bonus_stat="SKL", hit_rate=90,
-                         description="Your Wind Shot skill. Deals Wind damage based on SKL to a single target. High crit rate. Must be wielding a bow.")
+                         description="Your Wind Shot skill. Deals Wind damage based on SKL to a single target. High ccrit rate. Must be wielding a bow.")
+        
+    def ability(self, player, enemy):
+        if skill_hit(self, player, enemy):
+            cCRIT = chk_CRIT(player, enemy)
+            weapon = player.equipped['weapon']
+            bstat = (player.stats['STR'] + player.statbonus['STR']['value'])
+            bdamage = ((player.stats['SKL'] + player.stats['SKL']['value']) * 2)
+            base_dmg = (self.damage + weapon.damage + bdamage)
+            text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
+            time.sleep(.2)
+            if cCRIT == True:
+                pdamage *= 2
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.2)
+            if (pdamage - enemy.stats['DEF']) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.stats['DEF'])
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.stats['HP'] -= damage
+        else:
+            text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
+            time.sleep(.2)
+            text_speed("You missed!\n", .03)
+            time.sleep(.2)
         
 class retribution(Skill):
     def __init__(self):
         super().__init__(name="Retribution", cost=4, damage=6, damage_type="Holy", bonus_stat="HP", hit_rate=90,
                          description="Your Retribution skill. Deals Holy damage based on damage received to a single target.")
+        
+    def ability(self, player, enemy):
+        if skill_hit(self, player, enemy):
+            cCRIT = chk_CRIT(player, enemy)
+            weapon = player.equipped['weapon']
+            bstat = (player.stats['STR'] + player.statbonus['STR']['value'])
+            bdamage = ((player.stats['mHP'] - player.stats['cHP']) * 2)
+            base_dmg = (self.damage + weapon.damage + bdamage)
+            text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
+            pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
+            time.sleep(.2)
+            if cCRIT == True:
+                pdamage *= 2
+                text_speed("Critical hit!\n", .01)
+                time.sleep(.2)
+            if (pdamage - enemy.stats['DEF']) < 0:
+                damage = 1
+            else:
+                damage = (pdamage - enemy.stats['DEF'])
+            text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
+            enemy.stats['HP'] -= damage
+        else:
+            text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
+            time.sleep(.2)
+            text_speed("You missed!\n", .03)
+            time.sleep(.2)

@@ -19,17 +19,19 @@ class Enemy:
     def __init__(self, name, tier, hp, mhp, damage, statusatk, status_chance, weak, DEF, RES, SPD, SKL, LUCK, EXP, gold, part, description):
         self.name = name
         self.tier = tier
-        self.hp = hp
-        self.mhp = mhp
+        self.stats = {
+            'HP': hp,
+            'mHP': mhp,
+            'DEF': DEF,
+            'RES': RES,
+            'SPD': SPD,
+            'SKL': SKL,
+            'LUCK': LUCK
+        }
         self.damage = damage
         self.statusatk = statusatk
         self.status_chance = status_chance
         self.weak = weak
-        self.DEF = DEF
-        self.RES = RES
-        self.SPD = SPD
-        self.SKL = SKL
-        self.LUCK = LUCK
         self.EXP = EXP
         self.gold = gold
         self.part = part
@@ -42,18 +44,21 @@ class Enemy:
         return "{}     Type: {}\n========================================\n{}========================================\nHP: {}     Weakness: {}\nDMG: {}     DEF: {}\nRES: {}     SPD: {}\nSKL: {}     LUCK: {}\n".format(self.name, self.ID, self.description, self.mhp, self.weak, self.damage, self.DEF, self.RES, self.SPD, self.SKL, self.LUCK)
  
     def AVO(self):
-        return ((self.SPD + self.SKL) * (random.randint(self.LUCK, 100) / 100))
+        return ((self.stats['SPD'] + self.stats['SKL']) * (random.randint(self.stats['LUCK'], 100) / 100))
 
     def is_alive(self):
-        return self.hp > 0
+        return self.stats['HP'] > 0
     
     def roll_status(self):
         return random.randint(1,100) <= self.status_chance
     
     def drop_part(self):
         import items
-        part = self.part
-        return random.randint(1,100) <= 100 * part.drop_rate
+        if self.part:
+            part = self.part
+            return random.randint(1,100) <= 100 * part.drop_rate
+        else:
+            return False
     
     def apply_poison(self):
         if self.status['poison'] == True:
@@ -104,14 +109,49 @@ class Boss(Enemy):
 
 class dummy(Enemy):
     def __init__(self):
-        super().__init__(name="Dummy", tier=0, hp=1000000, mhp=1000000, damage=0, statusatk=None, status_chance=0, weak=None, DEF=0, RES=0, SPD=0, SKL=0, LUCK=0, EXP=0, gold=0, part=None,
-                         description="A wooden dummy. It doesn't do anything.\n")
+        super().__init__(
+            name="Dummy",
+            tier=0,
+            hp=1000000,
+            mhp=1000000,
+            damage=0,
+            statusatk=None,
+            status_chance=0,
+            weak=None,
+            DEF=0,
+            RES=0,
+            SPD=0,
+            SKL=0, 
+            LUCK=0,
+            EXP=0,
+            gold=0,
+            part=None,
+            description="A wooden dummy. It doesn't do anything.\n"
+            )
+        
         self.id = "Dummy"
 
 class testing_boss(Demon, Boss):
     def __init__(self):
-        super().__init__(name="Mega Demon", tier=50, hp=1000, mhp=1000, damage=150, statusatk=None, status_chance=0, weak=None, DEF=80, RES=80, SPD=80, SKL=50, LUCK=40, EXP=0, gold=0, part=None,
-                         description="The Mega Demon, a powerful foe for any adventurer to face.")
+        super().__init__(
+            name="Mega Demon",
+            tier='Boss',
+            hp=1000,
+            mhp=1000,
+            damage=150,
+            statusatk=None,
+            status_chance=0,
+            weak=None,
+            DEF=80,
+            RES=80,
+            SPD=80,
+            SKL=50,
+            LUCK=40,
+            EXP=100,
+            gold=0,
+            part=None,
+            description="The Mega Demon, a powerful foe for any adventurer to face."
+            )
 
 # Tier 1 Enemies
 class giant_spider(Bug):

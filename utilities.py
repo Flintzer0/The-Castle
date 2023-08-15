@@ -14,30 +14,26 @@ def text_speed(text, speed):
 # Combat Utilities
 
 # This functions is used in combat to determine if the attack is a critical hit.
-def chk_CRIT(object, target):
-    crit = (object.SKL + object.LUCK) - target.LUCK
+def chk_CRIT(attacker, target):
+    crit = (attacker.stats['SKL'] + attacker.stats['LUCK']) - target.stats['LUCK']
     return random.randint(1,100) <= crit
 
 def chk_weakness(target):
-    weakness = None
-    if target.weak != None:
-        weakness = target.weak
-        return weakness
-    else:
-        return weakness
+    if target.weak:
+        return target.weak
     
 def calculate_hit(attacker, defender):
     if attacker.status['blind'] == True:
-        Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO()) - 20
+        Hit_rate = 100 + ((attacker.stats['SKL'] + attacker.stats['LUCK']) - defender.AVO()) - 20
         return random.randint(1,100) <= Hit_rate
-    Hit_rate = 100 + ((attacker.SKL + attacker.LUCK) - defender.AVO())
+    Hit_rate = 100 + ((attacker.stats['SKL'] + attacker.stats['LUCK']) - defender.AVO())
     return random.randint(1,100) <= Hit_rate
 
 def skill_hit(skill, attacker, defender):
     if attacker.status['blind'] == True:
-        Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO()) - 20
+        Hit_rate = skill.hit_rate + ((attacker.stats['SKL'] + attacker.stats['LUCK']) - defender.AVO()) - 20
         return random.randint(1,100) <= Hit_rate
-    Hit_rate = skill.hit_rate + ((attacker.SKL + attacker.LUCK) - defender.AVO())
+    Hit_rate = skill.hit_rate + ((attacker.stats['SKL'] + attacker.stats['LUCK']) - defender.AVO())
     return random.randint(1,100) <= Hit_rate
 
 def scroll_hit(scroll, defender):
@@ -52,22 +48,33 @@ def generate_damage(player, stat, attack, enemy):
     else:
         return random.randrange(stat, stat + attack)
     
-def generate_magic_damage(player, spell, enemy):
+def generate_skill_damage(player, skill, stat, damage, enemy):
+    eweak = chk_weakness(enemy)
+    print(damage)
+    if player.equipped['weapon'].damage_type == eweak or skill.damage_type == eweak:
+        text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
+        return random.randrange(stat + damage, stat + (damage * 2))
+    else:
+        return random.randrange(stat, stat + damage)
+
+def generate_magic_damage(player, stat, spell, enemy):
     eweak = chk_weakness(enemy)
     spellcaster = player.equipped['weapon']
     if isinstance(spellcaster, items.Spellcaster):
-        base = spellcaster.mdamage + player.MAG
+        base = spellcaster.mdamage + stat
+        sdamage = spell.damage + spellcaster.mdamage
         if spell.damage_type == eweak:
             text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
-            return random.randrange(base + spell.damage, base + spellcaster.mdamage + (spell.damage * 2))
+            return random.randrange(base + sdamage, base + (sdamage * 2))
         else:
-            return random.randrange(base, base + spellcaster.mdamage + spell.damage)
+            return random.randrange(base, base + sdamage)
     else:
+        sdamage = spell.damage
         if spell.damage_type == eweak:
             text_speed("You hit the {}'s weakness!\n".format(enemy.name), .05)
-            return random.randrange(player.MAG + spell.damage, player.MAG + (spell.damage * 2))
+            return random.randrange(stat + sdamage, stat + (sdamage * 2))
         else:
-            return random.randrange(player.MAG, player.MAG + spell.damage)
+            return random.randrange(stat, stat + sdamage)
         
 def generate_scroll_damage(scroll, enemy):
     eweak = chk_weakness(enemy)

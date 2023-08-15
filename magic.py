@@ -44,8 +44,8 @@ class Spell:
         raise NotImplementedError()
     
     def cast_spell(self, player, enemy):
-        if player.cMP >= self.cost:
-            player.cMP -= self.cost
+        if player.stats['cMP'] >= self.cost:
+            player.stats['cMP'] -= self.cost
             self.effect(player, enemy)
     
 # Basic Spells
@@ -58,28 +58,28 @@ class fire(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
             time.sleep(.2)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.stats['HP']), .03)
             time.sleep(.2)
         
 class ice(Spell):
@@ -90,22 +90,22 @@ class ice(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -120,22 +120,22 @@ class shock(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -150,22 +150,22 @@ class water(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -180,22 +180,22 @@ class quake(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -210,22 +210,22 @@ class wind(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -240,22 +240,22 @@ class smite(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -270,22 +270,22 @@ class curse(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -300,10 +300,10 @@ class wither(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.MAG * 2) + 5)
+            stat_bonus = (((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2) + 5)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy) + 5
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy) + 5
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
@@ -313,18 +313,18 @@ class wither(Spell):
                 enemy.status['crippled'] = True
                 text_speed("The {} is crippled!\n".format(enemy.name), .03)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
             text_speed("You missed!\n", .03)
-            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
+            text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.stats['HP']), .03)
             time.sleep(.2)
         
 class poison(Spell):
@@ -335,22 +335,22 @@ class poison(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (player.MAG * 2)
+            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             time.sleep(.2)
             if cCRIT == True:
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
-            if (pdamage - enemy.RES) < 0:
+            if (pdamage - enemy.stats['RES']) < 0:
                 damage = 1
             else:
-                damage = (pdamage - enemy.RES)
+                damage = (pdamage - enemy.stats['RES'])
             text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
             time.sleep(.2)
-            enemy.hp -= damage
+            enemy.stats['HP'] -= damage
             if random.randint(1,100) <= 95:
                 enemy.status['poison'] = True
                 text_speed("The {} is poisoned!\n".format(enemy.name), .03)
@@ -369,11 +369,11 @@ class turn(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.MAG * 2) + 5)
+            stat_bonus = (((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2) + 5)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
-            pdamage = generate_magic_damage(player, self, enemy)
+            pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
             if isinstance(enemy, enemies.Undead):
                 pdamage *= 2
                 text_speed("The {} burns from the holy energy!\n".format(enemy.name), .03)
@@ -382,25 +382,25 @@ class turn(Spell):
                     pdamage *= 2
                     text_speed("Critical hit!\n", .01)
                     time.sleep(.2)
-                if (pdamage - enemy.RES) < 0:
+                if (pdamage - enemy.stats['RES']) < 0:
                     damage = 1
                 else:
-                    damage = (pdamage - enemy.RES)
+                    damage = (pdamage - enemy.stats['RES'])
                 text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
                 time.sleep(.2)
-                enemy.hp -= damage
+                enemy.stats['HP'] -= damage
             elif isinstance(enemy, enemies.Undead) == False: 
                 if cCRIT == True:
                     pdamage *= 2
                     text_speed("Critical hit!\n", .01)
                     time.sleep(.2)
-                if (pdamage - enemy.RES) < 0:
+                if (pdamage - enemy.stats['RES']) < 0:
                     damage = 1
                 else:
-                    damage = (pdamage - enemy.RES)
+                    damage = (pdamage - enemy.stats['RES'])
                 text_speed("You dealt {} {} damage to the {}.\n".format(damage, self.damage_type, enemy.name), .03)
                 time.sleep(.2)
-                enemy.hp -= damage
+                enemy.stats['HP'] -= damage
         else:
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)

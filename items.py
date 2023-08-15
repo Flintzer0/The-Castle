@@ -21,7 +21,7 @@ class Item():
         self.name = name
         self.description = description
         self.value = value
-        self.spcl = ""
+        self.buff = ""
  
     def __str__(self):
         return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description, self.value)
@@ -289,16 +289,16 @@ class Armor(Item):
         return "{}\n=====\n{}\nValue: {}\nArmor: {}".format(self.name, self.description, self.value, self.armor)
 
 class Magic_Armor(Armor):
-    def __init__(self, name, description, value, armor, marmor, resistance, resamt, property, propercent):
+    def __init__(self, name, description, value, armor, marmor, resistance, resamt, buff, propercent):
         self.marmor = marmor
         self.resistance = resistance
         self.resamt = resamt
-        self.property = property
+        self.buff = buff
         self.propercent = propercent
         super().__init__(name, description, value, armor)
     
     def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\nArmor: {}\nMagic Armor: {}\nResistance: {}\nProperty: {}".format(self.name, self.description, self.value, self.armor, self.marmor, self.resistance, self.property)
+        return "{}\n=====\n{}\nValue: {}\nArmor: {}\nMagic Armor: {}\nResistance: {}\nbuff: {}".format(self.name, self.description, self.value, self.armor, self.marmor, self.resistance, self.buff)
 
 class unarmored(Armor):
     def __init__(self):
@@ -337,7 +337,7 @@ class starweave(Magic_Armor):
                          marmor=30,
                          resistance="demonic_resist",
                          resamt=0.5,
-                         property="mana_rage",
+                         buff="mana_rage",
                          propercent=0.4)
 
 class shadecloak(Magic_Armor):
@@ -349,7 +349,7 @@ class shadecloak(Magic_Armor):
                          marmor=20,
                          resistance="holy",
                          resamt=0.5,
-                         property="necrosis",
+                         buff="necrosis",
                          propercent=0.3)
 
 class cowl_of_the_hunt(Magic_Armor):
@@ -361,7 +361,7 @@ class cowl_of_the_hunt(Magic_Armor):
                          marmor=15,
                          resistance="poison_resist",
                          resamt=0.5,
-                         property="heightened_senses",
+                         buff="heightened_senses",
                          propercent=15)
 
 class chainmail(Armor):
@@ -380,7 +380,7 @@ class healer_ringmail(Magic_Armor):
                          marmor=25,
                          resistance="necrotic_resist",
                          resamt=0.5,
-                         property="regen",
+                         buff="regen",
                          propercent=0.2)
 
 class iron_armor(Armor):
@@ -406,7 +406,7 @@ class sunplate(Magic_Armor):
                          marmor=15,
                          resistance="necrotic_resist",
                          resamt=0.5,
-                         property="blind",
+                         buff="blind",
                          propercent=0.3)
 
 class bloodplate(Magic_Armor):
@@ -418,7 +418,7 @@ class bloodplate(Magic_Armor):
                          marmor=20,
                          resistance="holy_resist",
                          resamt=0.5,
-                         property="cripple",
+                         buff="cripple",
                          propercent=0.3)
 
 # Shield Items
@@ -446,9 +446,9 @@ class rusty_shield(Shield):
 
 # Magic Shields
 class Spellshield(Shield):
-    def __init__(self, name, description, value, armor, marmor, property, propercent, resistance, resamt):
+    def __init__(self, name, description, value, armor, marmor, buff, propercent, resistance, resamt):
         self.marmor = marmor
-        self.property = property
+        self.buff = buff
         self.propercent = propercent
         self.resistance = resistance
         self.resamt = resamt
@@ -464,7 +464,7 @@ class iron_curtain(Spellshield):
                          value=200,
                          armor=10,
                          marmor=5,
-                         property=False,
+                         buff=False,
                          propercent=0,
                          resistance="cold_resist",
                          resamt=0.2)
@@ -476,7 +476,7 @@ class brokentower(Spellshield):
                          value=200,
                          armor=30,
                          marmor=10,
-                         property="silence",
+                         buff="silence",
                          propercent=0.5,
                          resistance="demonic_resist",
                          resamt=0.5)
@@ -488,7 +488,7 @@ class moonbrace(Spellshield):
                          value=200,
                          armor=15,
                          marmor=25,
-                         property="invisible",
+                         buff="invisible",
                          propercent=10,
                          resistance="necrotic_resist",
                          resamt=0.2)
@@ -500,8 +500,8 @@ class fallenshield(Spellshield):
                          value=200,
                          armor=20,
                          marmor=20,
-                         property="regen",
-                         propercent="0.25",
+                         buff="regen",
+                         propercent=.25,
                          resistance="demonic_resist",
                          resamt=0.5)
         
@@ -512,7 +512,7 @@ class hexbreaker(Spellshield):
                          value=200,
                          armor=10,
                          marmor=30,
-                         property="hexbreak",
+                         buff="hexbreak",
                          propercent=.25,
                          resistance="magical_resist",
                          resamt=0.2)
@@ -535,11 +535,12 @@ class empty(Accessory):
         return "\n=====\n{}\n".format(self.description)
 
 class Ring(Accessory):
-    def __init__(self, name, description, value, stat, statval, spcl):
+    def __init__(self, name, description, value, stat, statval, buff, propercent):
         super().__init__(name, description, value)
         self.stat = stat
         self.statval = statval
-        self.spcl = spcl        
+        self.buff = buff
+        self.propercent = propercent
 # Strength Rings
 class strength_1_ring(Ring):
     def __init__(self):
@@ -548,7 +549,8 @@ class strength_1_ring(Ring):
                          value=10,
                          stat="STR",
                          statval=1,
-                         spcl="")
+                         buff="",
+                         propercent=0)
 
 # Defense Rings
 class defense_1_ring(Ring):
@@ -558,7 +560,8 @@ class defense_1_ring(Ring):
                          value=10,
                          stat="DEF",
                          statval=1,
-                         spcl="")
+                         buff="",
+                         propercent=0)
 # Magic Rings
 class magic_1_ring(Ring):
     def __init__(self):
@@ -567,7 +570,8 @@ class magic_1_ring(Ring):
                          value=10,
                          stat="MAG",
                          statval=1,
-                         spcl="")   
+                         buff="",
+                         propercent=0)
 # Resistance Rings
 class resistance_1_ring(Ring):
     def __init__(self):
@@ -576,7 +580,8 @@ class resistance_1_ring(Ring):
                          value=10,
                          stat="RES",
                          statval=1,
-                         spcl="")
+                         buff="",
+                         propercent=0)
 # Speed Rings
 class speed_1_ring(Ring):
     def __init__(self):
@@ -585,7 +590,8 @@ class speed_1_ring(Ring):
                          value=10,
                          stat="SPD",
                          statval=1,
-                         spcl="")
+                         buff="",
+                         propercent=0)
 # Skill Rings
 class skill_1_ring(Ring):
     def __init__(self):
@@ -594,7 +600,8 @@ class skill_1_ring(Ring):
                          value=10,
                          stat="SKL",
                          statval=1,
-                         spcl="")
+                         buff="",
+                         propercent=0)
 # Luck Rings
 class luck_1_ring(Ring):
     def __init__(self):
@@ -603,77 +610,88 @@ class luck_1_ring(Ring):
                          value=10,
                          stat="LUCK",
                          statval=1,
-                         spcl="")
+                         buff="",
+                         propercent=0)
 # Special Rings
 class water_ring(Ring):
     def __init__(self):
-        self.spcl = "Water Breathing"
         super().__init__(name="Ring of the Sea",
-                         description="This ring allows the wearer to breathe underwater. \nSpecial: {}".format(self.spcl),
+                         description="This ring allows the wearer to breathe underwater.",
                          value=10,
                          stat="",
                          statval=0,
-                         spcl=self.spcl)
+                         buff="water_breathing",
+                         propercent=0)
 
 class might_ring(Ring):
     def __init__(self):
-        self.spcl = "Might"
         super().__init__(name="Ring of Might",
-                         description="This ring grants the wearer +5 STR and DEF. \nSpecial: {}".format(self.spcl),
+                         description="This ring grants the wearer +5 STR and DEF.",
                          value=10,
                          stat=["STR", "DEF"],
                          statval=5,
-                         spcl=self.spcl)
+                         buff="",
+                         propercent=0)
         
 class wisdom_ring(Ring):
     def __init__(self):
-        self.spcl = "Wisdom"
         super().__init__(name="Ring of Wisdom",
-                         description="This ring grants the wearer +5 MAG and RES. \nSpecial: {}".format(self.spcl),
+                         description="This ring grants the wearer +5 MAG and RES.",
                          value=10,
                          stat=["MAG", "RES"],
                          statval=5,
-                         spcl=self.spcl)
+                         buff="",
+                         propercent=0)
         
 class reflex_ring(Ring):
     def __init__(self):
-        self.spcl = "Reflex"
         super().__init__(name="Ring of Quick Reflexes",
-                         description="This ring grants the wearer +5 SPD and SKL. \nSpecial: {}".format(self.spcl),
+                         description="This ring grants the wearer +5 SPD and SKL.",
                          value=10,
                          stat=["SPD", "SKL"],
                          statval=5,
-                         spcl=self.spcl)
+                         buff="",
+                         propercent=0)
 
 class leprechaun_ring(Ring):
     def __init__(self):
-        self.spcl = "Fortune"
         super().__init__(name="Leprechaun Ring",
-                         description="This ring grants the wearer +5 LUCK, and grants the Fortune buff. \nSpecial: {}".format(self.spcl),
+                         description="This ring grants the wearer +5 LUCK, and grants the Fortune buff.",
                          value=10,
                          stat="LUCK",
                          statval=5,
-                         spcl=self.spcl)
+                         buff="fortune",
+                         propercent=.5)
 
 class warding_ring(Ring):
     def __init__(self):
-        self.spcl = "magic_resist"
         super().__init__(name="Ring of Warding",
-                         description="This ring grants the wearer +5 RES, and resistance to magical attacks. \nSpecial: {}".format(self.spcl),
+                         description="This ring grants the wearer +5 RES, and resistance 30% to magical attacks.",
                          value=10,
                          stat="RES",
                          statval=5,
-                         spcl=self.spcl)
+                         buff="magic_resist",
+                         propercent=.3)
 
 class armor_ring(Ring):
     def __init__(self):
-        self.spcl = "physical_resist"
         super().__init__(name="Ring of Armor",
-                         description="This ring grants the wearer +5 DEF and RES, and resistance to physical attacks. \nSpecial: {}".format(self.spcl),
+                         description="This ring grants the wearer +5 DEF, and resistance of 30% to physical attacks.",
+                         value=10,
+                         stat="DEF",
+                         statval=5,
+                         buff="physical_resist",
+                         propercent=.3)
+        
+class unbreakable(Ring):
+    def __init__(self):
+        super().__init__(name="Unbreakable Ring",
+                         description="This ring grants the wearer +5 DEF and RES, and resistance of 30% to all attacks.",
                          value=10,
                          stat=["DEF", "RES"],
                          statval=5,
-                         spcl=self.spcl)
+                         buff="unbreakable",
+                         propercent=.3)
 
 # Necklace Items
 # Bracelet Items
@@ -735,19 +753,19 @@ class PermBoost(Anytime):
     
     def boost(self, target):
         if self.stat == "STR":
-            target.STR += self.potency
+            target.stats['STR'] += self.potency
         elif self.stat == "DEF":
-            target.DEF += self.potency
+            target.stats['DEF'] += self.potency
         elif self.stat == "MAG":
-            target.MAG += self.potency
+            target.stats['MAG'] += self.potency
         elif self.stat == "RES":
-            target.RES += self.potency
+            target.stats['RES'] += self.potency
         elif self.stat == "SPD":
-            target.SPD += self.potency
+            target.stats['SPD'] += self.potency
         elif self.stat == "SKL":
-            target.SKL += self.potency
+            target.stats['SKL'] += self.potency
         elif self.stat == "LUCK":
-            target.LUCK += self.potency
+            target.stats['LUCK'] += self.potency
         text_speed("You permanently boosted {} by {}!\n".format(self.stat, str(self.potency)), .03)
         time.sleep(.2)
 
@@ -779,50 +797,50 @@ class Recovery(Anytime):
     
     def heal(self, target):
         if self.stat == "HP":
-            if target.cHP == target.mHP:
+            if target.stats['cHP'] == target.stats['mHP']:
                 text_speed("You are already at full HP!\n", .03)
                 time.sleep(.2)
-                target.use_potion()
-            elif target.cHP + self.potency > target.mHP:
-                target.cHP = target.mHP
+                target.stats['use_potion']()
+            elif target.stats['cHP'] + self.potency > target.stats['mHP']:
+                target.stats['cHP'] = target.stats['mHP']
                 text_speed("You fully restored your HP!\n", .03)
                 time.sleep(.2)
             else:
-                target.cHP += self.potency
+                target.stats['cHP'] += self.potency
                 text_speed("{} healed {} HP!\n".format(self.name, str(self.potency)), .03)
                 time.sleep(.2)
         elif self.stat == "MP":
-            if target.cMP == target.mMP:
+            if target.stats['cMP'] == target.stats['mMP']:
                 text_speed("You are already at full MP!\n", .03)
                 time.sleep(.2)
-                target.use_potion()
-            if target.cMP + self.potency > target.mMP:
-                target.cMP = target.mMP
+                target.stats['use_potion']()
+            if target.stats['cMP'] + self.potency > target.stats['mMP']:
+                target.stats['cMP'] = target.stats['mMP']
                 text_speed("You fully restored your MP!\n", .03)
                 time.sleep(.2)
             else:
-                target.cMP += self.potency
+                target.stats['cMP'] += self.potency
                 text_speed("{} recovered {} MP!\n".format(self.name, str(self.potency)), .03)
                 time.sleep(.2)
         elif self.stat == "HP/MP":
-            if target.cHP == target.mHP and target.cMP == target.mMP:
+            if target.stats['cHP'] == target.stats['mHP'] and target.stats['cMP'] == target.stats['mMP']:
                 text_speed("You are already at full HP and MP!\n", .03)
                 time.sleep(.2)
-                target.use_potion()
-            if target.cHP + self.potency > target.mHP:
-                target.cHP = target.mHP
+                target.stats['use_potion']()
+            if target.stats['cHP'] + self.potency > target.stats['mHP']:
+                target.stats['cHP'] = target.stats['mHP']
                 text_speed("You fully restored your HP!\n", .03)
                 time.sleep(.2)
             else:
-                target.cHP += self.potency
+                target.stats['cHP'] += self.potency
                 text_speed("You healed {} HP!\n".format(str(self.potency)), .03)
                 time.sleep(.2)
-            if target.cMP + self.potency > target.mMP:
-                target.cMP = target.mMP
+            if target.stats['cMP'] + self.potency > target.stats['mMP']:
+                target.stats['cMP'] = target.stats['mMP']
                 text_speed("You fully restored your MP!\n", .03)
                 time.sleep(.2)
             else:
-                target.cMP += self.potency
+                target.stats['cMP'] += self.potency
                 text_speed("You recovered {} MP!\n".format(str(self.potency)), .03)
                 time.sleep(.2)
 
@@ -864,13 +882,13 @@ class elixir(Recovery):
                          potency=99999)
         
     def heal(self, target):
-        if target.cHP == target.mHP and target.cMP == target.mMP:
+        if target.stats['cHP'] == target.stats['mHP'] and target.stats['cMP'] == target.stats['mMP']:
             text_speed("You are already at full HP and MP!\n", .03)
             time.sleep(.2)
-            target.use_potion()
+            target.stats['use_potion']()
         else:
-            target.cHP = target.mHP
-            target.cMP = target.mMP
+            target.stats['cHP'] = target.stats['mHP']
+            target.stats['cMP'] = target.stats['mMP']
             text_speed("You fully restored your HP and MP!\n".format(self.name), .03)
             time.sleep(.2)
 
@@ -887,7 +905,7 @@ class BoostPotion(Potion):
         target.tempboosts[self.stat]['flag'] = True
         target.tempboosts[self.stat]['value'] = self.potency
         target.tempboosts[self.stat]['duration'] = self.duration
-        target.starting_turn = target.turns
+        target.stats['starting_turn'] = target.stats['turns']
         text_speed("You boosted {} by {}!\n".format(self.stat, str(self.potency)), .03)
         time.sleep(.2)
 
@@ -929,11 +947,11 @@ class Thrown(Item):
     
     def throw(self, user, target):
         if user.status['blind'] != True:
-            total = (self.damage + user.STR) - target.DEF
-            target.hp -= total
+            total = (self.damage + user.STR) - target.stats['DEF']
+            target.stats['hp'] -= total
             text_speed("You threw the {}!\n".format(self.name), .03)
             time.sleep(.2)
-            text_speed("The {} dealt {} damage to the {}!\n".format(self.name, total, target.name), .03)
+            text_speed("The {} dealt {} damage to the {}!\n".format(self.name, total, target.stats['name']), .03)
             time.sleep(.2)
 
 class rock(Thrown):
@@ -964,10 +982,15 @@ class StatBoost(Item):
         return "{}\n=====\n{}\nValue: {}\nStat: {}\nPotency: {}\nDuration: {}".format(self.name, self.description, self.value, self.stat, self.potency, self.duration)
     
     def boost(self, target):
-        target.tempboosts[self.stat]['flag'] = True
-        target.tempboosts[self.stat]['value'] = self.potency
-        target.tempboosts[self.stat]['duration'] = self.duration
-        target.starting_turn = target.turns
+        target.tempboosts[self.stat]['value'] += self.potency
+        if target.tempboosts[self.stat]['flag'] == False:
+            target.tempboosts[self.stat]['flag'] = True
+            target.tempboosts[self.stat]['value'] = self.potency
+            target.tempboosts[self.stat]['duration'] = self.duration
+            target.starting_turn = target.turns
+        else:
+            if target.tempboosts[self.stat]['duration'] < self.duration:
+                target.tempboosts[self.stat]['duration'] = self.duration
         text_speed("You boosted {} by {}!\n".format(self.stat, str(self.potency)), .03)
         time.sleep(.2)
 
@@ -981,8 +1004,14 @@ class StatusBoost(Item):
         return "{}\n=====\n{}\nValue: {}\nStatus: {}\nDuration: {}".format(self.name, self.description, self.value, self.status, self.duration)
     
     def boost(self, target):
-        target.tempstatus[self.status]['flag'] = True
-        target.tempstatus[self.status]['duration'] = self.duration
+        target.tempstatus[self.status]['value'] += self.potency
+        if target.tempstatus[self.status]['flag'] == False:
+            target.tempstatus[self.status]['flag'] = True
+            target.tempstatus[self.status]['duration'] = self.duration
+            target.starting_turn = target.turns
+        else:
+            if target.tempstatus[self.status]['duration'] < self.duration:
+                target.tempstatus[self.status]['duration'] = self.duration
         text_speed("You are now {}!\n".format(self.status), .03)
         time.sleep(.2)
 
@@ -997,10 +1026,15 @@ class ResistanceBoost(Item):
         return "{}\n=====\n{}\nValue: {}\nResistance: {}\nPotency: {}\nDuration: {}".format(self.name, self.description, self.value, self.resistance, self.potency, self.duration)
     
     def boost(self, target):
-        target.tempresistances[self.resistance]['flag'] = True
-        target.tempresistances[self.resistance]['value'] = self.potency
-        target.tempresistances[self.resistance]['duration'] = self.duration
-        target.starting_turn = target.turns
+        target.tempresistances[self.resistance]['value'] += self.potency
+        if target.tempresistances[self.resistance]['flag'] == False:
+            target.tempresistances[self.resistance]['flag'] = True
+            target.tempresistances[self.resistance]['duration'] = self.duration
+            target.starting_turn = target.turns
+        else:
+            if target.tempresistances[self.resistance]['duration'] < self.duration:
+                target.tempresistances[self.resistance]['duration'] = self.duration
+        target.stats['starting_turn'] = target.stats['turns']
         text_speed("You are now have {} + {}!\n".format(self.resistance, self.potency), .03)
         time.sleep(.2)
 
