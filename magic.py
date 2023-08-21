@@ -27,15 +27,13 @@ Status Effects
 '''
 
 class Spell:
-    def __init__(self, name, description, cost, damage, damage_type):
+    def __init__(self, name, description, cost):
         self.name = name
         self.description = description
         self.cost = cost
-        self.damage = damage
-        self.damage_type = damage_type
     
     def __str__(self):
-        return '{}\n====================\n{}\nMP: {}\nDamage: {}\nType: {}'.format(self.name, self.description, self.cost, self.damage, self.damage_type)
+        return '{}\n====================\n{}\nMP: {}'.format(self.name, self.description, self.cost)
     
     def __repr__(self):
         return self.name
@@ -44,13 +42,39 @@ class Spell:
         raise NotImplementedError()
     
     def cast_spell(self, player, enemy):
-        if player.stats['cMP'] >= self.cost:
-            player.stats['cMP'] -= self.cost
+        if player.stats['cMP']['value'] >= self.cost:
+            player.stats['cMP']['value'] -= self.cost
             self.effect(player, enemy)
-    
-# Basic Spells
 
-class fire(Spell):
+class Damage(Spell):
+    def __init__(self, name, description, cost, damage, damage_type):
+        self.damage = damage
+        self.damage_type = damage_type
+        super().__init__(name, description, cost)
+
+class Restore(Spell):
+    def __init__(self, name, description, cost, rtype, potency):
+        self.rtype = rtype
+        self.potency = potency
+        super().__init__(name, description, cost)
+
+class Buff(Spell):
+    def __init__(self, name, description, cost, buff, potency, duration):
+        self.buff = buff
+        self.potency = potency
+        self.duration = duration
+        super().__init__(name, description, cost)
+
+class Debuff(Spell):
+    def __init__(self, name, description, cost, debuff, potency, duration):
+        self.debuff = debuff
+        self.potency = potency
+        self.duration = duration
+        super().__init__(name, description, cost)
+
+# Basic Damaging Spells
+
+class fire(Damage):
     def __init__(self):
         super().__init__(name="Fire", cost=2, damage=5, damage_type="Fire", 
                          description="Shoots a steam of flames. Deals Fire damage to a single target.")
@@ -58,7 +82,7 @@ class fire(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -82,7 +106,7 @@ class fire(Spell):
             text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.stats['HP']), .03)
             time.sleep(.2)
         
-class ice(Spell):
+class ice(Damage):
     def __init__(self):
         super().__init__(name="Ice", cost=2, damage=5, damage_type="Cold", 
                          description="Sends out shards of ice. Deals Cold damage to a single target.")
@@ -90,7 +114,7 @@ class ice(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -112,7 +136,7 @@ class ice(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class shock(Spell):
+class shock(Damage):
     def __init__(self):
         super().__init__(name="Shock", cost=2, damage=5, damage_type="Lightning", 
                          description="Spouts electricity from your fingertips. Deals Lightning damage \nto a single target.")
@@ -120,7 +144,7 @@ class shock(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -142,7 +166,7 @@ class shock(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class water(Spell):
+class water(Damage):
     def __init__(self):
         super().__init__(name="Water", cost=2, damage=5, damage_type="Water", 
                          description="Fire a stream of pressurized water. Deals Water damage to a single target.")
@@ -150,7 +174,7 @@ class water(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -172,7 +196,7 @@ class water(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class quake(Spell):
+class quake(Damage):
     def __init__(self):
         super().__init__(name="Quake", cost=2, damage=5, damage_type="Earth", 
                          description="Makes the ground tremble. Deals Earth damage to a single target.")
@@ -180,7 +204,7 @@ class quake(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -202,7 +226,7 @@ class quake(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class wind(Spell):
+class wind(Damage):
     def __init__(self):
         super().__init__(name="Wind", cost=2, damage=5, damage_type="Wind", 
                          description="Moves the air around you like blades. Deals Wind damage to a single target.")
@@ -210,7 +234,7 @@ class wind(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -232,7 +256,7 @@ class wind(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class smite(Spell):
+class smite(Damage):
     def __init__(self):
         super().__init__(name="Smite", cost=2, damage=5, damage_type="Holy", 
                          description="Calls forth heavenly judgement in a column of light. Deals \nHoly damage to a single target.")
@@ -240,7 +264,7 @@ class smite(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -262,7 +286,7 @@ class smite(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class curse(Spell):
+class curse(Damage):
     def __init__(self):
         super().__init__(name="Curse", cost=2, damage=5, damage_type="Demonic", 
                          description="Sends demonic energy from the shadows to curse your enemies. \nDeals Demonic damage to a single target.")
@@ -270,7 +294,7 @@ class curse(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -292,7 +316,7 @@ class curse(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class wither(Spell):
+class wither(Damage):
     def __init__(self):
         super().__init__(name="Wither", cost=6, damage=5, damage_type="Necrotic", 
                          description="Shoots a purple bolt of nectrotic energy that atrophies your enemies. \nDeals Necrotic damage to a single target. Has a chance to Cripple the target.")
@@ -300,7 +324,7 @@ class wither(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2) + 5)
+            stat_bonus = (((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2) + 5)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy) + 5
@@ -327,15 +351,31 @@ class wither(Spell):
             text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.stats['HP']), .03)
             time.sleep(.2)
         
-class poison(Spell):
+class poison_dart(Damage, Debuff):
     def __init__(self):
-        super().__init__(name="Poison", cost=2, damage=3, damage_type="Poison", 
-                         description="Shoots a thin, green bolt. Deals Poison damage to a single target. \nHas a chance to Poison the target.")
-        
+        name = "Poison Dart"
+        description = "Shoots a bolt of magical poison. Deals Poison damage to a single target. \nHas a chance to Poison the target."
+        cost = 2
+        damage = 3
+        damage_type = "Poison"
+        debuff = "poison"
+        potency = 5
+        duration = 3
+        self.name = name
+        self.description = description
+        self.cost = cost
+        self.damage = damage
+        self.damage_type = damage_type
+        self.debuff = debuff
+        self.potency = potency
+        self.duration = duration
+        Damage(name, description, cost, damage, damage_type).__init__(name, description, cost, damage, damage_type)
+        Debuff(name, description, cost, debuff, potency, duration).__init__(name, description, cost, debuff, potency, duration)
+
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = ((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2)
+            stat_bonus = ((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             pdamage = generate_magic_damage(player, stat_bonus, self, enemy)
@@ -352,7 +392,8 @@ class poison(Spell):
             time.sleep(.2)
             enemy.stats['HP'] -= damage
             if random.randint(1,100) <= 95:
-                enemy.status['poison'] = True
+                enemy.status['poison']['flag'] = True
+                enemy.status['poison']['potency'] = self.potency
                 text_speed("The {} is poisoned!\n".format(enemy.name), .03)
                 time.sleep(.2)
         else:
@@ -361,7 +402,7 @@ class poison(Spell):
             text_speed("You missed!\n", .03)
             time.sleep(.2)
         
-class turn(Spell):
+class turn(Damage):
     def __init__(self):
         super().__init__(name="Turn Undead", cost=2, damage=5, damage_type="Holy", 
                          description="Your hands glow and burn away the undead. Deals damage to a single target. \nDeals tremendous damage to undead creatures.")
@@ -369,7 +410,7 @@ class turn(Spell):
     def effect(self, player, enemy):
         if calculate_hit(player, enemy):
             cCRIT = chk_CRIT(player, enemy)
-            stat_bonus = (((player.stats['MAG'] + player.statbonus['MAG']['value']) * 2) + 5)
+            stat_bonus = (((player.stats['MAG']['value'] + player.statbonus['MAG']['value']) * 2) + 5)
             base_dmg = (self.damage)
             text_speed("You cast {}!\n".format(self.name), .03)
             time.sleep(.2)
@@ -406,3 +447,42 @@ class turn(Spell):
             time.sleep(.2)
             text_speed("You missed!\n", .03)
             time.sleep(.2)
+
+# Basic Restore Spells
+
+class pheal(Restore):
+    def __init__(self):
+        super().__init__(name="Heal", cost=2, rtype="Heal", potency=5, 
+                         description="Heals the user for a small amount of HP. Heal amount increases with RES.")
+        
+    def effect(self, player):
+        if player.stats['cHP']['value'] < player.stats['mHP']['value']:
+            text_speed("You cast {}!\n".format(self.name), .03)
+            time.sleep(.2)
+            heal = self.potency + ((self.potency * (player.stats['RES']['value']) / 100))
+            player.stats['cHP']['value'] += heal
+            if player.stats['cHP']['value'] > player.stats['mHP']['value']:
+                player.stats['cHP']['value'] = player.stats['mHP']['value']
+            text_speed("You healed yourself for {} HP.\n".format(heal), .03)
+            time.sleep(.2)
+        else:
+            text_speed("You cast {}!\n".format(self.name), .03)
+            time.sleep(.2)
+            text_speed("You are already at full HP!\n", .03)
+            time.sleep(.2)
+
+class eheal(Restore):
+    def __init__(self):
+        super().__init__(name="Heal", cost=2, rtype="Heal", potency=5, 
+                         description="Heals the user for a small amount of HP. Heal amount increases with RES.")
+        
+    def effect(self, enemy):
+        text_speed("The {} cast {}!\n".format(enemy.name, self.name), .03)
+        time.sleep(.2)
+        heal = self.potency + ((self.potency * (enemy.stats['RES']) / 100))
+        if heal + enemy.stats['HP'] > enemy.stats['mHP']['value']:
+            enemy.stats['HP'] = enemy.stats['mHP']['value']
+        else:
+            enemy.stats['HP'] += heal
+        text_speed("The {} healed itself for {} HP.\n".format(enemy.name, heal), .03)
+        time.sleep(.2)

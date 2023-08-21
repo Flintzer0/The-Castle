@@ -1,10 +1,10 @@
-import world, items, magic, skills
+import world, items, magic, skills, pickle, sys, time, random, enemy_ai
 from utilities import *
-import pickle, sys, time, random
 
 class Player():
     starting_turns = 0
     turns = 1
+    pchoice = None
 
     def __init__(self, name, mHP, cHP, mMP, cMP, STR, DEF, MAG, RES, SPD, SKL, LUCK, cash, char_class):
         self.name = name
@@ -61,14 +61,14 @@ class Player():
             'LUCK' : {'value' : 0}
         }
         self.status = {
-            'poison' : False,
-            'paralysis' : False,
-            'blind' : False,
-            'silence' : False,
-            'sleep' : False,
-            'confusion' : False,
-            'charm' : False,
-            'crippled' : False
+            'poison': {'flag' : False, 'potency' : 0},
+            'paralysis': {'flag' : False, 'potency' : 0},
+            'blind': {'flag' : False, 'potency' : 0},
+            'silence': {'flag' : False, 'potency' : 0},
+            'sleep': {'flag' : False, 'potency' : 0},
+            'confusion': {'flag' : False, 'potency' : 0},
+            'charm': {'flag' : False, 'potency' : 0},
+            'crippled': {'flag' : False, 'potency' : 0},
         }
         self.buffs = {
             'water_breathing' : {'flag' : False},
@@ -157,7 +157,7 @@ class Player():
         self.save_data = {}
     
     def AVO(self):
-        return round((self.stats['SPD'] + self.stats['SKL']) * (random.randint(self.stats['LUCK'], 100) / 100))
+        return round((self.stats['SPD']['value'] + self.stats['SKL']['value']) * (random.randint(self.stats['LUCK']['value'], 100) / 100))
     
     def __str__(self):
         return "\n{}    Class: {}\n======================\nLevel: {}    EXP: {}\nHP: {}/{} MP: {}/{}\nSTR: {}    DEF: {}\nMAG: {}    RES: {}\nSPD: {}    SKL: {}\nLUCK: {}\n".format(
@@ -165,24 +165,24 @@ class Player():
             self.char_class,
             self.LVL,
             self.EXP,
-            self.stats['cHP'],
-            self.stats['mHP'],
-            self.stats['cMP'],
-            self.stats['mMP'],
-            (self.stats['STR'] + self.statbonus['STR']['value']),
-            (self.stats['DEF'] + self.statbonus['DEF']['value']),
-            (self.stats['MAG'] + self.statbonus['MAG']['value']),
-            (self.stats['RES'] + self.statbonus['RES']['value']),
-            (self.stats['SPD'] + self.statbonus['SPD']['value']),
-            (self.stats['SKL'] + self.statbonus['SKL']['value']),
-            (self.stats['LUCK'] + self.statbonus['LUCK']['value'])
+            self.stats['cHP']['value'],
+            self.stats['mHP']['value'],
+            self.stats['cMP']['value'],
+            self.stats['mMP']['value'],
+            (self.stats['STR']['value'] + self.statbonus['STR']['value']),
+            (self.stats['DEF']['value'] + self.statbonus['DEF']['value']),
+            (self.stats['MAG']['value'] + self.statbonus['MAG']['value']),
+            (self.stats['RES']['value'] + self.statbonus['RES']['value']),
+            (self.stats['SPD']['value'] + self.statbonus['SPD']['value']),
+            (self.stats['SKL']['value'] + self.statbonus['SKL']['value']),
+            (self.stats['LUCK']['value'] + self.statbonus['LUCK']['value'])
             )
     
     def __repr__(self):
         return self.name
  
     def is_alive(self):
-        return self.stats['cHP'] > 0
+        return self.stats['cHP']['value'] > 0
     
     def do_action(self, action, **kwargs):
         action_method = getattr(self, action.method.__name__)
@@ -209,72 +209,72 @@ class Player():
         self.EXP -= 100
         if self.chk_stat_roll(self.growthmHP):
             if isinstance(self, Mage):
-                self.stats['mHP'] += 3 + (random.randint(1, 3))
+                self.stats['mHP']['value'] += 3 + (random.randint(1, 3))
             else:
-                self.stats['mHP'] += 5 + (random.randint(1, 5))
+                self.stats['mHP']['value'] += 5 + (random.randint(1, 5))
         else:
-            self.stats['mHP'] += 5
-        print("Your max HP is now {}!".format(self.stats['mHP']))
+            self.stats['mHP']['value'] += 5
+        print("Your max HP is now {}!".format(self.stats['mHP']['value']))
         time.sleep(.5)
-        self.stats['cHP'] = self.stats['mHP']
+        self.stats['cHP']['value'] = self.stats['mHP']['value']
         if self.chk_stat_roll(self.growthmMP):
             if isinstance(self, Mage):
-                self.stats['mMP'] += 5 + (random.randint(1, 5))
+                self.stats['mMP']['value'] += 5 + (random.randint(1, 5))
             else:
-                self.stats['mMP'] += 2 + (random.randint(1, 3))
+                self.stats['mMP']['value'] += 2 + (random.randint(1, 3))
         else:
-            self.stats['mMP'] += 2
-        print("Your max MP is now {}!".format(self.stats['mMP']))
+            self.stats['mMP']['value'] += 2
+        print("Your max MP is now {}!".format(self.stats['mMP']['value']))
         time.sleep(.5)
-        self.stats['cMP'] = self.stats['mMP']
+        self.stats['cMP']['value'] = self.stats['mMP']['value']
         if self.chk_stat_roll(self.growthSTR):
             if self.growthSTR >= .5:
-                self.stats['STR'] += random.randint(1, 3)
+                self.stats['STR']['value'] += random.randint(1, 3)
             else:
-                self.stats['STR'] += 1
-            print("Your STR is now {}!".format(self.stats['STR']))
+                self.stats['STR']['value'] += 1
+            print("Your STR is now {}!".format(self.stats['STR']['value']))
             time.sleep(.5)
         if self.chk_stat_roll(self.growthDEF):
             if self.growthDEF >= .5:
-                self.stats['DEF'] += random.randint(1, 3)
+                self.stats['DEF']['value'] += random.randint(1, 3)
             else:
-                self.stats['DEF'] += 1
-            print("Your DEF is now {}!".format(self.stats['DEF']))
+                self.stats['DEF']['value'] += 1
+            print("Your DEF is now {}!".format(self.stats['DEF']['value']))
             time.sleep(.5)
         if self.chk_stat_roll(self.growthMAG):
             if self.growthMAG >= .5:
-                self.stats['MAG'] += random.randint(1, 5)
+                self.stats['MAG']['value'] += random.randint(1, 5)
             else:
-                self.stats['MAG'] += 1
-            print("Your MAG is now {}!".format(self.stats['MAG']))
+                self.stats['MAG']['value'] += 1
+            print("Your MAG is now {}!".format(self.stats['MAG']['value']))
             time.sleep(.5)
         if self.chk_stat_roll(self.growthRES):
             if self.growthRES >= .5:
-                self.stats['RES'] += random.randint(1, 3)
+                self.stats['RES']['value'] += random.randint(1, 3)
             else:
-                self.stats['RES'] += 1
-            print("Your RES is now {}!".format(self.stats['RES']))
+                self.stats['RES']['value'] += 1
+            print("Your RES is now {}!".format(self.stats['RES']['value']))
             time.sleep(.5)
         if self.chk_stat_roll(self.growthSPD):
             if self.growthSPD >= .5:
-                self.stats['SPD'] += random.randint(1, 3)
+                self.stats['SPD']['value'] += random.randint(1, 3)
             else:
-                self.stats['SPD'] += 1
-            print("Your SPD is now {}!".format(self.stats['SPD']))
+                self.stats['SPD']['value'] += 1
+            print("Your SPD is now {}!".format(self.stats['SPD']['value']))
             time.sleep(.5)
         if self.chk_stat_roll(self.growthSKL):
             if self.growthSKL >= .5:
-                self.stats['SKL'] += random.randint(1, 3)
+                self.stats['SKL']['value'] += random.randint(1, 3)
             else:
-                self.stats['SKL'] += 1
-            print("Your SKL is now {}!".format(self.stats['SKL']))
+                self.stats['SKL']['value'] += 1
+            print("Your SKL is now {}!".format(self.stats['SKL']['value']))
             time.sleep(.5)
         if self.chk_stat_roll(self.growthLUCK):
             if self.growthLUCK >= .5:
-                self.stats['LUCK'] += random.randint(1, 3)
+                self.stats['LUCK']['value'] += random.randint(1, 3)
             else:
-                self.stats['LUCK'] += 1
-            print("Your LUCK is now {}!".format(self.stats['LUCK']))
+                self.stats['LUCK']['value'] += 1
+            print("Your LUCK is now {}!".format(self.stats['LUCK']['value']))
             time.sleep(.5)
 
     def menu(self):
@@ -577,19 +577,19 @@ class Player():
                     self.equipped['accessory_1'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
-                        self.stats['STR'] += accessories[accessory].statval
+                        self.stats['STR']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "DEF":
-                        self.stats['DEF'] += accessories[accessory].statval
+                        self.stats['DEF']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "MAG":
-                        self.stats['MAG'] += accessories[accessory].statval
+                        self.stats['MAG']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "RES":
-                        self.stats['RES'] += accessories[accessory].statval
+                        self.stats['RES']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SPD":
-                        self.stats['SPD'] += accessories[accessory].statval
+                        self.stats['SPD']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SKL":
-                        self.stats['SKL'] += accessories[accessory].statval
+                        self.stats['SKL']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "LUCK":
-                        self.stats['LUCK'] += accessories[accessory].statval
+                        self.stats['LUCK']['value'] += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
                     else:
@@ -622,19 +622,19 @@ class Player():
                     self.equipped['accessory_2'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
-                        self.stats['STR'] += accessories[accessory].statval
+                        self.stats['STR']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "DEF":
-                        self.stats['DEF'] += accessories[accessory].statval
+                        self.stats['DEF']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "MAG":
-                        self.stats['MAG'] += accessories[accessory].statval
+                        self.stats['MAG']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "RES":
-                        self.stats['RES'] += accessories[accessory].statval
+                        self.stats['RES']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SPD":
-                        self.stats['SPD'] += accessories[accessory].statval
+                        self.stats['SPD']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SKL":
-                        self.stats['SKL'] += accessories[accessory].statval
+                        self.stats['SKL']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "LUCK":
-                        self.stats['LUCK'] += accessories[accessory].statval
+                        self.stats['LUCK']['value'] += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
                     else:
@@ -667,19 +667,19 @@ class Player():
                     self.equipped['accessory_3'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
-                        self.stats['STR'] += accessories[accessory].statval
+                        self.stats['STR']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "DEF":
-                        self.stats['DEF'] += accessories[accessory].statval
+                        self.stats['DEF']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "MAG":
-                        self.stats['MAG'] += accessories[accessory].statval
+                        self.stats['MAG']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "RES":
-                        self.stats['RES'] += accessories[accessory].statval
+                        self.stats['RES']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SPD":
-                        self.stats['SPD'] += accessories[accessory].statval
+                        self.stats['SPD']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SKL":
-                        self.stats['SKL'] += accessories[accessory].statval
+                        self.stats['SKL']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "LUCK":
-                        self.stats['LUCK'] += accessories[accessory].statval
+                        self.stats['LUCK']['value'] += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
                     else:
@@ -712,19 +712,19 @@ class Player():
                     self.equipped['accessory_4'] = accessories[accessory]
                     text_speed("You equipped the {}!\n".format(accessories[accessory].name), .05)
                     if accessories[accessory].stat == "STR":
-                        self.stats['STR'] += accessories[accessory].statval
+                        self.stats['STR']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "DEF":
-                        self.stats['DEF'] += accessories[accessory].statval
+                        self.stats['DEF']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "MAG":
-                        self.stats['MAG'] += accessories[accessory].statval
+                        self.stats['MAG']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "RES":
-                        self.stats['RES'] += accessories[accessory].statval
+                        self.stats['RES']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SPD":
-                        self.stats['SPD'] += accessories[accessory].statval
+                        self.stats['SPD']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "SKL":
-                        self.stats['SKL'] += accessories[accessory].statval
+                        self.stats['SKL']['value'] += accessories[accessory].statval
                     elif accessories[accessory].stat == "LUCK":
-                        self.stats['LUCK'] += accessories[accessory].statval
+                        self.stats['LUCK']['value'] += accessories[accessory].statval
                     elif accessories[accessory].spcl == "water_breathing":
                         self.status['water_breathing'] = True
                     else:
@@ -765,19 +765,19 @@ class Player():
         if self.equipped['accessory_1'].name != "Empty":
             self.inventory.append(self.equipped['accessory_1'])
             if self.equipped['accessory_1'].stat == "STR":
-                self.stats['STR'] -= self.equipped['accessory_1'].statval
+                self.stats['STR']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].stat == "DEF":
-                self.stats['DEF'] -= self.equipped['accessory_1'].statval
+                self.stats['DEF']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].stat == "MAG":
-                self.stats['MAG'] -= self.equipped['accessory_1'].statval
+                self.stats['MAG']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].stat == "RES":
-                self.stats['RES'] -= self.equipped['accessory_1'].statval
+                self.stats['RES']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].stat == "SPD":
-                self.stats['SPD'] -= self.equipped['accessory_1'].statval
+                self.stats['SPD']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].stat == "SKL":
-                self.stats['SKL'] -= self.equipped['accessory_1'].statval
+                self.stats['SKL']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].stat == "LUCK":
-                self.stats['LUCK'] -= self.equipped['accessory_1'].statval
+                self.stats['LUCK']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_1'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
             else:
@@ -791,19 +791,19 @@ class Player():
         if self.equipped['accessory_2'].name != "Empty":
             self.inventory.append(self.equipped['accessory_2'])
             if self.equipped['accessory_2'].stat == "STR":
-                self.stats['STR'] -= self.equipped['accessory_2'].statval
+                self.stats['STR']['value'] -= self.equipped['accessory_2'].statval
             elif self.equipped['accessory_2'].stat == "DEF":
-                self.stats['DEF'] -= self.equipped['accessory_2'].statval
+                self.stats['DEF']['value'] -= self.equipped['accessory_2'].statval
             elif self.equipped['accessory_2'].stat == "MAG":
-                self.stats['MAG'] -= self.equipped['accessory_2'].statval
+                self.stats['MAG']['value'] -= self.equipped['accessory_2'].statval
             elif self.equipped['accessory_2'].stat == "RES":
-                self.stats['RES'] -= self.equipped['accessory_2'].statval
+                self.stats['RES']['value'] -= self.equipped['accessory_2'].statval
             elif self.equipped['accessory_2'].stat == "SPD":
-                self.stats['SPD'] -= self.equipped['accessory_2'].statval
+                self.stats['SPD']['value'] -= self.equipped['accessory_2'].statval
             elif self.equipped['accessory_2'].stat == "SKL":
-                self.stats['SKL'] -= self.equipped['accessory_1'].statval
+                self.stats['SKL']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_2'].stat == "LUCK":
-                self.stats['LUCK'] -= self.equipped['accessory_2'].statval
+                self.stats['LUCK']['value'] -= self.equipped['accessory_2'].statval
             elif self.equipped['accessory_2'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
             else:
@@ -817,19 +817,19 @@ class Player():
         if self.equipped['accessory_3'].name != "Empty":
             self.inventory.append(self.equipped['accessory_3'])
             if self.equipped['accessory_3'].stat == "STR":
-                self.stats['STR'] -= self.equipped['accessory_3'].statval
+                self.stats['STR']['value'] -= self.equipped['accessory_3'].statval
             elif self.equipped['accessory_3'].stat == "DEF":
-                self.stats['DEF'] -= self.equipped['accessory_3'].statval
+                self.stats['DEF']['value'] -= self.equipped['accessory_3'].statval
             elif self.equipped['accessory_3'].stat == "MAG":
-                self.stats['MAG'] -= self.equipped['accessory_1'].statval
+                self.stats['MAG']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_3'].stat == "RES":
-                self.stats['RES'] -= self.equipped['accessory_3'].statval
+                self.stats['RES']['value'] -= self.equipped['accessory_3'].statval
             elif self.equipped['accessory_3'].stat == "SPD":
-                self.stats['SPD'] -= self.equipped['accessory_1'].statval
+                self.stats['SPD']['value'] -= self.equipped['accessory_1'].statval
             elif self.equipped['accessory_3'].stat == "SKL":
-                self.stats['SKL'] -= self.equipped['accessory_3'].statval
+                self.stats['SKL']['value'] -= self.equipped['accessory_3'].statval
             elif self.equipped['accessory_2'].stat == "LUCK":
-                self.stats['LUCK'] -= self.equipped['accessory_3'].statval
+                self.stats['LUCK']['value'] -= self.equipped['accessory_3'].statval
             elif self.equipped['accessory_3'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
             else:
@@ -843,19 +843,19 @@ class Player():
         if self.equipped['accessory_4'].name != "Empty":
             self.inventory.append(self.equipped['accessory_4'])
             if self.equipped['accessory_4'].stat == "STR":
-                self.stats['STR'] -= self.equipped['accessory_4'].statval
+                self.stats['STR']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].stat == "DEF":
-                self.stats['DEF'] -= self.equipped['accessory_4'].statval
+                self.stats['DEF']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].stat == "MAG":
-                self.stats['MAG'] -= self.equipped['accessory_4'].statval
+                self.stats['MAG']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].stat == "RES":
-                self.stats['RES'] -= self.equipped['accessory_4'].statval
+                self.stats['RES']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].stat == "SPD":
-                self.stats['SPD'] -= self.equipped['accessory_4'].statval
+                self.stats['SPD']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].stat == "SKL":
-                self.stats['SKL'] -= self.equipped['accessory_4'].statval
+                self.stats['SKL']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].stat == "LUCK":
-                self.stats['LUCK'] -= self.equipped['accessory_4'].statval
+                self.stats['LUCK']['value'] -= self.equipped['accessory_4'].statval
             elif self.equipped['accessory_4'].spcl == "water_breathing":
                 self.status['water_breathing'] = False
             else:
@@ -1033,7 +1033,7 @@ class Player():
                 if room.choice == "1":
                     text_speed("You offer your blood to the altar.\n", .05)
                     time.sleep(1)
-                    self.stats['cHP'] -= 20
+                    self.stats['cHP']['value'] -= 20
                     if self.is_alive() == True:
                         self.inventory.append(item)
                         text_speed("You've obtained the {}!\n".format(item.name), .05)
@@ -1154,8 +1154,8 @@ class Player():
 
     def apply_poison(self):
         if self.status['poison'] == True:
-            damage = random.randint(1, 5)
-            self.stats['cHP'] -= damage
+            damage = self.status['poison']['potency']
+            self.stats['cHP']['value'] -= damage
             text_speed("You took {} damage from poison!\n".format(damage), .03)
             time.sleep(.2)
             if self.is_alive() == False:
@@ -1201,22 +1201,9 @@ class Player():
         else:
             return False
 
-    def chk_Weapon(self):
-        best_weapon = items.Fists()
-        max_dmg = 0
-        for i in self.inventory:
-            if isinstance(i, items.Weapon):
-                if i.damage > max_dmg:
-                    max_dmg = i.damage
-                    best_weapon = i
-        return best_weapon
-
     def chk_armor(self):
         armor = self.equipped['armor'].armor + self.equipped['shield'].armor
         return armor / 100
-
-    def chk_SPD(self, enemy):
-        return self.stats['SPD'] >= enemy.stats['SPD']
 
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
@@ -1234,14 +1221,14 @@ class Player():
                 time.sleep(.2)
                 text_speed("You take 1 damage!\n", .03)
                 time.sleep(.2)
-                self.stats['cHP'] -= 1
+                self.stats['cHP']['value'] -= 1
                 self.apply_poison()
             elif confusion == False:
                 if calculate_hit(self, enemy):
                     cCRIT = chk_CRIT(self, enemy)
                     text_speed("You use {}!\n".format(weapon.name), .03)
                     time.sleep(.2)
-                    bstat = (self.stats['STR'] + self.statbonus['STR']['value'])
+                    bstat = (self.stats['STR']['value'] + self.statbonus['STR']['value'])
                     pdamage = generate_damage(self, bstat, weapon.damage, enemy)
                     if cCRIT == True:
                         pdamage *= 2
@@ -1263,64 +1250,6 @@ class Player():
                     text_speed("The {} has {} HP remaining.\n".format(enemy.name, enemy.hp), .03)
                     self.apply_poison()
 
-    def chk_edamage(self, enemy):
-        edamage = None
-        armor = self.chk_armor()
-        cCRIT = chk_CRIT(enemy, self)
-        if cCRIT == True:
-            text_speed("The {} scores a Critical Hit!\n".format(enemy.name), .01)
-            time.sleep(.2)
-            if self.buffs['physical_resist'] == True:
-                edamage = round(((enemy.damage * 2) - (enemy.damage * armor)) - (enemy.damage * self.buffs['physical_resist']['potency']))
-            else:
-                edamage = round((enemy.damage * 2) - (enemy.damage * armor))
-            if edamage < self.stats['DEF']:
-                edamage = 1
-                return edamage
-            elif edamage == self.stats['DEF']:
-                edamage = 1
-                return edamage
-            else:
-                edamage = edamage - self.stats['DEF']
-                return edamage
-        else:
-            if self.buffs['physical_resist'] == True:
-                edamage = round(((enemy.damage) - (enemy.damage * armor)) - (enemy.damage * self.buffs['physical_resist']['potency']))
-            else:
-                edamage = round((enemy.damage) - (enemy.damage * armor))
-            if edamage < self.stats['DEF']:
-                edamage = 1
-                return edamage
-            
-            elif edamage == self.stats['DEF']:
-                edamage = 1
-                return edamage
-            else:
-                edamage = (enemy.damage - self.stats['DEF'])
-                return edamage
-
-    def efight(self, enemy):
-        text_speed("The {} attacks!\n".format(enemy.name), .03)
-        time.sleep(.2)
-        if calculate_hit(enemy, self):
-            edamage = self.chk_edamage(enemy)
-            self.stats['cHP'] -= edamage
-            text_speed("The {} dealt {} damage to you.\n".format(enemy.name, edamage), .03)
-            time.sleep(.2)
-            if self.is_alive() == True:
-                if enemy.roll_status():
-                    if enemy.statusatk in self.status:
-                        text_speed("The {} inflicts {} on you!\n".format(enemy.name, enemy.statusatk), .03)
-                        time.sleep(.2)
-                        self.status[enemy.statusatk] = True
-                text_speed("You have {} HP remaining.\n".format(self.stats['cHP']), .03)
-                time.sleep(.2)
-                enemy.apply_poison()
-        else:
-            text_speed("The {} missed!\n".format(enemy.name), .03)
-            time.sleep(.2)
-            enemy.apply_poison()
-    
     def chk_spells(self):
         spell = []
         for i in self.spells:
@@ -1341,7 +1270,7 @@ class Player():
         if choice.isdigit():
             choice = int(choice)
             if choice < len(self.chk_spells()):
-                if self.stats['cMP'] >= self.chk_spells()[choice].cost:
+                if self.stats['cMP']['value'] >= self.chk_spells()[choice].cost:
                     return self.chk_spells()[choice]
                 else:
                     text_speed("You don't have enough MP!\n", .03)
@@ -1359,7 +1288,7 @@ class Player():
             if confusion == True:
                 text_speed("You lose your concentration and are damaged by your mana!\n", .03)
                 time.sleep(.2)
-                self.stats['cHP'] -= 1
+                self.stats['cHP']['value'] -= 1
                 self.apply_poison()
             elif confusion == False:
                 spell.cast_spell(self, enemy)
@@ -1384,7 +1313,7 @@ class Player():
         if choice.isdigit():
             choice = int(choice)
             if choice < len(self.chk_skills()):
-                if self.stats['cMP'] >= self.chk_skills()[choice].cost:
+                if self.stats['cMP']['value'] >= self.chk_skills()[choice].cost:
                     return self.chk_skills()[choice]
                 else:
                     text_speed("You don't have enough MP!\n", .03)
@@ -1402,7 +1331,7 @@ class Player():
             if confusion == True:
                 text_speed("You trip over your own feet!\n", .03)
                 time.sleep(.2)
-                self.stats['cHP'] -= 1
+                self.stats['cHP']['value'] -= 1
                 self.apply_poison()
             elif confusion == False:
                 skill.use_ability(self, enemy)
@@ -1492,52 +1421,56 @@ class Player():
                     stat_info = self.statbonus.get(stat)
                     if stat_info:
                         print(item.statval)
-                        stat_info['value'] += item.statval
+                        stat_info += item.statval
 
     def chk_temps(self):
         for f in self.tempboosts:
             if self.tempboosts[f]['flag'] != False:
                 if self.tempboosts[f]['duration'] > 0:
                     if self.tempboosts[f] == "STR":
-                        self.stats['STR'] = self.stats['STR'] + self.tempboosts[f]['value']
+                        self.stats['STR']['value'] = self.stats['STR']['value'] + self.tempboosts[f]
                     elif self.tempboosts[f] == "DEF":
-                        self.stats['DEF'] = self.stats['DEF'] + self.tempboosts[f]['value']
+                        self.stats['DEF']['value'] = self.stats['DEF']['value'] + self.tempboosts[f]
                     elif self.tempboosts[f] == "MAG":
-                        self.stats['MAG'] = self.stats['MAG'] + self.tempboosts[f]['value']
+                        self.stats['MAG']['value'] = self.stats['MAG']['value'] + self.tempboosts[f]
                     elif self.tempboosts[f] == "RES":
-                        self.stats['RES'] = self.stats['RES'] + self.tempboosts[f]['value']
+                        self.stats['RES']['value'] = self.stats['RES']['value'] + self.tempboosts[f]
                     elif self.tempboosts[f] == "SPD":
-                        self.stats['SPD'] = self.stats['SPD'] + self.tempboosts[f]['value']
+                        self.stats['SPD']['value'] = self.stats['SPD']['value'] + self.tempboosts[f]
                     elif self.tempboosts[f] == "SKL":
-                        self.stats['SKL'] = self.stats['SKL'] + self.tempboosts[f]['value']
+                        self.stats['SKL']['value'] = self.stats['SKL']['value'] + self.tempboosts[f]
                     elif self.tempboosts[f] == "LUCK":
-                        self.stats['LUCK'] = self.stats['LUCK'] + self.tempboosts[f]['value']
+                        self.stats['LUCK']['value'] = self.stats['LUCK']['value'] + self.tempboosts[f]
                     self.tempboosts[f]['duration'] -= 1
                 else:
                     self.tempboosts[f]['flag'] = False
                     self.tempboosts[f]['duration'] = 0
-                    self.tempboosts[f]['value'] = 0
+                    self.tempboosts[f] = 0
                     text_speed("Your temporary boost to {} has worn off!\n".format(f), .03)
                     time.sleep(.2)
             else:
                 pass
 
     def combat(self, enemy):
-        # Something odd is happening with damage calculations. It seems that regular, magic, and skill attacks aren't combining in decreasing the enemy's HP.
+        eai = enemy_ai.EnemyAI(enemy)
         text_speed("What will you do?\n", .03)
         time.sleep(.2)
         choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n4. Use Item\n5. Stats\n")
         if choice == "1":
-            chkSPD = self.chk_SPD(enemy)
-            if chkSPD == True:
+            self.pchoice = "regular"
+            chkSPD = chk_SPD(self, enemy)
+            if chkSPD == 'player':
                 self.pfight(enemy)
                 if enemy.is_alive() == True:
-                    self.efight(enemy)
-            else:
-                self.efight(enemy)
+                    eai.decide()
+                    enemy.apply_poison()
+            elif chkSPD == 'enemy':
+                eai.decide()
+                enemy.apply_poison()
                 if self.is_alive() == True:
                     self.pfight(enemy)
         elif choice == "2":
+            self.pchoice = "magic"
             if self.status['silence'] == True:
                 text_speed("You can't cast spells while silenced!\n", .03)
                 time.sleep(.2)
@@ -1547,17 +1480,20 @@ class Player():
                 time.sleep(.2)
                 self.combat(enemy)
             else:
-                chkSPD = self.chk_SPD(enemy)
+                chkSPD = chk_SPD(self, enemy)
                 spell = self.cast_spell(enemy)
-                if chkSPD == True:
+                if chkSPD == 'player':
                     self.pmagatk(enemy, spell)
                     if enemy.is_alive() == True:
-                        self.efight(enemy)
-                else:
-                    self.efight(enemy)
+                        eai.decide()
+                        enemy.apply_poison()
+                elif chkSPD == 'enemy':
+                    eai.decide()
+                    enemy.apply_poison()
                     if self.is_alive() == True:
                         self.pmagatk(enemy, spell)
         elif choice == "3":
+            self.pchoice = "skill"
             if self.status['crippled'] == True:
                 text_speed("You can't use skills while crippled!\n", .03)
                 time.sleep(.2)
@@ -1567,19 +1503,23 @@ class Player():
                 time.sleep(.2)
                 self.combat(enemy)
             else:
-                chkSPD = self.chk_SPD(enemy)
+                chkSPD = chk_SPD(self, enemy)
                 skill = self.use_skill(enemy)
-                if chkSPD == True:
+                if chkSPD == 'player':
                     self.pskillatk(enemy, skill)
                     if enemy.is_alive() == True:
-                        self.efight(enemy)
-                else:
-                    self.efight(enemy)
+                        eai.decide()
+                        enemy.apply_poison()
+                elif chkSPD == 'enemy':
+                    eai.decide()
+                    enemy.apply_poison()
                     if self.is_alive() == True:
                         self.pskillatk(enemy, skill)
         elif choice == "4":
+            self.pchoice = "item"
             self.use_item(enemy)
-            self.efight(enemy)
+            eai.decide()
+            enemy.apply_poison()
         elif choice == "5":
             print(self.__str__())
             for s in self.status:
@@ -1601,10 +1541,11 @@ class Player():
             self.chk_temps()
             self.combat(enemy)
             if self.buffs['regen']['flag'] == True:
-                self.stats['cHP'] += self.stats['mHP'] * self.buffs['regen']['potency']
+                self.stats['cHP']['value'] += self.stats['mHP']['value'] * self.buffs['regen']['potency']
             self.turns += 1
-            print(self.stats['STR'] + self.statbonus['STR']['value'])
+            print(self.stats['STR']['value'] + self.statbonus['STR']['value'])
         if not enemy.is_alive():
+            self.pchoice = None
             self.starting_turns = 0
             self.turns = 1
             if enemy.tier == "Boss":
@@ -1692,7 +1633,7 @@ class Mage(Player):
 class Rogue(Player):
     def __init__(self):
         super().__init__(self, mHP=10, cHP=10, mMP=20, cMP=20, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
-        self.spells.append(magic.poison())
+        self.spells.append(magic.poison_dart())
         self.skills.append(skills.sneak_attack())
         self.skills.append(skills.steal())
         self.growthmHP = .3
