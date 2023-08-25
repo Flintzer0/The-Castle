@@ -1,5 +1,5 @@
 from player import Player
-from title_screen import save_game
+import title_screen
  
 class Action():
     def __init__(self, method, name, hotkey, **kwargs):
@@ -51,6 +51,6 @@ class menu(Action):
     def __init__(self):
         super().__init__(method=Player.menu, name="Menu", hotkey="m")
 
-# class SaveAndExit(Action):
-#     def __init__(self):
-#         super().__init__(method=Player.save_game, name="Save and Exit", hotkey='x')
+class SaveAndExit(Action):
+    def __init__(self):
+        super().__init__(method=title_screen.save_game, name="Save and Exit", hotkey='x')

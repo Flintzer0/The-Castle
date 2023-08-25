@@ -5,8 +5,10 @@
 .venv/pyvenv.cfg
 .venv/*
 __pycache__
+stat_datasheets
 test_chamber.py
 saved_games
 .vscode
 calculation_tests.py
+stat_data_check.py
 ```

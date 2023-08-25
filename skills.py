@@ -62,7 +62,7 @@ class cleave(Combat):
                          description="Your Cleave skill. Deals damage to a single target. Deals extra damage based on your STR.")
         
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = ((player.stats['STR']['value'] + player.statbonus['STR']['value']))
@@ -90,19 +90,30 @@ class cleave(Combat):
 class sneak_attack(Combat):
     def __init__(self):
         super().__init__(name="Sneak Attack", cost=4, damage=5, damage_type="", bonus_stat="SKL", hit_rate=90,
-                         description="Your Sneak Attack skill. Deals damage to a single target. Deals extra damage based on your SKL.")
+                         description="Your Sneak Attack skill. Deals damage to a single target. Has a high chance to crit, and\ndoes extra crit damage, both based on SKL")
         
+    def skchance(self, chance):
+        roll1 = random.randint(1,100) <= chance
+        roll2 = random.randint(1,100) <= chance
+        roll3 = random.randint(1,100) <= chance
+        if roll1 == True or roll2 == True or roll3 == True:
+            return True
+
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
-            cCRIT = chk_CRIT(player, enemy)
+        if skill_hit(self.hit_rate, player, enemy):
+            cCRIT = crit = ((player.stats['SKL']['value'] * 2) + player.stats['LUCK']['value']) - enemy.stats['LUCK']
+            yescrit = self.skchance(cCRIT)
             weapon = player.equipped['weapon']
-            bstat = ((player.stats['STR']['value'] + player.statbonus['STR']['value']))
-            bdamage = ((player.stats['SKL']['value'] + player.statbonus['SKL']['value']) * 2)
+            bstat = ((player.stats['STR']['value'] + player.statbonus['STR']['value']) + weapon.damage)
+            bdamage = ((player.stats['SKL']['value'] + player.statbonus['SKL']['value']))
             base_dmg = (self.damage + weapon.damage + bdamage)
             text_speed("You use {} with your {}!\n".format(self.name, weapon.name), .03)
             pdamage = generate_skill_damage(player, self, bstat, base_dmg, enemy)
             time.sleep(.2)
-            if cCRIT == True:
+            if yescrit == True:
+                base = (((player.stats['SKL']['value'] + player.statbonus['SKL']['value']) * 2) + bstat)
+                crit_damage =((self.damage * 2) + weapon.damage + base)
+                pdamage = generate_skill_damage(player, self, base, crit_damage, enemy)
                 pdamage *= 2
                 text_speed("Critical hit!\n", .01)
                 time.sleep(.2)
@@ -149,7 +160,7 @@ class double_strike(Combat):
                          description="Your Double Strike skill. Deals damage to a single target. Has a chance to hit twice based on SPD.")
 
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = ((player.stats['STR']['value'] + player.statbonus['STR']['value']))
@@ -167,13 +178,17 @@ class double_strike(Combat):
                 damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
             enemy.stats['HP'] -= damage
-            self.second_hit(player, enemy)
+            second_chance = (50 + bstat)
+            if chance(second_chance) == True:
+                self.second_hit(player, enemy, bstat)
 
-    def second_hit(self, player, enemy):
-        astat = (player.stats['SPD']['value'] + player.statbonus['SPD']['value'])
-        second_hit = random.randint(1,100) <= 50 + astat
-        if second_hit == True:
-            text_speed("You hit the {} again!\n".format(enemy.name), .03)
+    def second_hit(self, player, enemy, stat):
+        text_speed("You attack the {} again!\n".format(enemy.name), .01)
+        time.sleep(.1)
+        rate = 50 + stat
+        schance = chance(rate)
+        if schance == True:
+            text_speed("Your second attack hits!\n".format(enemy.name), .03)
             time.sleep(.2)
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
@@ -193,6 +208,9 @@ class double_strike(Combat):
                 damage = (pdamage - enemy.stats['DEF'])
             text_speed("You dealt {} damage to the {}.\n".format(damage, enemy.name), .03)
             enemy.stats['HP'] -= damage
+        else:
+            text_speed("Your second attack missed!\n", .03)
+            time.sleep(.2)
         
 class guard_breaker(Combat):
     def __init__(self):
@@ -200,7 +218,7 @@ class guard_breaker(Combat):
                          description="Your Guard Breaker skill. Deals damage to a single target. Ignores enemy DEF.")
         
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = (player.stats['STR']['value'] + player.statbonus['STR']['value'])
@@ -228,7 +246,7 @@ class heavy_swing(Combat):
         
     def ability(self, player, enemy):
         weapon = player.equipped['weapon']
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             bstat = ((player.stats['STR']['value'] + player.statbonus['STR']['value']) * 2)
             base_dmg = (self.damage + weapon.damage + bstat)
@@ -258,7 +276,7 @@ class steal(Combat):
                          description="Your Steal skill. Deals damage to a single target. Has a chance to steal from enemies based on SPD.")
         
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = (player.stats['STR']['value'] + player.statbonus['STR']['value'])
@@ -315,7 +333,7 @@ class poison_point(Combat, Debuff):
                          description="Your Poison Point skill. Deals damage based on SKL to a single target. Has a high chance to poison enemies.")
         
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = (player.stats['STR']['value'] + player.statbonus['STR']['value'])
@@ -357,7 +375,7 @@ class wind_shot(Combat):
                          description="Your Wind Shot skill. Deals Wind damage based on SKL to a single target. High ccrit rate. Must be wielding a bow.")
         
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = (player.stats['STR']['value'] + player.statbonus['STR']['value'])
@@ -388,7 +406,7 @@ class retribution(Combat):
                          description="Your Retribution skill. Deals Holy damage based on damage received to a single target.")
         
     def ability(self, player, enemy):
-        if skill_hit(self, player, enemy):
+        if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)
             weapon = player.equipped['weapon']
             bstat = (player.stats['STR']['value'] + player.statbonus['STR']['value'])

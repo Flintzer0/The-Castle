@@ -61,14 +61,15 @@ class Player():
             'LUCK' : {'value' : 0}
         }
         self.status = {
-            'poison': {'flag' : False, 'potency' : 0},
-            'paralysis': {'flag' : False, 'potency' : 0},
-            'blind': {'flag' : False, 'potency' : 0},
-            'silence': {'flag' : False, 'potency' : 0},
-            'sleep': {'flag' : False, 'potency' : 0},
-            'confusion': {'flag' : False, 'potency' : 0},
-            'charm': {'flag' : False, 'potency' : 0},
-            'crippled': {'flag' : False, 'potency' : 0},
+            'poisoned': {'flag' : False, 'potency' : 0, 'duration' : 0},
+            'paralyzed': {'flag' : False, 'potency' : 0, 'duration' : 0},
+            'blinded': {'flag' : False, 'duration' : 0},
+            'silenced': {'flag' : False, 'duration' : 0},
+            'asleep': {'flag' : False, 'duration' : 0},
+            'confused': {'flag' : False, 'duration' : 0},
+            'charmed': {'flag' : False, 'potency' : 0, 'duration' : 0},
+            'crippled': {'flag' : False, 'duration' : 0},
+            'slowed': {'flag' : False, 'potency' : 0, 'duration' : 0}
         }
         self.buffs = {
             'water_breathing' : {'flag' : False},
@@ -86,7 +87,7 @@ class Player():
             'holy_resist' : {'flag' : False, 'potency' : 0},
             'demonic_resist' : {'flag' : False, 'potency' : 0},
             'poison_resist' : {'flag' : False, 'potency' : 0},
-            'paralysis_resist' : {'flag' : False, 'potency' : 0},
+            'paralyzed_resist' : {'flag' : False, 'potency' : 0},
             'blind_resist' : {'flag' : False, 'potency' : 0},
             'silence_resist' : {'flag' : False, 'potency' : 0},
             'sleep_resist' : {'flag' : False, 'potency' : 0},
@@ -145,7 +146,7 @@ class Player():
             'holy_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
             'demonic_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
             'poison_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
-            'paralysis_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
+            'paralyzed_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
             'blind_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
             'silence_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
             'sleep_resist' : {'flag' : False, 'duration' : 0, 'potency' : 0},
@@ -188,94 +189,100 @@ class Player():
         action_method = getattr(self, action.method.__name__)
         if action_method:
             action_method(**kwargs)
-    
-    def growth_rate(self, growth):
-        return (100 * growth)
 
     def chk_stat_roll(self, growth):
-        growth = self.growth_rate(growth)
-        if random.randint(1,100) <= growth:
+        growth1 = random.randint(1,100) <= (growth * 100)
+        growth2 = random.randint(1,100) <= (growth * 100)
+        if growth1 or growth2:
             return True
-        else:
-            return False
         
     def view_character(self):
         return self.__str__()
 
     def level_up(self):
         self.LVL += 1
-        print("You are now level {}!".format(self.LVL))
-        time.sleep(.5)
+        # print("You are now level {}!".format(self.LVL))
+        # time.sleep(.5)
         self.EXP -= 100
+        # print('You fully recover your HP!')
+        # time.sleep(.5)
         if self.chk_stat_roll(self.growthmHP):
             if isinstance(self, Mage):
-                self.stats['mHP']['value'] += 3 + (random.randint(1, 3))
+                print
+                self.stats['mHP']['value'] += 3 + (random.randint(2, 3))
             else:
-                self.stats['mHP']['value'] += 5 + (random.randint(1, 5))
+                self.stats['mHP']['value'] += 5 + (random.randint(2, 5))
         else:
-            self.stats['mHP']['value'] += 5
-        print("Your max HP is now {}!".format(self.stats['mHP']['value']))
-        time.sleep(.5)
+            if isinstance(self, Mage):
+                self.stats['mHP']['value'] += random.randint(1, 2)
+            else:
+                self.stats['mHP']['value'] += random.randint(2, 4)
+        # print("Your max HP is now {}!".format(self.stats['mHP']['value']))
+        # time.sleep(.5)
         self.stats['cHP']['value'] = self.stats['mHP']['value']
+        # print('You fully recover your MP!')
         if self.chk_stat_roll(self.growthmMP):
             if isinstance(self, Mage):
-                self.stats['mMP']['value'] += 5 + (random.randint(1, 5))
+                self.stats['mMP']['value'] += 5 + (random.randint(2, 5))
             else:
-                self.stats['mMP']['value'] += 2 + (random.randint(1, 3))
+                self.stats['mMP']['value'] += 3 + (random.randint(2, 3))
         else:
-            self.stats['mMP']['value'] += 2
-        print("Your max MP is now {}!".format(self.stats['mMP']['value']))
-        time.sleep(.5)
+            if isinstance(self, Mage):
+                self.stats['mMP']['value'] += random.randint(2, 4)
+            else:
+                self.stats['mMP']['value'] += random.randint(1, 2) 
+        # print("Your max MP is now {}!".format(self.stats['mMP']['value']))
+        # time.sleep(.5)
         self.stats['cMP']['value'] = self.stats['mMP']['value']
         if self.chk_stat_roll(self.growthSTR):
             if self.growthSTR >= .5:
-                self.stats['STR']['value'] += random.randint(1, 3)
+                self.stats['STR']['value'] += random.randint(2, 3)
             else:
                 self.stats['STR']['value'] += 1
-            print("Your STR is now {}!".format(self.stats['STR']['value']))
-            time.sleep(.5)
+            # print("Your STR is now {}!".format(self.stats['STR']['value']))
+            # time.sleep(.5)
         if self.chk_stat_roll(self.growthDEF):
             if self.growthDEF >= .5:
-                self.stats['DEF']['value'] += random.randint(1, 3)
+                self.stats['DEF']['value'] += random.randint(2, 3)
             else:
                 self.stats['DEF']['value'] += 1
-            print("Your DEF is now {}!".format(self.stats['DEF']['value']))
-            time.sleep(.5)
+            # print("Your DEF is now {}!".format(self.stats['DEF']['value']))
+            # time.sleep(.5)
         if self.chk_stat_roll(self.growthMAG):
             if self.growthMAG >= .5:
-                self.stats['MAG']['value'] += random.randint(1, 5)
+                self.stats['MAG']['value'] += random.randint(2, 3)
             else:
                 self.stats['MAG']['value'] += 1
-            print("Your MAG is now {}!".format(self.stats['MAG']['value']))
-            time.sleep(.5)
+            # print("Your MAG is now {}!".format(self.stats['MAG']['value']))
+            # time.sleep(.5)
         if self.chk_stat_roll(self.growthRES):
             if self.growthRES >= .5:
-                self.stats['RES']['value'] += random.randint(1, 3)
+                self.stats['RES']['value'] += random.randint(2, 3)
             else:
                 self.stats['RES']['value'] += 1
-            print("Your RES is now {}!".format(self.stats['RES']['value']))
-            time.sleep(.5)
+            # print("Your RES is now {}!".format(self.stats['RES']['value']))
+            # time.sleep(.5)
         if self.chk_stat_roll(self.growthSPD):
             if self.growthSPD >= .5:
-                self.stats['SPD']['value'] += random.randint(1, 3)
+                self.stats['SPD']['value'] += random.randint(2, 3)
             else:
                 self.stats['SPD']['value'] += 1
-            print("Your SPD is now {}!".format(self.stats['SPD']['value']))
-            time.sleep(.5)
+            # print("Your SPD is now {}!".format(self.stats['SPD']['value']))
+            # time.sleep(.5)
         if self.chk_stat_roll(self.growthSKL):
             if self.growthSKL >= .5:
-                self.stats['SKL']['value'] += random.randint(1, 3)
+                self.stats['SKL']['value'] += random.randint(2, 3)
             else:
                 self.stats['SKL']['value'] += 1
-            print("Your SKL is now {}!".format(self.stats['SKL']['value']))
-            time.sleep(.5)
+            # print("Your SKL is now {}!".format(self.stats['SKL']['value']))
+            # time.sleep(.5)
         if self.chk_stat_roll(self.growthLUCK):
             if self.growthLUCK >= .5:
-                self.stats['LUCK']['value'] += random.randint(1, 3)
+                self.stats['LUCK']['value'] += random.randint(2, 3)
             else:
                 self.stats['LUCK']['value'] += 1
-            print("Your LUCK is now {}!".format(self.stats['LUCK']['value']))
-            time.sleep(.5)
+            # print("Your LUCK is now {}!".format(self.stats['LUCK']['value']))
+            # time.sleep(.5)
 
     def menu(self):
         print("1. View Character  2. View Inventory  3. View Compendium  4. View Spells  5. View Skills  6. Equipment  7. Exit\n")
@@ -869,7 +876,7 @@ class Player():
         import tiles
         self.location_x += dx
         self.location_y += dy
-        return world.tile_exists(self.location_x, self.location_y).intro_text()
+        # return world.tile_exists(self.location_x, self.location_y).intro_text()
         location = world.tile_exists(self.location_x, self.location_y)
         if isinstance(location, tiles.stairs):
             location.end_demo(self)
@@ -1153,8 +1160,8 @@ class Player():
             time.sleep(.2)
 
     def apply_poison(self):
-        if self.status['poison'] == True:
-            damage = self.status['poison']['potency']
+        if self.status['poisoned']['flag'] == True:
+            damage = self.status['poisoned']['potency']
             self.stats['cHP']['value'] -= damage
             text_speed("You took {} damage from poison!\n".format(damage), .03)
             time.sleep(.2)
@@ -1166,9 +1173,8 @@ class Player():
                 sys.exit()
 
     def roll_paralyze(self):
-        if self.status['paralysis'] == True:
-            print(self.turns)
-            if self.turns < self.starting_turns + 3:
+        if self.status['paralyzed']['flag'] == True:
+            if self.status['paralyzed']['duration'] > 0:
                 text_speed("You are paralyzed!\n", .03)
                 time.sleep(.2)
                 roll = random.randint(1, 10)
@@ -1176,23 +1182,18 @@ class Player():
                     return True
                 elif roll == 3 or roll == 4 or roll == 5 or roll == 6 or roll == 7 or roll == 8 or roll == 9 or roll == 10:
                     return False
-            else:
-                self.status['paralysis'] = False
-                text_speed("You are no longer paralyzed!\n", .03)
-                time.sleep(.2)
-                return False
         else:
             return False
         
     def roll_confusion(self):
-        if self.status['confusion'] == True:
+        if self.status['confused'] == True:
             text_speed("You are confused!\n", .03)
             time.sleep(.2)
             roll = random.randint(1, 10)
             if roll == 1 or roll == 2:
                 return True
             elif roll == 10:
-                self.status['confusion'] = False
+                self.status['confused'] = False
                 text_speed("You are no longer confused!\n", .03)
                 time.sleep(.2)
                 return False
@@ -1204,6 +1205,19 @@ class Player():
     def chk_armor(self):
         armor = self.equipped['armor'].armor + self.equipped['shield'].armor
         return armor / 100
+    
+    def chk_marmor(self):
+        if self.equipped['armor'].marmor:
+            if self.equipped['shield'].marmor:
+                marmor = self.equipped['armor'].marmor + self.equipped['shield'].marmor
+            else:
+                marmor = self.equipped['armor'].marmor
+            return marmor / 100
+        elif self.equipped['shield'].marmor:
+            marmor = self.equipped['shield'].marmor
+            return marmor / 100
+        else:
+            return 0
 
     def pfight(self, enemy):
         text_speed("You attack!\n", .03)
@@ -1276,6 +1290,14 @@ class Player():
                     text_speed("You don't have enough MP!\n", .03)
                     time.sleep(.2)
                     self.combat(enemy)
+            else:
+                text_speed("Invalid choice.\n", .03)
+                time.sleep(.2)
+                self.cast_spell(enemy)
+        else:
+            text_speed("Invalid choice.\n", .03)
+            time.sleep(.2)
+            self.cast_spell(enemy)
 
     def pmagatk(self, enemy, spell):
         paralyzed = self.roll_paralyze()
@@ -1291,7 +1313,7 @@ class Player():
                 self.stats['cHP']['value'] -= 1
                 self.apply_poison()
             elif confusion == False:
-                spell.cast_spell(self, enemy)
+                spell.cast(self, enemy)
 
     def chk_skills(self):
         skill = []
@@ -1418,10 +1440,11 @@ class Player():
                         if 'potency' in buff_info:
                             buff_info['potency'] += (item.propercent * 100)
                 if stat:
+                    print(stat)
                     stat_info = self.statbonus.get(stat)
                     if stat_info:
-                        print(item.statval)
-                        stat_info += item.statval
+                        print(stat_info, item.statval)
+                        stat_info['value'] += item.statval
 
     def chk_temps(self):
         for f in self.tempboosts:
@@ -1457,21 +1480,19 @@ class Player():
         time.sleep(.2)
         choice = input("1. Attack\n2. Cast Spell\n3. Use Skill\n4. Use Item\n5. Stats\n")
         if choice == "1":
-            self.pchoice = "regular"
+            self.pchoice = "attack"
             chkSPD = chk_SPD(self, enemy)
             if chkSPD == 'player':
                 self.pfight(enemy)
                 if enemy.is_alive() == True:
-                    eai.decide()
-                    enemy.apply_poison()
+                    eai.decide(self)
             elif chkSPD == 'enemy':
-                eai.decide()
-                enemy.apply_poison()
+                eai.decide(self)
                 if self.is_alive() == True:
                     self.pfight(enemy)
         elif choice == "2":
             self.pchoice = "magic"
-            if self.status['silence'] == True:
+            if self.status['silenced'] == True:
                 text_speed("You can't cast spells while silenced!\n", .03)
                 time.sleep(.2)
                 self.combat(enemy)
@@ -1485,11 +1506,9 @@ class Player():
                 if chkSPD == 'player':
                     self.pmagatk(enemy, spell)
                     if enemy.is_alive() == True:
-                        eai.decide()
-                        enemy.apply_poison()
+                        eai.decide(self)
                 elif chkSPD == 'enemy':
-                    eai.decide()
-                    enemy.apply_poison()
+                    eai.decide(self)
                     if self.is_alive() == True:
                         self.pmagatk(enemy, spell)
         elif choice == "3":
@@ -1508,18 +1527,15 @@ class Player():
                 if chkSPD == 'player':
                     self.pskillatk(enemy, skill)
                     if enemy.is_alive() == True:
-                        eai.decide()
-                        enemy.apply_poison()
+                        eai.decide(self)
                 elif chkSPD == 'enemy':
-                    eai.decide()
-                    enemy.apply_poison()
+                    eai.decide(self)
                     if self.is_alive() == True:
                         self.pskillatk(enemy, skill)
         elif choice == "4":
             self.pchoice = "item"
             self.use_item(enemy)
-            eai.decide()
-            enemy.apply_poison()
+            eai.decide(self)
         elif choice == "5":
             print(self.__str__())
             for s in self.status:
@@ -1533,6 +1549,10 @@ class Player():
                 text_speed("Invalid choice.\n", .03)
                 time.sleep(.2)
                 self.combat(enemy)
+        else:
+            text_speed("Invalid choice.\n", .03)
+            time.sleep(.2)
+            self.combat(enemy)
 
     def fight(self, enemy):
         self.starting_turns = 1
@@ -1543,7 +1563,24 @@ class Player():
             if self.buffs['regen']['flag'] == True:
                 self.stats['cHP']['value'] += self.stats['mHP']['value'] * self.buffs['regen']['potency']
             self.turns += 1
-            print(self.stats['STR']['value'] + self.statbonus['STR']['value'])
+            for s in self.status:
+                if self.status[s]['flag'] == True:
+                    if self.status[s]['duration'] > 0:
+                        self.status[s]['duration'] -= 1
+                    if self.status[s]['duration'] == 0:
+                        self.status[s]['flag'] = False
+                        self.status[s]['duration'] = 0
+                        text_speed("You are no longer {}!\n".format(s), .03)
+                        time.sleep(.2)
+            for e in enemy.status:
+                if enemy.status[e]['flag'] == True:
+                    if enemy.status[e]['duration'] > 0:
+                        enemy.status[e]['duration'] -= 1
+                    if enemy.status[e]['duration'] == 0:
+                        enemy.status[e]['flag'] = False
+                        enemy.status[e]['duration'] = 0
+                        text_speed("The {} is not longer {}!\n".format(enemy.name, e), .03)
+                        time.sleep(.2)
         if not enemy.is_alive():
             self.pchoice = None
             self.starting_turns = 0
@@ -1584,7 +1621,6 @@ class Player():
                 time.sleep(.5)
             if self.chk_compendium(enemy) == False:
                 self.add_monster(enemy)
-            # self.monster_part_drop(enemy)
         elif not self.is_alive():
             self.turns = 0
             text_speed("You died.\n", .05)
@@ -1632,7 +1668,22 @@ class Mage(Player):
 
 class Rogue(Player):
     def __init__(self):
-        super().__init__(self, mHP=10, cHP=10, mMP=20, cMP=20, STR=2, DEF=1, MAG=1, RES=1, SPD=3, SKL=3, LUCK=4, cash=15, char_class="Rogue")
+        super().__init__(
+            self,
+            mHP=10,
+            cHP=10,
+            mMP=20,
+            cMP=20,
+            STR=2,
+            DEF=1,
+            MAG=1,
+            RES=1,
+            SPD=3,
+            SKL=3,
+            LUCK=4,
+            cash=15,
+            char_class="Rogue"
+            )
         self.spells.append(magic.poison_dart())
         self.skills.append(skills.sneak_attack())
         self.skills.append(skills.steal())

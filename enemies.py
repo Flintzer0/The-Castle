@@ -6,14 +6,15 @@ class Enemy:
     steal_list = {}
     
     status = {
-        'poison': {'flag' : False, 'potency' : 0},
-        'paralysis': {'flag' : False, 'potency' : 0},
-        'blind': {'flag' : False, 'potency' : 0},
-        'silence': {'flag' : False, 'potency' : 0},
-        'sleep': {'flag' : False, 'potency' : 0},
-        'confusion': {'flag' : False, 'potency' : 0},
-        'charm': {'flag' : False, 'potency' : 0},
-        'crippled': {'flag' : False, 'potency' : 0},
+        'poisoned': {'flag' : False, 'potency' : 0, 'duration' : 0},
+        'paralyzed': {'flag' : False, 'duration' : 0},
+        'blinded': {'flag' : False, 'duration' : 0},
+        'silenced': {'flag' : False, 'duration' : 0},
+        'asleep': {'flag' : False, 'duration' : 0},
+        'confused': {'flag' : False, 'duration' : 0},
+        'charmed': {'flag' : False, 'potency' : 0, 'duration' : 0},
+        'crippled': {'flag' : False, 'duration' : 0},
+        'slowed': {'flag' : False, 'potency' : 0, 'duration' : 0},
         }
 
     skills = []
@@ -64,8 +65,8 @@ class Enemy:
             return False
     
     def apply_poison(self):
-        if self.status['poison'] == True:
-            damage = self.status['poison']['potency']
+        if self.status['poisoned']['flag'] == True:
+            damage = self.status['poisoned']['potency']
             self.stats['HP'] -= damage
             text_speed("The {} takes {} damage from poison!\n".format(self.name, damage), .03)
             time.sleep(.2)
@@ -77,7 +78,10 @@ class Enemy:
             return skill.use(self, player)
 
     def use_spell(self, spell, player):
-        return spell.cast_spell(self, player)
+        if isinstance(spell, magic.Restore):
+            return spell.cast_spell(self)
+        else:
+            return spell.cast_spell(self, player)
 
     def attack(self, player):
         if calculate_hit(self, player):
@@ -101,9 +105,11 @@ class Enemy:
             player.stats['cHP']['value'] -= damage
             text_speed("The {} dealt {} damage to you!\n".format(self.name, damage), .03)
             time.sleep(.2)
+            self.apply_poison()
         else:
             text_speed("{} missed!\n".format(self.name), .03)
             time.sleep(.2)
+            self.apply_poison()
 
 # Enemy Types
 class Undead(Enemy):
@@ -221,6 +227,9 @@ class giant_spider(Bug):
             part=items.spider_leg(1),
             description="A large spider with dripping fangs and a hairy body.\nThey are quicker than most basic monsters. Being all buggy, its defense\nisn't superb, but it has a bit of magic resistance.\n"
             )
+        
+        self.skills.append(enemy_skills.web())
+        self.skills.append(enemy_skills.venom())
  
 class goblin(Humanoid):
     import items
@@ -251,6 +260,7 @@ class goblin(Humanoid):
             part=items.goblin_ear(1),
             description="A small, green humanoid with a large nose and pointed ears.\nThey aren't very special, but they have a bit of defense.\n"
             )
+        
         self.skills.append(enemy_skills.club_smash())
         self.skills.append(enemy_skills.patch())
 
@@ -282,7 +292,7 @@ class skeleton(Undead):
             gold=13, 
             part=items.femur_bone(1),
             description="A walking skeleton. \nThey are slow, but they have some defense and deal a little more \ndamage. Very weak to Magic damage.\n")
-        
+
 class large_rat(Beast):
     import items
     steal_list = {
@@ -342,7 +352,9 @@ class demon_bat(Demon):
             part=items.bat_wing(1),
             description="A bat with red eyes and a demonic aura. \nThey are quick and have a bit of magic resistance, but physically weak.\n"
             )
-        
+    
+        self.skills.append(enemy_skills.drain())
+
 class zombie(Undead):
     import items
     steal_list = {

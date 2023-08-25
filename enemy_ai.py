@@ -24,6 +24,7 @@ class EnemyAI:
 
     def decide(self, player):
         pchoice = player.pchoice
+        debuffed = False
         skillchance = random.randint(1, 100) < 0
         magicchance = random.randint(1, 100) < 0
         hslist = []
@@ -35,22 +36,37 @@ class EnemyAI:
         dslist = []
         dchance = random.randint(1, 100) < 0
 
+        for d in self.enemy.status:
+            if self.enemy.status[d]['flag'] == True:
+                debuffed = True
+
         if self.enemy.stats['HP'] < (self.enemy.stats['mHP'] / 3) and self.chk_heals():
-            skorsp = random.choice(['skill', 'spell'])
-            if skorsp == 'skill':
-                if self.chk_lists(self.enemy.skills, enemy_skills.Restore):
-                    for s in self.enemy.skills:
-                        if isinstance(s, enemy_skills.Restore):
-                            if s.rtype == 'Heal':
-                                return self.enemy.use_skill(s, self.enemy)
-            elif skorsp == 'spell':
-                if self.chk_lists(self.enemy.spells, magic.Restore):
-                    for s in self.enemy.spells:
-                        if isinstance(s, magic.Restore):
-                            if s.rtype == 'Heal':
-                                return self.enemy.use_spell(s, player)
+            if self.chk_lists(self.enemy.skills, enemy_skills.Restore):
+                for s in self.enemy.skills:
+                    if isinstance(s, enemy_skills.Restore):
+                        if s.rtype == 'Heal':
+                            return self.enemy.use_skill(s, player)
+                        
+            if self.chk_lists(self.enemy.spells, magic.Restore):
+                for s in self.enemy.spells:
+                    if isinstance(s, magic.Restore):
+                        if s.rtype == 'Heal':
+                            return self.enemy.use_spell(s, player)
+                            
+        elif debuffed:
+            if self.chk_lists(self.enemy.skills, enemy_skills.Restore):
+                for sk in self.enemy.skills:
+                    if isinstance(sk, enemy_skills.Restore):
+                        if sk.rtype == 'Cure':
+                            return self.enemy.use_skill(sk, player)
+                        
+            elif self.chk_lists(self.enemy.spells, magic.Restore):
+                for sp in self.enemy.spells:
+                    if isinstance(sp, magic.Restore):
+                        if sp.rtype == 'Cure':
+                            return self.enemy.use_spell(sp, player)
+                    
         elif self.enemy.skills and self.enemy.spells:
-            print('Both')
             if pchoice == None:
                 skillchance = random.randint(1, 100) < 40
                 magicchance = random.randint(1, 100) < 40
@@ -67,7 +83,6 @@ class EnemyAI:
                 skillchance = random.randint(1, 100) < 80
                 magicchance = random.randint(1, 100) < 80
         elif self.enemy.skills:
-            print('Skills')
             if pchoice == None:
                 skillchance = random.randint(1, 100) < 66
             elif pchoice == 'attack':
@@ -75,17 +90,16 @@ class EnemyAI:
             elif pchoice == 'skill':
                 skillchance = random.randint(1, 100) < 85
             elif pchoice == 'magic':
-                skillchance = random.randint(1, 100) < 66
+                skillchance = random.randint(1, 100) < 85
             elif pchoice == 'item':
                 skillchance = random.randint(1, 100) < 80
         elif self.enemy.spells:
-            print('Spells')
             if pchoice == None:
                 magicchance = random.randint(1, 100) < 66
             elif pchoice == 'attack':
                 magicchance = random.randint(1, 100) < 66
             elif pchoice == 'skill':
-                magicchance = random.randint(1, 100) < 55
+                magicchance = random.randint(1, 100) < 85
             elif pchoice == 'magic':
                 magicchance = random.randint(1, 100) < 85
             elif pchoice == 'item':
@@ -95,15 +109,6 @@ class EnemyAI:
 
         if skillchance:
             print('Skill', skillchance)
-            for p in self.enemy.skills:
-                if isinstance(p, enemy_skills.Attack):
-                    print(p.name, ' - Attack')
-                if isinstance(p, enemy_skills.Restore):
-                    print(p.name, ' - Restore')
-                if isinstance(p, enemy_skills.Buff):
-                    print(p.name, ' - Buff')
-                if isinstance(p, enemy_skills.Debuff):
-                    print(p.name, ' - Debuff')
             skilled = False
             while not skilled:
                 for c in self.enemy.skills:
@@ -121,59 +126,57 @@ class EnemyAI:
                     if isinstance(c, enemy_skills.Debuff):
                         dchance = random.randint(1, 100) < 80
                         dslist.append(c)
-                print('R:', hchance, '\nA:', achance, '\nB:', bchance, '\nD:', dchance)
                 if hchance:
-                    print('Choice: Heal')
                     heal = random.choice(hslist)
                     skilled = True
                     return self.enemy.use_skill(heal, player)
                 elif achance:
-                    print('Choice: Skill Attack')
                     attack = random.choice(aslist)
                     skilled = True
                     return self.enemy.use_skill(attack, player)
                 elif bchance:
-                    print('Choice: Buff')
                     buff = random.choice(bslist)
                     skilled = True
                     return self.enemy.use_skill(buff, player)
                 elif dchance:
-                    print('Choice: Debuff')
                     debuff = random.choice(dslist)
                     skilled = True
                     return self.enemy.use_skill(debuff, player)    
         
         if magicchance:
             print('Magic', magicchance)
-            for c in self.enemy.spells:
-                if isinstance(c, magic.Restore):
-                    if self.enemy.stats['HP'] < (self.enemy.stats['mHP'] / 2):
-                        if c.rtype == 'Heal':
-                            hchance = random.randint(1, 100) < 25
-                            hslist.append(c)
-                if isinstance(c, magic.Attack):
-                    achance = random.randint(1, 100) < 40
-                    aslist.append(c)
-                if isinstance(c, magic.Buff):
-                    bchance = random.randint(1, 100) < 40
-                    bslist.append(c)
-                if isinstance(c, magic.Debuff):
-                    dchance = random.randint(1, 100) < 40
-                    dslist.append(c)
-            if hchance:
-                heal = random.choice(hslist)
-                return self.enemy.use_spell(heal, player)
-            elif achance:
-                attack = random.choice(aslist)
-                return self.enemy.use_spell(attack, player)
-            elif bchance:
-                buff = random.choice(bslist)
-                return self.enemy.use_spell(buff, player)
-            elif dchance:
-                debuff = random.choice(dslist)
-                return self.enemy.use_spell(debuff, player)
-            else:
-                pass
+            spelled = False
+            while not spelled:
+                for c in self.enemy.spells:
+                    if isinstance(c, magic.Restore):
+                        if self.enemy.stats['HP'] < (self.enemy.stats['mHP'] / 2):
+                            if c.rtype == 'Heal':
+                                hchance = random.randint(1, 100) < 25
+                                hslist.append(c)
+                    if isinstance(c, magic.Attack):
+                        achance = random.randint(1, 100) < 40
+                        aslist.append(c)
+                    if isinstance(c, magic.Buff):
+                        bchance = random.randint(1, 100) < 40
+                        bslist.append(c)
+                    if isinstance(c, magic.Debuff):
+                        dchance = random.randint(1, 100) < 40
+                        dslist.append(c)
+                if hchance:
+                    heal = random.choice(hslist)
+                    spelled = True
+                    return self.enemy.use_spell(heal, player)
+                elif achance:
+                    attack = random.choice(aslist)
+                    spelled = True
+                    return self.enemy.use_spell(attack, player)
+                elif bchance:
+                    buff = random.choice(bslist)
+                    spelled = True
+                    return self.enemy.use_spell(buff, player)
+                elif dchance:
+                    debuff = random.choice(dslist)
+                    spelled = True
+                    return self.enemy.use_spell(debuff, player)
 
-        print('Basic attack')
         return self.enemy.attack(player)
