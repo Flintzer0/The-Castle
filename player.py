@@ -1,5 +1,6 @@
 import world, items, magic, skills, pickle, sys, time, random, enemy_ai
 from utilities import *
+from title_screen import save_game
 
 class Player():
     starting_turns = 0
@@ -190,6 +191,9 @@ class Player():
         if action_method:
             action_method(**kwargs)
 
+    def save_game(self):
+        return save_game(self)
+
     def chk_stat_roll(self, growth):
         growth1 = random.randint(1,100) <= (growth * 100)
         growth2 = random.randint(1,100) <= (growth * 100)
@@ -197,7 +201,7 @@ class Player():
             return True
         
     def view_character(self):
-        return self.__str__()
+        return print(self.__str__())
 
     def level_up(self):
         self.LVL += 1
@@ -1436,15 +1440,15 @@ class Player():
                 if buff:
                     buff_info = self.buffs.get(buff)
                     if buff_info:
-                        buff_info['flag'] = True
-                        if 'potency' in buff_info:
-                            buff_info['potency'] += (item.propercent * 100)
+                        if buff_info['flag'] == False:
+                            buff_info['flag'] = True
+                            if 'potency' in buff_info:
+                                buff_info['potency'] += (item.propercent * 100)
                 if stat:
-                    print(stat)
                     stat_info = self.statbonus.get(stat)
                     if stat_info:
-                        print(stat_info, item.statval)
-                        stat_info['value'] += item.statval
+                        if stat_info['value'] == 0:
+                            stat_info['value'] += item.statval
 
     def chk_temps(self):
         for f in self.tempboosts:
@@ -1556,7 +1560,7 @@ class Player():
 
     def fight(self, enemy):
         self.starting_turns = 1
-        self.chk_equips()
+        # self.chk_equips()
         while self.is_alive() and enemy.is_alive():
             self.chk_temps()
             self.combat(enemy)
@@ -1755,8 +1759,10 @@ class Ranger(Player):
 
 class Debug(Player):
     def __init__(self):
-        super().__init__(self, mHP=1000, cHP=1000, mMP=1000, cMP=1000, STR=2, DEF=1000, MAG=1000, RES=1000, SPD=1000, SKL=1000, LUCK=1000, cash=10000, char_class="Debug")
+        super().__init__(self, mHP=1000, cHP=1000, mMP=1000, cMP=1000, STR=1000, DEF=1000, MAG=1000, RES=1000, SPD=1000, SKL=1000, LUCK=1000, cash=10000, char_class="Debug")
+        self.name = "Debug"
         self.inventory.append(items.elixir(99))
+        self.inventory.append(items.might_ring())
         self.inventory.append(items.STR_1_boost(99))
         self.inventory.append(items.DEF_1_boost(99))
         self.inventory.append(items.minor_strength_boost(99))
@@ -1784,13 +1790,14 @@ class Debug(Player):
         self.spells.append(magic.water())
         self.spells.append(magic.smite())
         self.spells.append(magic.turn())
-        self.spells.append(magic.poison())
-        self.spells.append(magic.curse())
+        self.spells.append(magic.poison_dart())
+        self.spells.append(magic.blood())
         self.spells.append(magic.wither())
         self.equipped['weapon'] = items.obsidian_blade()
         self.equipped['shield'] = items.iron_curtain()
         self.equipped['armor'] = items.plate()
         self.equipped['accessory_1'] = items.water_ring()
+        self.equipped['accessory_2'] = items.wisdom_ring()
         self.growthmHP = 1
         self.growthmMP = 1
         self.growthSTR = 1

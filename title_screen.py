@@ -53,15 +53,15 @@ def game_loop(player):
             available_actions = room.available_actions()
             for action in available_actions:
                 print(action)
-            print('x: Save and Exit')
+            # print('x: Save and Exit')
             action_input = input('Action: ')
             for action in available_actions:
                 if action_input == action.hotkey:
                     player.do_action(action, **action.kwargs)
                     break
-                elif action_input == 'x':
-                    save_game(player)
-                    break
+                # elif action_input == 'x':
+                #     save_game(player)
+                #     break
         else:
             text_speed("You died.\n", .05)
             time.sleep(2)

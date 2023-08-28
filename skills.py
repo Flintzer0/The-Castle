@@ -328,10 +328,20 @@ class steal(Combat):
             time.sleep(.2)
         
 class poison_point(Combat, Debuff):
+    name="Poison Point",
+    cost=3,
+    damage=2,
+    damage_type="Poison",
+    bonus_stat="SKL",
+    hit_rate=85,
+    description="Your Poison Point skill. Deals damage based on SKL to a single target. Has a high chance to poison enemies."
+    stat="HP",
+    debuff="poisoned",
+    dpercent=5
     def __init__(self):
-        super().__init__(name="Poison Point", cost=3, damage=2, damage_type="Poison", bonus_stat="SKL", hit_rate=85,
-                         description="Your Poison Point skill. Deals damage based on SKL to a single target. Has a high chance to poison enemies.")
-        
+        Combat(self.name, self.description, self.cost, self.damage, self.damage_type, self.bonus_stat, self.hit_rate).__init__(name=self.name, cost=self.cost, damage=self.damage, damage_type=self.damage_type, bonus_stat=self.bonus_stat, hit_rate=self.hit_rate, description=self.description)
+        Debuff.__init__(self, name=self.name, description=self.description, cost=self.cost, stat="HP", debuff="poisoned", dpercent=5)
+
     def ability(self, player, enemy):
         if skill_hit(self.hit_rate, player, enemy):
             cCRIT = chk_CRIT(player, enemy)

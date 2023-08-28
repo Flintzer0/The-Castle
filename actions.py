@@ -53,4 +53,4 @@ class menu(Action):
 
 class SaveAndExit(Action):
     def __init__(self):
-        super().__init__(method=title_screen.save_game, name="Save and Exit", hotkey='x')
+        super().__init__(method=Player.save_game, name="Save and Exit", hotkey='x')

@@ -549,8 +549,8 @@ class wither(Damage, Debuff):
         duration=5,
         dchance=55,
         description="Shoots a purple bolt of nectrotic energy that atrophies your enemies. \nDeals Necrotic damage to a single target. Has a chance to Cripple the target."        
-        Damage().__init__(name, cost, damage, damage_type)
-        Debuff().__init__(name, cost, debuff, potency, duration, dchance)
+        Damage(name, description, cost, damage, damage_type).__init__(name, cost, damage, damage_type, description)
+        Debuff(name, description, cost, debuff, potency, duration, dchance).__init__(name, description, cost, debuff, potency, duration, dchance)
         
     def effect(self, caster, target):
         if isinstance(caster, player.Player):

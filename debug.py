@@ -34,15 +34,15 @@ def game_loop(player):
             available_actions = room.available_actions()
             for action in available_actions:
                 print(action)
-            print('x: Save and Exit Game')
+            # print('x: Save and Exit Game')
             action_input = input('Action: ')
             for action in available_actions:
                 if action_input == action.hotkey:
                     player.do_action(action, **action.kwargs)
                     break
-                elif action_input == 'x':
-                    save_game(player)
-                    break
+                # elif action_input == 'x':
+                #     save_game(player)
+                #     break
 
 def chk_save():
     saves = []
@@ -73,6 +73,22 @@ def chk_save():
             else:
                 print("Invalid choice.")
                 chk_save()
+        else:
+            print("Invalid choice.")
+            chk_save()
+    else:
+        play()
+
+def menu():
+    print("!!Debug Mode!!\n1. New Game    2. Load Game    3. Exit")
+    choice = input()
+    if choice == '1':
+        play()
+    elif choice == '2':
+        chk_save()
+    elif choice == '3':
+        text_speed("Farewell!\n", .05)
+        sys.exit()
 
 if __name__ == "__main__":
-    chk_save()
+    menu()
